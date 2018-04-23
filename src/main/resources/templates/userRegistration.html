@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <h2>Registration</h2>
+            <form class="form-horizontal" action="/user/register" method="POST">
+
+                <div class="form-group">
+                    <label for="login">Login</label>
+                    <input type="text" id="login" name="login" class="form-control">
+                    <div id="feedbackLogin"></div>
+                </div>
+
+                <label for="password">Password</label><br />
+                <div class="input-group">
+                    <input type="password" id="password" name="password" class="form-control">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="showPassword">Show</button>
+                    </div>
+                    <div id="feedbackPassword"></div>
+                </div>
+                <br />
+
+                <label for="repeatedPassword">Repeat password</label><br />
+                <div class="input-group">
+                    <input type="password" id="repeatedPassword" name="repeatedPassword" class="form-control">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="showRepeatedPassword">Show</button>
+                    </div>
+                    <div id="feedbackRepeatedPassword"></div>
+                </div>
+                <br />
+
+                <div class="form-group">
+                    <label for="surname">Surname</label>
+                    <input type="text" id="surname" name="surname" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" class="form-control">
+                </div>
+
+                <button class="btn btn-primary btn-lg" id="registerUser">Register</button>
+                <button class="btn btn-danger btn-lg" type="reset" id="resetButton">Reset</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" th:src="@{/js/userRegistrationScript.js}"></script>
+</body>
+</html>
