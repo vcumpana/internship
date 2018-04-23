@@ -1,20 +1,20 @@
 //Creates Dialog that adds categories
 $(document).ready(function () {
     $(function () {
-        $("#dialog").dialog({
+        $("#addCategoryDialog").dialog({
             autoOpen: false
         });
         $("#add_categories").on("click", function () {
-            $("#dialog").dialog("open");
+            $("#addCategoryDialog").dialog("open");
         });
     });
 // Validating Form Fields.....
-    $("#submit").click(function (e) {
-        var name = $("#name").val();
+    $("#add_submit").click(function (e) {
+        var name = $("#add_name").val();
         if (name === '') {
             displayMessage("Please fill name");
         } else {
-            saveCategoryInDb()
+            saveCategoryInDb(name)
         }
     });
 });

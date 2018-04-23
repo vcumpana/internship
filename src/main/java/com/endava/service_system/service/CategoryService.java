@@ -31,4 +31,8 @@ public class CategoryService {
     public List<Category> delete(String name){
         return categoryDao.deleteByName(name);
     }
+
+    public int updateName(String oldName,String name) {
+        return categoryDao.updateCategoryByName(oldName,name);
+    }
 }
