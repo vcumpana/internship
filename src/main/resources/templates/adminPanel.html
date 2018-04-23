@@ -51,7 +51,13 @@
     <script th:inline="javascript">
         function changeCategory() {
             //var name=this.val();
-            displayMessage("change " + $(this).val());
+            var id_name= $(this).val();
+            if(id_name==$("#input_"+id_name).val()){
+                return;
+            }
+            displayMessage("change " + id_name);
+            var newCategoryName=$("#tr_"+id_name+ " input").val();
+            changeCategoryInDb(id_name,newCategoryName);
         }
 
         function deleteCategory() {
@@ -73,12 +79,11 @@
     </script>
 </head>
 <body>
-<div id="dialog" title="Add Category">
+<div id="addCategoryDialog" title="Add Category">
     <label>Name:</label>
-    <input id="name" name="name" type="text">
-    <button id="submit" class="btn btn-primary btn-lg btn-block">Create</button>
+    <input id="add_name" name="name" type="text">
+    <button id="add_submit" class="btn btn-primary btn-lg btn-block">Create</button>
 </div>
-
 
 <div class="container col-md-6 col-sm-10">
     <div class="text-center mt-12">
@@ -142,7 +147,7 @@
             <tbody id="tbody">
             <th:block th:if="${categories!=null}" th:each="category : ${categories}">
                 <tr th:id='${"tr_"+category.getName()}'>
-                    <td th:text="${category.getName()}">...</td>
+                    <td><input class="btn btn-default" th:id='${"input_"+category.getName()}'th:value="${category.getName()}"/></td>
 
                     <td>
                         <button th:id='${"btn_change_"+category.getName()}' th:value="${category.getName()}"

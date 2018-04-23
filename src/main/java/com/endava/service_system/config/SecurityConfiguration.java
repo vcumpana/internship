@@ -49,7 +49,6 @@ public class SecurityConfiguration {
                     .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
                     .and().formLogin().loginPage("/admin/login")
                     .defaultSuccessUrl("/admin/panel")
-//	                .failureUrl("/login")
                     .usernameParameter("username").passwordParameter("password")
                     .and().csrf().disable();
             //TODO add csrf in all forms and enable crsf (for protection)!!
