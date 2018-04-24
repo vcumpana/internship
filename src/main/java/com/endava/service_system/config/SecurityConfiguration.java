@@ -9,94 +9,55 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfiguration {
-    @Order(1)
-    @Configuration
-    public static class AdminSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-        private final UserDetailsService userDetailsService;
-        private final LogoutSuccessHandler logoutSuccessHandler;
-        private final DaoAuthenticationProvider daoAuthenticationProvider;
+    private final UserDetailsService userDetailsService;
+    private final LogoutSuccessHandler logoutSuccessHandler;
+    private final DaoAuthenticationProvider daoAuthenticationProvider;
 
-        public AdminSecurityConfiguration(@Qualifier("adminDetailsService") UserDetailsService userDetailsService,
-                                          LogoutSuccessHandler logoutSuccessHandler,
-                                          @Qualifier("adminDaoAuthProvider") DaoAuthenticationProvider daoAuthenticationProvider) {
-            this.daoAuthenticationProvider = daoAuthenticationProvider;
-            this.userDetailsService = userDetailsService;
-            this.logoutSuccessHandler = logoutSuccessHandler;
-        }
-
-        @Autowired
-        public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
-            auth.userDetailsService(userDetailsService);
-            auth.authenticationProvider(daoAuthenticationProvider);
-        }
-
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests()
-                    .antMatchers("/admin", "/admin/login","/user/login").permitAll()
-                    .antMatchers("/admin/logout").authenticated()
-                    .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
-                    .and().formLogin().loginPage("/admin/login")
-                    .defaultSuccessUrl("/admin/panel")
-//	                .failureUrl("/username")
-                    .usernameParameter("username").passwordParameter("password")
-                    .and().csrf().disable();
-            //TODO add csrf in all forms and enable crsf (for protection)!!
-            http.logout().deleteCookies()
-                    .logoutUrl("/admin/logout").invalidateHttpSession(true).clearAuthentication(true)
-                    .logoutSuccessUrl("/").logoutSuccessHandler(logoutSuccessHandler);
-        }
+    public SecurityConfiguration(@Qualifier("userDetailsService") UserDetailsService userDetailsService,
+                                 LogoutSuccessHandler logoutSuccessHandler,
+                                 @Qualifier("userDaoAuthProvider") DaoAuthenticationProvider daoAuthenticationProvider) {
+        this.daoAuthenticationProvider = daoAuthenticationProvider;
+        this.userDetailsService = userDetailsService;
+        this.logoutSuccessHandler = logoutSuccessHandler;
     }
 
-    @Order(2)
-    @Configuration
-    public static class UserSecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-        private final UserDetailsService userDetailsService;
-        private final LogoutSuccessHandler logoutSuccessHandler;
-        private final DaoAuthenticationProvider daoAuthenticationProvider;
-
-        public UserSecurityConfiguration(@Qualifier("userDetailsService") UserDetailsService userDetailsService,
-                                         LogoutSuccessHandler logoutSuccessHandler,
-                                         @Qualifier("userDaoAuthProvider") DaoAuthenticationProvider daoAuthenticationProvider) {
-            this.daoAuthenticationProvider = daoAuthenticationProvider;
-            this.userDetailsService = userDetailsService;
-            this.logoutSuccessHandler = logoutSuccessHandler;
-        }
-
-        @Autowired
-        public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
-            auth.userDetailsService(userDetailsService);
-            auth.authenticationProvider(daoAuthenticationProvider);
-        }
-
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests()
-                    .antMatchers("/user", "/user/login", "/user/register").permitAll()
-                    .antMatchers("/user/logout").access("hasRole('ROLE_USER')")
-                    .antMatchers("/user/**").access("hasRole('ROLE_USER')")
-                    .and().formLogin().loginPage("/user/login")
-                    .defaultSuccessUrl("/user/panel")
-                    .failureUrl("/user/login")
-                    .usernameParameter("username").passwordParameter("password")
-                    .and().csrf().disable();
-
-            http.logout().deleteCookies()
-                    .logoutUrl("/user/logout").invalidateHttpSession(true).clearAuthentication(true)
-                    .logoutSuccessUrl("/").logoutSuccessHandler(logoutSuccessHandler);
-        }
+    @Autowired
+    public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService);
+        auth.authenticationProvider(daoAuthenticationProvider);
     }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                //TODO $RUSTAM change register name to registration;
+                .antMatchers("/", "/login", "/index","/user/register","/company/registration").permitAll()
+                .antMatchers("/logout").authenticated()
+                .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
+                .antMatchers("/user/**").access("hasRole('ROLE_USER')")
+                .antMatchers("/company/**").access("hasRole('ROLE_COMPANY')")
+                .and().formLogin().loginPage("/login")
+                .defaultSuccessUrl("/success")
+                .usernameParameter("username").passwordParameter("password");
+        http.csrf().disable();
+        //TODO add csrf in all forms and enable crsf (for protection)!!
+        http.logout().deleteCookies()
+                .logoutUrl("/logout").invalidateHttpSession(true).clearAuthentication(true)
+                .logoutSuccessUrl("/").logoutSuccessHandler(logoutSuccessHandler);
+    }
+
 
 }

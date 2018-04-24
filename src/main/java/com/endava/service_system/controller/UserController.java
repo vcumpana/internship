@@ -36,7 +36,7 @@ public class UserController {
         if(authUtils.isLoggedIn(auth)) {
             return authUtils.isUser(auth)?"redirect:/user/panel":"redirect:/";
         }
-        return "userLogin";
+        return "login";
     }
 
     @RequestMapping(value = "/user/register")

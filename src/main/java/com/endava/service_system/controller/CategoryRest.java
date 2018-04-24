@@ -10,9 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.endava.service_system.model.Roles.ROLE_ADMIN;
-import static com.endava.service_system.model.Roles.ROLE_COMPANY;
-import static com.endava.service_system.model.Roles.ROLE_USER;
 
 @RestController
 public class CategoryRest {
@@ -24,7 +21,7 @@ public class CategoryRest {
     }
 
     @PostMapping("/category")
-    @PreAuthorize("hasRole('" + ROLE_ADMIN + "')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity addCategory(@RequestBody Category category) {
         try {
             category.setId(-1);
@@ -38,13 +35,13 @@ public class CategoryRest {
     }
 
     @GetMapping("/category")
-    @PreAuthorize("hasAnyAuthority('" + ROLE_ADMIN + "," + ROLE_COMPANY + "," + ROLE_USER + "')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_COMPANY','ROLE_USER')")
     public ResponseEntity getAllCategories() {
         return new ResponseEntity(categoryService.getAll(), HttpStatus.OK);
     }
 
     @DeleteMapping("/category/{name}")
-    @PreAuthorize("hasRole('" + ROLE_ADMIN + "')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity deleteCategory(@PathVariable("name") String name) {
         try {
             List<Category> categoryList = categoryService.delete(name);
@@ -59,7 +56,7 @@ public class CategoryRest {
     }
 
     @PutMapping("/category/{name}")
-    @PreAuthorize("hasRole('" + ROLE_ADMIN + "')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity changeCategory(@PathVariable("name") String name, @RequestBody Category category) {
         try {
             System.out.println("Name:" + name);

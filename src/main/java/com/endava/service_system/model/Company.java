@@ -16,11 +16,8 @@ public class Company {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
-    private String name;
-
-    private String username;
-
-    private String password;
+    @OneToOne
+    private Credential credential;
 
     private String bankAccount;
 
