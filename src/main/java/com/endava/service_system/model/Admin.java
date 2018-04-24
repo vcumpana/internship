@@ -1,9 +1,6 @@
 package com.endava.service_system.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Table(name="admins")
 public class Admin  {
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	@OneToOne
 	private Credential credential;

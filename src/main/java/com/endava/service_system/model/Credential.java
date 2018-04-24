@@ -14,7 +14,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Table(name = "credentials")
 public class Credential {
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Id
     private long id;
     @Column(unique = true)

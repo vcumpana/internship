@@ -1,2 +1,2 @@
-INSERT INTO credentials(id,username,password,status,role) VALUES (0,'admin','$2a$10$O2M/QcKwMyboENRAtMvEXebcyWkwO.yCbTb6orzCKROvS8lFqVVK2','ACCEPTED','ROLE_ADMIN');
-INSERT INTO admins(id,credential_id) VALUES (0,0);
+INSERT INTO credentials(username,password,status,role) VALUES ('admin','$2a$10$O2M/QcKwMyboENRAtMvEXebcyWkwO.yCbTb6orzCKROvS8lFqVVK2','ACCEPTED','ROLE_ADMIN');
+INSERT INTO admins(credential_id) VALUES (1);
