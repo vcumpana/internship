@@ -5,7 +5,7 @@ var errorMessageLogin = "<strong>Warning!</strong> Login must contain at least 8
 var errorMessagePassword = "<strong>Warning!</strong> Password must contain at least 8 chars, that includes at least one number, upper case character and symbol.";
 var errorMessageRepeatedPassword = "<strong>Warning!</strong> Password must be the same.";
 
-$("#login").keyup(function () {
+$("#username").keyup(function () {
     validateLogin(this);
 })
 
@@ -38,7 +38,7 @@ $("#registerUser").click(function(event){
     if(checkPasswords() == false){
         errors++;
     }
-    if(validateLogin("#login") == false){
+    if(validateLogin("#username") == false){
         errors++;
     }
     if(errors > 0){

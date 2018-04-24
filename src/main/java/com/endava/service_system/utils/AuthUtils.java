@@ -1,6 +1,7 @@
 package com.endava.service_system.utils;
 
 import static com.endava.service_system.model.Roles.ROLE_ADMIN;
+import static com.endava.service_system.model.Roles.ROLE_USER;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,11 @@ public class AuthUtils {
 	public boolean isAdmin(Authentication auth) {
 		return !auth.getAuthorities().isEmpty()&&hasRole(auth,ROLE_ADMIN);
 	}
-	
+
+	public boolean isUser(Authentication auth) {
+		return !auth.getAuthorities().isEmpty()&&hasRole(auth,ROLE_USER);
+	}
+
 	public boolean hasRole(Authentication auth,String role) {
 		return auth.getAuthorities()
 				.stream()
