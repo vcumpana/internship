@@ -10,4 +10,7 @@ import java.util.Optional;
 @Repository
 public interface ICredentialDao extends JpaRepository<Credential,Long>{
 	Optional<Credential> getByUsername(String username);
+	Credential save(Credential credential);
+
+
 }

@@ -1,5 +1,6 @@
 package com.endava.service_system.model;
 
+import com.endava.service_system.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,12 +10,15 @@ import java.util.Collection;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class Company {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    private String name;
 
     @OneToOne
     private Credential credential;
@@ -22,6 +26,8 @@ public class Company {
     private String bankAccount;
 
     private String address;
+
+    private String email;
 
     @OneToMany
     private Collection<Contract> contracts;
@@ -31,8 +37,4 @@ public class Company {
 
     @OneToMany
     private Collection<Invoice> invoices;
-
-
-
-
 }
