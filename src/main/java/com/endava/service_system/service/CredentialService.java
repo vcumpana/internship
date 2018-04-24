@@ -16,4 +16,8 @@ public class CredentialService {
     public Optional<Credential> getByUsername(String username){
         return credentialDao.getByUsername(username);
     }
+
+    public void save(Credential credential){
+        credentialDao.save(credential);
+    }
 }
