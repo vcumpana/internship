@@ -7,7 +7,11 @@ function addCategoryInUi(category) {
     var tr = document.createElement("tr");
     tr.id="tr_".concat(categoryName);
     var td = document.createElement("td");
-    td.appendChild(document.createTextNode(categoryName));
+    var input=document.createElement("input");
+    input.value=categoryName;
+    input.className="btn btn-default";
+    input.id="input_".concat(categoryName);
+    td.appendChild(input);
     tr.appendChild(td);
 
     var changeTd = document.createElement("td");
@@ -56,6 +60,29 @@ function createUserThead() {
 
 function createCompanyThead() {
 
+}
+
+function editCategoryInUi(oldName,newName) {
+    deleteFunc=getButton(oldName).onclick;
+    changeValuesAndIds("tr",oldName,newName);
+    changeValuesAndIds("input",oldName,newName);
+    changeValuesAndIds("btn_change",oldName,newName);
+    changeValuesAndIds("btn_delete",oldName,newName);
+    getButton("btn_delete",newName).on("click",deleteCategory);
+    getButton("btn_change",newName).on("click",changeCategory);
+    // $("#tr_"+oldName).prop("id",newName);
+    // $("#input_"+oldName).prop("id",newName);
+    // $("#btn_change_"+oldName).prop("id","#btn_change_"+newName);
+    // $("#btn_delete_"+oldName).prop("id","#btn_change_"+newName);
+}
+
+function changeValuesAndIds(tag,oldValue,newValue){
+    $("#"+tag+"_"+oldValue).prop("value",newValue);
+    $("#"+tag+"_"+oldValue).prop("id",tag+"_"+newValue);
+}
+
+function getButton(prefix,id){
+    return $("#"+prefix+"_"+id);
 }
 
 function getCurrentTable(){

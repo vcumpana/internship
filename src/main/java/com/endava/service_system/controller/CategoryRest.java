@@ -8,14 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.Access;
-import javax.websocket.server.PathParam;
-
 import java.util.List;
 
-import static com.endava.service_system.model.Roles.ROLE_ADMIN;
-import static com.endava.service_system.model.Roles.ROLE_COMPANY;
-import static com.endava.service_system.model.Roles.ROLE_USER;
 
 @RestController
 public class CategoryRest {
@@ -27,7 +21,7 @@ public class CategoryRest {
     }
 
     @PostMapping("/category")
-    @PreAuthorize("hasRole('" + ROLE_ADMIN + "')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity addCategory(@RequestBody Category category) {
         try {
             category.setId(-1);
@@ -41,22 +35,42 @@ public class CategoryRest {
     }
 
     @GetMapping("/category")
-    @PreAuthorize("hasAnyAuthority('" + ROLE_ADMIN + "," + ROLE_COMPANY + "," + ROLE_USER + "')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_COMPANY','ROLE_USER')")
     public ResponseEntity getAllCategories() {
         return new ResponseEntity(categoryService.getAll(), HttpStatus.OK);
     }
 
     @DeleteMapping("/category/{name}")
-    @PreAuthorize("hasRole('" + ROLE_ADMIN + "')")
-    public ResponseEntity delete(@PathVariable("name") String name) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity deleteCategory(@PathVariable("name") String name) {
         try {
             List<Category> categoryList = categoryService.delete(name);
-            if(!categoryList.isEmpty()) {
+            if (!categoryList.isEmpty()) {
                 return new ResponseEntity(categoryList, HttpStatus.OK);
-            }else {
+            } else {
                 return new ResponseEntity(HttpStatus.BAD_REQUEST);
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
+            return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/category/{name}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity changeCategory(@PathVariable("name") String name, @RequestBody Category category) {
+        try {
+            System.out.println("Name:" + name);
+            System.out.println("NewName:" + category.getName());
+            int entitiesUpdated = categoryService.updateName(name, category.getName());
+            if (entitiesUpdated == 0) {
+                return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            } else if (entitiesUpdated == 1) {
+                String json="{\"count\":\"1\"}";
+                return new ResponseEntity(json,HttpStatus.OK);
+            } else {
+                return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
             return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

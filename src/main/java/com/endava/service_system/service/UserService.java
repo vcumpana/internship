@@ -1,20 +1,26 @@
 package com.endava.service_system.service;
 
-import com.endava.service_system.dao.UserRepository;
+import com.endava.service_system.dao.UserDao;
 import com.endava.service_system.model.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 public class UserService {
-    private UserRepository userRepository;
+    private UserDao userDao;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserService(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     public void saveUser(User user){
-        userRepository.save(user);
+        userDao.save(user);
+    }
+
+    public Optional<User> getByUsername(String username){
+        return userDao.getByUsername(username);
     }
 }

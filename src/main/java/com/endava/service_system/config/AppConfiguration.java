@@ -25,8 +25,8 @@ public class AppConfiguration {
 	}
 
 	@Bean
-	@Qualifier("adminDaoAuthProvider")
-	public DaoAuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder, @Qualifier("adminDetailsService") UserDetailsService userDetailsService) {
+	@Qualifier("userDaoAuthProvider")
+	public DaoAuthenticationProvider authenticationProviderForUser(PasswordEncoder passwordEncoder, @Qualifier("userDetailsService") UserDetailsService userDetailsService) {
 		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 		authenticationProvider.setUserDetailsService(userDetailsService);
 		authenticationProvider.setPasswordEncoder(passwordEncoder);

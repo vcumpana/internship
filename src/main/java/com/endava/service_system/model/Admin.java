@@ -18,6 +18,6 @@ import lombok.NoArgsConstructor;
 public class Admin  {
 	@Id
 	private int id;
-	private String username;
-	private String password;
+	@OneToOne
+	private Credential credential;
 }
