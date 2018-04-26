@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
 public class CompanyController {
@@ -43,4 +44,10 @@ public class CompanyController {
         return "redirect:/login";
     }
 
+    @GetMapping("company/profile")
+    public String getCompanyProfile(Model model){
+        Optional<Company> company = companyService.getCompanyById(1);
+        model.addAttribute("company", company);
+        return "companyProfilePage";
+    }
 }
