@@ -3,6 +3,7 @@ package com.endava.service_system.dto;
 
 import com.endava.service_system.constraints.EmailInUseConstraint;
 import com.endava.service_system.constraints.FieldsValueMatch;
+import com.endava.service_system.constraints.NameInUseConstraint;
 import com.endava.service_system.constraints.UsernameInUseConstraint;
 import lombok.Data;
 
@@ -19,6 +20,7 @@ import javax.validation.constraints.Pattern;
 public class CompanyRegistrationDTO {
 
     @NotEmpty
+    @NameInUseConstraint
     private String name;
 
     @NotEmpty

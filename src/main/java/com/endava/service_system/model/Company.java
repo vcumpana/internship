@@ -1,6 +1,7 @@
 package com.endava.service_system.model;
 
 import com.endava.service_system.enums.UserStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,9 +19,11 @@ public class Company {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(unique = true)
     private String name;
 
     @OneToOne
+    @JsonIgnore
     private Credential credential;
 
     private String bankAccount;
@@ -32,9 +35,12 @@ public class Company {
     @OneToMany
     private Collection<Contract> contracts;
 
-    @ManyToMany
+    @OneToMany
     private Collection<Service> services;
 
     @OneToMany
     private Collection<Invoice> invoices;
+
+    @ManyToMany
+    Collection<Category> categories;
 }

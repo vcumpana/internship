@@ -4,6 +4,9 @@ import com.endava.service_system.dto.CompanyRegistrationDTO;
 import com.endava.service_system.model.Company;
 import com.endava.service_system.model.Credential;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import static com.endava.service_system.enums.UserStatus.ACCEPTED;
 import static com.endava.service_system.enums.UserStatus.WAITING;
 import static com.endava.service_system.model.Role.ROLE_COMPANY;
 
@@ -15,10 +18,10 @@ public class CompanyRegistrationDTOToCompanyConverter implements Converter<Compa
         Credential credential = new Credential();
         company.setName(companyRegistrationDTO.getName());
         credential.setUsername(companyRegistrationDTO.getUsername());
-        credential.setPassword(companyRegistrationDTO.getPassword());
+        credential.setPassword(new BCryptPasswordEncoder().encode(companyRegistrationDTO.getPassword()));
         company.setAddress(companyRegistrationDTO.getAddress());
         company.setEmail(companyRegistrationDTO.getEmail());
-        credential.setStatus(WAITING);
+        credential.setStatus(ACCEPTED);
         credential.setRole(ROLE_COMPANY);
         company.setCredential(credential);
         return company;
