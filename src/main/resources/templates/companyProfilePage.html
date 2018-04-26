@@ -1,11 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Profile</title>
 </head>
 <body>
 <p>Succes login</p>
-
+<div>
+    <form class="form" role="form" th:object="${service}" autocomplete="off" id="registrationForm" action="/company/registration" novalidate=""
+        method="POST">
+    <p>Register your service</p><br>
+    <p>Select a category</p><br>
+        <option th:each ="category : ${categories}" th:value="${category.id}" th:text="${category.title}"></option><br>
+    <p>Insert your service name</p>
+        <input>
+    </form>
+</div>
 </body>
 </html>

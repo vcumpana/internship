@@ -9,13 +9,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.websocket.server.PathParam;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
 public interface CompanyDao extends JpaRepository<Company,Long> {
 
-    Optional<Company> getById(Long aLong);
+    Optional<Company> getById(int aLong);
 
     @Query("SELECT c FROM Company c INNER JOIN FETCH c.credential cr WHERE cr.username=:username")
     Optional<Company> getByUsername(@Param("username") String username);
@@ -24,4 +25,12 @@ public interface CompanyDao extends JpaRepository<Company,Long> {
 //    Optional<Company> getByEmail(@PathParam("email") String email);
 
     Optional<Company> getByEmail(String email);
+
+    Optional<Company> getByName(String name);
+
+    @Query("SELECT c FROM Company c join fetch c.services s")
+    List<Company> getAll();
+
+    @Query("SELECT c FROM Company c INNER JOIN FETCH c.credential cr JOIN FETCH c.services s WHERE cr.username=:username")
+    Optional<Company> getCompanyByNameWithServices(@Param("username")String name);
 }

@@ -7,6 +7,7 @@ import org.hibernate.annotations.GeneratorType;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 @Data
@@ -17,6 +18,12 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+
     @Column(unique = true)
     private String name;
+
+//    @OneToMany
+//    Collection<Service> services;
+
+
 }

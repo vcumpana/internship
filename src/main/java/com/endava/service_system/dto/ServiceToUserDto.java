@@ -1,26 +1,22 @@
-package com.endava.service_system.model;
+package com.endava.service_system.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
-
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Entity
-public class Service {
+@AllArgsConstructor
+public class ServiceToUserDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String title;
 
-    @ManyToOne
-    private Category category;
+    private String category;
+
+    private String companyName;
 
     private String description;
 
