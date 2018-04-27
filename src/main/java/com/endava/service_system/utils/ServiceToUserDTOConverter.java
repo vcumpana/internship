@@ -8,6 +8,7 @@ import com.endava.service_system.model.Service;
 import com.endava.service_system.model.User;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 import static com.endava.service_system.enums.UserStatus.WAITING;
 
+@Component
 public class ServiceToUserDTOConverter implements Converter<Map, ServiceToUserDto> {
     @Override
     public ServiceToUserDto convert(Map map){

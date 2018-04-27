@@ -3,6 +3,7 @@ package com.endava.service_system.controller;
 import com.endava.service_system.dto.CompanyRegistrationDTO;
 import com.endava.service_system.model.Company;
 import com.endava.service_system.service.CompanyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,17 +15,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.validation.Valid;
 import java.util.Optional;
 
+
 @Controller
 public class CompanyController {
 
+    private  CompanyService companyService;
+    private  ConversionService conversionService;
 
-    private final CompanyService companyService;
-    private final ConversionService conversionService;
-
-    public CompanyController(CompanyService companyService, ConversionService conversionService) {
-        this.companyService = companyService;
-        this.conversionService = conversionService;
-    }
 
     @GetMapping("company/registration")
     public String getCompanyRegistrationForm(Model model){
@@ -49,5 +46,15 @@ public class CompanyController {
         Optional<Company> company = companyService.getCompanyById(1);
         model.addAttribute("company", company);
         return "companyProfilePage";
+    }
+
+    @Autowired
+    public void setCompanyService(CompanyService companyService) {
+        this.companyService = companyService;
+    }
+
+    @Autowired
+    public void setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
     }
 }

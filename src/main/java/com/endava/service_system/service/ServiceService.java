@@ -60,4 +60,8 @@ public class ServiceService {
     public Optional<Service> deleteService(int id) {
         return serviceDao.deleteServicesById(id);
     }
+
+    public Optional<Service> getServiceById(int serviceId) {
+        return serviceDao.getById(serviceId);
+    }
 }
