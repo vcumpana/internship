@@ -22,7 +22,6 @@ public class CompanyController {
     private  CompanyService companyService;
     private  ConversionService conversionService;
 
-
     @GetMapping("company/registration")
     public String getCompanyRegistrationForm(Model model) {
         model.addAttribute("company", new CompanyRegistrationDTO());
@@ -37,7 +36,7 @@ public class CompanyController {
             model.addAttribute("company", companyRegistrationDTO);
             return "companyRegistration";
         }
-        companyService.saveCompany(conversionService.convert(companyRegistrationDTO, Company.class));
+        companyService.save(conversionService.convert(companyRegistrationDTO, Company.class));
         return "redirect:/login";
     }
 

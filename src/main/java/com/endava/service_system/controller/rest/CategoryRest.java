@@ -1,4 +1,4 @@
-package com.endava.service_system.controller;
+package com.endava.service_system.controller.rest;
 
 import com.endava.service_system.model.Category;
 import com.endava.service_system.service.CategoryService;

@@ -29,12 +29,12 @@ $("#showPassword").click(function(){
 });
 
 $("#showRepeatedPassword").click(function(){
-    convertPasswordIntoTextAndInverse("#repeatedPassword", this);
+    convertPasswordIntoTextAndInverse("#confirmPassword", this);
 });
 
 // $("#resetButton").click(function () {
 //     toNeutral("#feedbackPassword", "#password");
-//     toNeutral("#feedbackRepeatedPassword", "#repeatedPassword");
+//     toNeutral("#feedbackRepeatedPassword", "#confirmPassword");
 // });
 
 $("#btnRegister").click(function(event){

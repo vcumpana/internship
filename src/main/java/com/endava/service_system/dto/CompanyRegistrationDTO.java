@@ -25,7 +25,6 @@ public class CompanyRegistrationDTO {
 
     @NotEmpty
     @UsernameInUseConstraint()
-    //@Pattern(regexp = "^([A-Za-z\\d]){8,}$", message = "Username must contain at least 8 chars, that includes letters and numbers.")
     private String username;
 
     @NotEmpty
