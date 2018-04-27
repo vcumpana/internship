@@ -53,7 +53,7 @@ public class ServiceRestController {
     }
 
     @GetMapping("/services")
-    public ResponseEntity getServiceById(Model model, @RequestParam(required = false, value = "category") String categoryName){
+    public ResponseEntity getServiceByCategory(Model model, @RequestParam(required = false, value = "category") String categoryName){
         List<ServiceToUserDto> services = null;
         if (categoryName == null)
             services = serviceService.getAllServices();

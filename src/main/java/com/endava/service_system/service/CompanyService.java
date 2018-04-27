@@ -4,17 +4,12 @@ import com.endava.service_system.dao.CompanyDao;
 import com.endava.service_system.dto.ContractDtoFromUser;
 import com.endava.service_system.dto.CredentialDTO;
 import com.endava.service_system.model.Company;
-import com.endava.service_system.model.Contract;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
-import com.endava.service_system.dao.CompanyDao;
 import com.endava.service_system.enums.UserStatus;
-import com.endava.service_system.model.Company;
 import com.endava.service_system.model.Credential;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Collection;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +19,7 @@ public class CompanyService {
 
     private CompanyDao companyDao;
     private CredentialService credentialService;
+    private ConversionService conversionService;
 
     public Company save(Company company) {
         Credential credential = credentialService.save(company.getCredential());
@@ -49,6 +45,10 @@ public class CompanyService {
 
     public Optional<Company> getCompanyByName(String name) {
         return companyDao.getByName(name);
+    }
+
+    public List<Company> getAllCompanies() {
+        return companyDao.getAll();
     }
 
     Optional<Company> getCompanyByNameWithServices(String name){
@@ -77,5 +77,14 @@ public class CompanyService {
     @Autowired
     public void setCredentialService(CredentialService credentialService) {
         this.credentialService = credentialService;
+    }
+
+    @Autowired
+    public void setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
+
+    public Optional<Company> getCompanyNameByUsername(String name) {
+        return companyDao.getCompanyNameByUsername(name);
     }
 }
