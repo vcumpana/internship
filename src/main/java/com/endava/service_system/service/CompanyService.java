@@ -1,8 +1,11 @@
 package com.endava.service_system.service;
 
 import com.endava.service_system.dao.CompanyDao;
+import com.endava.service_system.dto.ContractDtoFromUser;
 import com.endava.service_system.model.Company;
-import com.endava.service_system.model.Credential;
+import com.endava.service_system.model.Contract;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,11 +16,7 @@ public class CompanyService {
 
     private CompanyDao companyDao;
     private CredentialService credentialService;
-
-    public CompanyService(CompanyDao companyDao, CredentialService credentialService) {
-        this.companyDao = companyDao;
-        this.credentialService = credentialService;
-    }
+    private ConversionService conversionService;
 
     public void saveCompany(Company company) {
         credentialService.save(company.getCredential());
@@ -46,5 +45,20 @@ public class CompanyService {
 
     Optional<Company> getCompanyByNameWithServices(String name){
         return companyDao.getCompanyByNameWithServices(name);
+    }
+
+    @Autowired
+    public void setCompanyDao(CompanyDao companyDao) {
+        this.companyDao = companyDao;
+    }
+
+    @Autowired
+    public void setCredentialService(CredentialService credentialService) {
+        this.credentialService = credentialService;
+    }
+
+    @Autowired
+    public void setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
     }
 }

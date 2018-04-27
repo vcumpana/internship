@@ -6,9 +6,11 @@ import com.endava.service_system.model.Role;
 import com.endava.service_system.model.User;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import static com.endava.service_system.enums.UserStatus.WAITING;
 
+@Component
 public class UserDtoToUserConverter implements Converter<UserDto, User> {
     @Override
     public User convert(UserDto userDto){

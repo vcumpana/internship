@@ -29,9 +29,10 @@ public class Contract {
     @OneToOne
     private Service service;
 
-    private LocalDate date;
+    private LocalDate startDate;
 
-    private Period term;
+    private LocalDate endDate;
 
+    @Enumerated(EnumType.STRING)
     private ContractStatus status;
 }
