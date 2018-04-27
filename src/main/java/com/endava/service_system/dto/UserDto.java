@@ -4,6 +4,7 @@ import com.endava.service_system.constraints.EmailInUseConstraint;
 import com.endava.service_system.constraints.FieldsValueMatch;
 import com.endava.service_system.constraints.UserEmailInUseConstraint;
 import com.endava.service_system.constraints.UsernameInUseConstraint;
+import com.endava.service_system.constraints.FieldsValueMatch;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,7 +28,7 @@ public class UserDto {
     private String login;
 
     @NotEmpty
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[._?!])[A-Za-z\\d._?!]{8,}$", message = "Login must contain at least 8 chars, that includes letters and numbers.")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[._?!])[A-Za-z\\d._?!]{8,}$", message = "Password must contain at least 8 chars, that includes upper letters, numbers and special sign ")
     private String password;
 
     private String repeatedPassword;

@@ -20,9 +20,12 @@
     <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-    <script th:src="@{/js/admin/dialog.js}" type="text/javascript"></script>
-    <script th:src="@{/js/admin/ajax.js}" type="text/javascript"></script>
-    <script th:src="@{/js/admin/ui.js}" type="text/javascript"></script>
+    <script th:src="@{/js/admin/createCategoryDialog.js}" type="text/javascript"></script>
+    <script th:src="@{/js/admin/editCompanyDialog.js}" type="text/javascript"></script>
+    <script th:src="@{/js/admin/companyAjax.js}" type="text/javascript"></script>
+    <script th:src="@{/js/admin/companyUi.js}" type="text/javascript"></script>
+    <script th:src="@{/js/admin/categoryAjax.js}" type="text/javascript"></script>
+    <script th:src="@{/js/admin/categoryUi.js}" type="text/javascript"></script>
     <script th:src="@{/js/utils.js}" type="text/javascript"></script>
     <style>
         .mt-12 {
@@ -65,9 +68,25 @@
             displayMessage("delete " + $(this).val());
             deleteCategoryFromDb($(this).val());
         }
+
+        function showAllCompanies(){
+            getCompanyFromDb("");
+        }
+
+        function showWaitingCompanies(){
+            getCompanyFromDb("WAITING");
+        }
+
+        function showDeniedCompanies(){
+            getCompanyFromDb("DENIED");
+        }
         /*<![CDATA[*/
         $(document).ready(function () {
+
             createCategoryThead();
+            $("#all_companies").click(showAllCompanies);
+            $("#not_verified_companies").click(showWaitingCompanies);
+            $("#denied_companies").click(showDeniedCompanies);
             var categories = /*[[${categories}]]*/ 'default';
             console.log(categories);
             categories.forEach(function (v) {
@@ -83,6 +102,19 @@
     <label>Name:</label>
     <input id="add_name" name="name" type="text">
     <button id="add_submit" class="btn btn-primary btn-lg btn-block">Create</button>
+</div>
+
+<div id="editCompany" title="Edit company">
+    <label>Name:<span id="company_name"></span></label>
+    <label>Status:</label>
+
+    <input id="input_company_status" name="name" type="text">
+    <label>Password:</label>
+    <input id="input_company_password" name="name" type="text">
+    <label>Repeated password:</label>
+    <input id="input_company_repeated_password" name="name" type="text">
+
+    <button id="edit_company" class="btn btn-primary btn-lg btn-block">Edit Company</button>
 </div>
 
 <div class="container col-md-6 col-sm-10">

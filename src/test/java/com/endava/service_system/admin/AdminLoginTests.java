@@ -27,7 +27,7 @@ public class AdminLoginTests {
     public void testLoginWithoutBody() throws IOException {
         HttpClient instance =
                 HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build();
-        HttpResponse response = instance.execute(new HttpPost(HOST+"/admin/username"));
+        HttpResponse response = instance.execute(new HttpPost(HOST+"/login"));
 
         assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
         response.getEntity().toString().contains("class=\"alert alert-danger\"");
@@ -38,7 +38,7 @@ public class AdminLoginTests {
     public void testLoginWithWrongCredentials() throws IOException {
         HttpClient instance =
                 HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build();
-        HttpPost post=new HttpPost(HOST+"/admin/username");
+        HttpPost post=new HttpPost(HOST+"/login");
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("username", "John"));
         params.add(new BasicNameValuePair("password", "pass"));
@@ -53,7 +53,7 @@ public class AdminLoginTests {
     public void testLoginWithRightCredentials() throws IOException {
         HttpClient instance =
                 HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build();
-        HttpPost post=new HttpPost(HOST+"/admin/username");
+        HttpPost post=new HttpPost(HOST+"/login");
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("username", "admin"));
         params.add(new BasicNameValuePair("password", "1qa2ws3ed"));
@@ -63,27 +63,6 @@ public class AdminLoginTests {
         //CHECKS if is admin panel view;
         assertTrue(bodyHas(response,"<title>Admin Panel</title>"));
 //        response.getEntity().toString().contains("class=\"alert alert-danger\"");
-    }
-    @Test
-    public void testLoginWithoutBody2() throws IOException {
-        HttpClient instance =
-                HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build();
-        HttpResponse response = instance.execute(new HttpPost(HOST+"/admin/username"));
-
-        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
-        response.getEntity().toString().contains("class=\"alert alert-danger\"");
-        assertTrue(bodyHas(response,"class=\"alert alert-danger\""));
-    }
-
-    @Test
-    public void testLoginWithoutBody3() throws IOException {
-        HttpClient instance =
-                HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy()).build();
-        HttpResponse response = instance.execute(new HttpPost(HOST+"/admin/username"));
-
-        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
-        response.getEntity().toString().contains("class=\"alert alert-danger\"");
-        assertTrue(bodyHas(response,"class=\"alert alert-danger\""));
     }
 
     private String getString(InputStream inputStream){

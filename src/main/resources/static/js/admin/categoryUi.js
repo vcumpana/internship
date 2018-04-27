@@ -1,5 +1,5 @@
 function addCategoryInUi(category) {
-    if (getCurrentTable()!==CATEGORY_TABLE) {
+    if (CURRENT_TABLE!==CATEGORY_TABLE) {
         return;
     }
     console.log(category);
@@ -85,12 +85,8 @@ function getButton(prefix,id){
     return $("#"+prefix+"_"+id);
 }
 
-function getCurrentTable(){
-    if(getColumnNr()==3){
-        return CATEGORY_TABLE;
-    }
-    return NOT_FOUND;
-}
+var CURRENT_TABLE=CATEGORY_TABLE;
+
 
 function getColumnNr() {
     if ($("#thead") != null) {

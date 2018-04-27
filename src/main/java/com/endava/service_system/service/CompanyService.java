@@ -6,7 +6,13 @@ import com.endava.service_system.model.Company;
 import com.endava.service_system.model.Contract;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import com.endava.service_system.dao.CompanyDao;
+import com.endava.service_system.enums.UserStatus;
+import com.endava.service_system.model.Company;
+import com.endava.service_system.model.Credential;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,17 +24,22 @@ public class CompanyService {
     private CredentialService credentialService;
     private ConversionService conversionService;
 
-    public void saveCompany(Company company) {
-        credentialService.save(company.getCredential());
-        companyDao.save(company);
+    public Company save(Company company) {
+        Credential credential = credentialService.save(company.getCredential());
+        company.setCredential(credential);
+        return companyDao.save(company);
     }
 
-    public Optional<Company> getCompanyByEmail(String email) {
-        return companyDao.getByEmail(email);
+    public List<Company> getAll() {
+        return companyDao.findAll();
     }
 
     public Optional<Company> getCompanyByUsername(String username) {
         return companyDao.getByUsername(username);
+    }
+
+    public List<Company> getAllWithStatus(UserStatus status) {
+        return companyDao.getAllWithStatus(status);
     }
 
     public Optional<Company> getCompanyById(int id) {
@@ -60,5 +71,9 @@ public class CompanyService {
     @Autowired
     public void setConversionService(ConversionService conversionService) {
         this.conversionService = conversionService;
+    }
+
+    public Optional<Company> getCompanyByEmail(String email) {
+        return companyDao.getByEmail(email);
     }
 }

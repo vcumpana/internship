@@ -18,7 +18,6 @@ public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
     @Column(unique = true)
     private String name;
 
@@ -40,7 +39,4 @@ public class Company {
 
     @OneToMany
     private Collection<Invoice> invoices;
-
-    @ManyToMany
-    Collection<Category> categories;
 }

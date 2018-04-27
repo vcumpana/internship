@@ -4,9 +4,12 @@ import com.endava.service_system.utils.AuthUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.util.Optional;
 
 @Controller
 public class CommonController {
@@ -17,30 +20,26 @@ public class CommonController {
     }
 
     @GetMapping("/login")
-    public String adminLogin(Authentication auth) {
-        if(authUtils.isLoggedIn(auth)) {
-            if(authUtils.isAdmin(auth)){
-                return "redirect:/admin/panel";
-            }else if(authUtils.isUser(auth)){
-                return "redirect:/user/profile";
-            }else if(authUtils.isCompany(auth)){
-                return "redirect:/company/profile";
-            }
-        }
-        return "adminLogin";
+    public String loginView(Authentication auth) {
+        return redirectIfLoggedIn(auth).orElse("adminLogin");
     }
 
     @GetMapping("/success")
     public String redirectAfterLogin(Authentication auth) {
+        return redirectIfLoggedIn(auth).orElse("redirect:/index");
+    }
+
+    private Optional<String> redirectIfLoggedIn(Authentication auth){
         if(authUtils.isLoggedIn(auth)) {
             if(authUtils.isAdmin(auth)){
-                return "redirect:/admin/panel";
+                return Optional.of("redirect:/admin/panel");
             }else if(authUtils.isUser(auth)){
-                return "redirect:/user/profile";
+                return Optional.of("redirect:/user/profile");
             }else if(authUtils.isCompany(auth)){
-                return "redirect:/company/profile";
+                return Optional.of("redirect:/company/profile");
             }
         }
-        return "redirect:/index";
+        return Optional.empty();
     }
+
 }
