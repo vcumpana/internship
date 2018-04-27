@@ -1,9 +1,13 @@
 package com.endava.service_system.controller;
 
 import com.endava.service_system.utils.AuthUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 @Controller
 public class CommonController {
     private final AuthUtils authUtils;

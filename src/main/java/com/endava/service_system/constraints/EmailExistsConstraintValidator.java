@@ -9,20 +9,20 @@ import java.util.Optional;
 
 public class EmailExistsConstraintValidator implements ConstraintValidator<EmailInUseConstraint, String> {
 
-   private CompanyService companyService;
+    private CompanyService companyService;
 
     public EmailExistsConstraintValidator(CompanyService companyService) {
         this.companyService = companyService;
     }
 
     public void initialize(EmailInUseConstraint constraint) {
-   }
+    }
 
-   public boolean isValid(String email, ConstraintValidatorContext context) {
+    public boolean isValid(String email, ConstraintValidatorContext context) {
         Optional<Company> company = companyService.getCompanyByEmail(email);
         if (company.isPresent()) {
             return false;
         }
         return true;
-   }
+    }
 }

@@ -43,8 +43,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                //TODO $RUSTAM change register name to registration;
-                .antMatchers("/", "/login", "/index","/user/register","/company/registration").permitAll()
+                .antMatchers("/", "/login", "/index","/user/registration","/company/registration", "/services").permitAll()
                 .antMatchers("/logout").authenticated()
                 .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
                 .antMatchers("/user/**").access("hasRole('ROLE_USER')")

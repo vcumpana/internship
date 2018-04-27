@@ -4,7 +4,7 @@ import com.endava.service_system.utils.CompanyRegistrationDTOToCompanyConverter;
 import com.endava.service_system.utils.ContractDtoFromUserConverter;
 import com.endava.service_system.utils.ServiceToUserDTOConverter;
 import com.endava.service_system.utils.UserDtoToUserConverter;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.endava.service_system.utils.UserToUserDtoToShowConverter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +36,6 @@ public class ServiceSystemApplication {
 //		}
 		@Bean
 		@Primary
-		//@Autowired
 		public ConversionServiceFactoryBean conversionFacilitator(Set<Converter> converters) {
 			ConversionServiceFactoryBean factory = new ConversionServiceFactoryBean();
 			factory.setConverters(converters);
