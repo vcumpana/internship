@@ -16,7 +16,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface ServiceDao extends JpaRepository<Service,Long> {
 
-    Optional<Service> getById(Long aLong);
+    Optional<Service> getById(int id);
 
 //    @Query("SELECT c FROM Company c INNER JOIN FETCH c.credential cr WHERE cr.email=:email")
 //    Optional<Company> getByEmail(@PathParam("email") String email);
