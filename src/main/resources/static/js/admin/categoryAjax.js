@@ -1,6 +1,6 @@
 function deleteCategoryFromDb(value) {
     var resp = $.ajax({
-        url: CATEGORY_HOST.concat(value),
+        url: HOST.concat("/category/").concat(value),
         type: 'DELETE', success: function (rs) {
             displayMessage(rs);
             deleteCategoryFromUi(rs)
@@ -16,7 +16,7 @@ function saveCategoryInDb(name) {
     request = $.ajax({
         type: "POST",
         contentType: "application/json; charset=utf-8",
-        url: CATEGORY_HOST,
+        url: HOST.concat("/category"),
         data: JSON.stringify({"name": name}),
         dataType: "json"
     });
@@ -38,11 +38,11 @@ function saveCategoryInDb(name) {
     })
 }
 
-function changeCategoryInDb(oldCategoryName,newCategoryName){
+function changeCategoryInDb(oldCategoryName, newCategoryName) {
     request = $.ajax({
         type: "PUT",
         contentType: "application/json; charset=utf-8",
-        url: CATEGORY_HOST.concat(oldCategoryName),
+        url: HOST.concat("/category/").concat(oldCategoryName),
         data: JSON.stringify({"name": newCategoryName}),
         dataType: "json"
     });
@@ -51,12 +51,12 @@ function changeCategoryInDb(oldCategoryName,newCategoryName){
         if (status == STATUS.OK) {
             displayMessage("all ok");
             //check if we are displaying categories now if yes then show it;;
-            editCategoryInUi(oldCategoryName,newCategoryName);
+            editCategoryInUi(oldCategoryName, newCategoryName);
         }
     });
     request.error(function (e) {
         console.log(e);
-        $("#input_"+oldCategoryName).val(oldCategoryName);
+        $("#input_" + oldCategoryName).val(oldCategoryName);
         status = e.status;
         if (status == STATUS.BAD_REQUEST) {
             displayMessage("bad request please contact ");

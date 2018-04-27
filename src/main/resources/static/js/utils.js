@@ -1,5 +1,4 @@
 var HOST="http://localhost:8080";
-var CATEGORY_HOST=HOST+"/category/";
 var STATUS=function(){};
 STATUS.OK=200;
 STATUS.BAD_REQUEST=400;
