@@ -21,16 +21,16 @@ function downloadServices() {
 $("th[scopeForSort='sort']").click(function () {
     var field = $(this).attr("field");
     removeTypeOfSort(field);
-    if(field === "category"){
+    if (field === "category") {
         listOfServices.sort(comparatorForCategory);
     }
-    if(field === "companyName"){
+    if (field === "companyName") {
         listOfServices.sort(comparatorForCompanyName);
     }
-    if(field === "price"){
+    if (field === "price") {
         listOfServices.sort(comparatorForPrice);
     }
-    if($(this).attr("typeOfSort") === "asc"){
+    if ($(this).attr("typeOfSort") === "asc") {
         listOfServices.reverse();
         setArrowForSort(field, "desc");
         $(this).attr("typeOfSort", "desc");
@@ -50,10 +50,21 @@ function fillTableWithServices() {
         row += "<td>" + listOfServices[i].title + "</td>";
         row += "<td>" + listOfServices[i].description + "</td>";
         row += "<td>" + listOfServices[i].price + "</td>";
-        row += "<td></td>";
+        row += "<td><i class=\"fa fa-paw filter\" onclick='showServiceInfo(" + listOfServices[i].id + ")'></i></td>";
         row += "</tr>";
         $("#tableWithServices tbody").append(row);
     }
+}
+
+function showServiceInfo(id) {
+    $("#serviceInfo").modal('show');
+    $.ajax({
+        type: "GET",
+        url: "/service/getById/" + id,
+        success: function(result){
+            cosnole.log(result);
+        }
+    });
 }
 
 function comparatorForCategory(a, b) {
@@ -72,7 +83,7 @@ function comparatorForCompanyName(a, b) {
     return 0;
 }
 
-function comparatorForPrice(a, b){
+function comparatorForPrice(a, b) {
     if (a.price < b.price)
         return -1;
     if (a.price > b.price)
@@ -80,10 +91,10 @@ function comparatorForPrice(a, b){
     return 0;
 }
 
-function removeTypeOfSort(value){
+function removeTypeOfSort(value) {
     $("th[scopeForSort='sort']").each(function () {
         var field = $(this).attr("field");
-        if(field !== value){
+        if (field !== value) {
             $(this).attr("typeOfSort", "null");
         }
     });
@@ -92,8 +103,8 @@ function removeTypeOfSort(value){
 function setArrowForSort(value, type) {
     $("span[scopeForSort='icon']").each(function () {
         var field = $(this).attr("field");
-        if(field === value){
-            if(type === "asc") {
+        if (field === value) {
+            if (type === "asc") {
                 $(this).html(ascArrow);
             } else {
                 $(this).html(descArrow);
