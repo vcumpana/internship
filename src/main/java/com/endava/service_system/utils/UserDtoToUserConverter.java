@@ -12,9 +12,10 @@ import static com.endava.service_system.enums.UserStatus.WAITING;
 
 @Component
 public class UserDtoToUserConverter implements Converter<UserDto, User> {
+
     @Override
-    public User convert(UserDto userDto){
-        Credential credential=new Credential();
+    public User convert(UserDto userDto) {
+        Credential credential = new Credential();
         credential.setUsername(userDto.getLogin());
         credential.setPassword(new BCryptPasswordEncoder().encode(userDto.getPassword()));
         credential.setStatus(WAITING);
@@ -23,6 +24,7 @@ public class UserDtoToUserConverter implements Converter<UserDto, User> {
         user.setCredential(credential);
         user.setName(userDto.getName());
         user.setSurname(userDto.getSurname());
+        user.setEmail(userDto.getEmail());
         return user;
     }
 }

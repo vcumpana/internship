@@ -24,19 +24,19 @@ public class CompanyController {
 
 
     @GetMapping("company/registration")
-    public String getCompanyRegistrationForm(Model model){
+    public String getCompanyRegistrationForm(Model model) {
         model.addAttribute("company", new CompanyRegistrationDTO());
         return "companyRegistration";
     }
 
     @PostMapping("company/registration")
-    public String registerCompany(Model model, @ModelAttribute("company") @Valid CompanyRegistrationDTO companyRegistrationDTO, BindingResult bindingResult){
+    public String registerCompany(Model model, @ModelAttribute("company") @Valid CompanyRegistrationDTO companyRegistrationDTO, BindingResult bindingResult) {
         System.out.println(companyRegistrationDTO);
 
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             model.addAttribute("company", companyRegistrationDTO);
             return "companyRegistration";
-    }
+        }
         companyService.saveCompany(conversionService.convert(companyRegistrationDTO, Company.class));
         return "redirect:/login";
     }
