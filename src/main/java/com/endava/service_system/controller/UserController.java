@@ -3,6 +3,8 @@ package com.endava.service_system.controller;
 import com.endava.service_system.dto.UserDto;
 import com.endava.service_system.dto.UserDtoToShow;
 import com.endava.service_system.model.User;
+import com.endava.service_system.service.CategoryService;
+import com.endava.service_system.service.CompanyService;
 import com.endava.service_system.service.UserService;
 import com.endava.service_system.utils.AuthUtils;
 import org.springframework.core.convert.ConversionService;
@@ -21,11 +23,15 @@ public class UserController {
     private UserService userService;
     private ConversionService conversionService;
     private AuthUtils authUtils;
+    private CategoryService categoryService;
+    private CompanyService companyService;
 
-    public UserController(UserService userService, ConversionService conversionService, AuthUtils authUtils) {
+    public UserController(UserService userService, ConversionService conversionService, AuthUtils authUtils, CategoryService categoryService, CompanyService companyService) {
         this.userService = userService;
         this.conversionService = conversionService;
         this.authUtils = authUtils;
+        this.categoryService = categoryService;
+        this.companyService = companyService;
     }
 
     @GetMapping("/user")
@@ -66,7 +72,13 @@ public class UserController {
     @GetMapping(value = "/user/serviceList")
     public String userServiceList(Model model){
         addUsernameToModel(model);
+        addCategoriesToModel(model);
+        addCompaniesToModel(model);
         return  "userServiceList";
+    }
+
+    private void addCompaniesToModel(Model model) {
+        model.addAttribute("companies",companyService.getAll());
     }
 
     @GetMapping(value = "/user/cabinet")
@@ -83,5 +95,9 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         model.addAttribute("username", username);
+    }
+
+    private void addCategoriesToModel(Model model){
+        model.addAttribute("categories",categoryService.getAll());
     }
 }

@@ -24,6 +24,7 @@ public class UserDto {
 
     @NotEmpty
     @Pattern(regexp = "^([A-Za-z\\d]){8,}$", message = "Login must contain at least 8 chars, that includes letters and numbers.")
+    @Pattern(regexp = "^[^<'\">]+$",message = "You can't use tags and \"")
     @UsernameInUseConstraint
     private String login;
 
@@ -32,12 +33,13 @@ public class UserDto {
     private String password;
 
     private String repeatedPassword;
-
+    @Pattern(regexp = "^[^<'\">]+$",message = "You can't use tags and \"")
     private String name;
-
+    @Pattern(regexp = "^[^<'\">]+$",message = "You can't use tags and \"")
     private String surname;
 
     @Email
     @UserEmailInUseConstraint
+    @Pattern(regexp = "^[^<'\">]+$",message = "You can't use tags and \"")
     private String email;
 }

@@ -1,19 +1,18 @@
 //TODO change theader
-function getCompanyFromDb(status) {
+function getUsersFromDb(status) {
 
     request = $.ajax({
         type: "GET",
         contentType: "application/json; charset=utf-8",
-        url: HOST+"/admin/companies?status="+status,
+        url: HOST+"/admin/users?status="+status,
         dataType: "json"
     });
     request.done(function (response, textStatus, xhr) {
         status = xhr.status;
         if (status == STATUS.OK) {
-
-            displayMessage("Showing companies ...");
+            displayMessage("Displaying users..");
             //check if we are displaying categories now if yes then show it;;
-            displayCompanies(xhr.responseJSON);
+            displayUsersInUi(xhr.responseJSON);
             //addCategoryInUi(xhr.responseJSON);
         }else{
             displayMessage("There isn't any data");
@@ -29,20 +28,20 @@ function getCompanyFromDb(status) {
     })
 }
 
-function updateCompany(name,company){
+function updateUser(name,data){
     request = $.ajax({
         type: "PUT",
         contentType: "application/json; charset=utf-8",
-        url: HOST.concat("/admin/companies/").concat(encodeURIComponent(name)),
-        data: JSON.stringify(company),
+        url: HOST.concat("/admin/users/").concat(encodeURIComponent(name)),
+        data: JSON.stringify(data),
         dataType: "json"
     });
     request.done(function (response, textStatus, xhr) {
         status = xhr.status;
         if (status == STATUS.OK) {
-            displayMessage("Company Updated");
+            displayMessage("User Updated");
             //check if we are displaying categories now if yes then show it;;
-            editCompanyInUi(name,company);
+            editUserInUi(name,data);
             $("#editCompany").dialog("close");
         }
     });
@@ -50,7 +49,7 @@ function updateCompany(name,company){
         console.log(e);
         status = e.status;
         if (status == STATUS.BAD_REQUEST) {
-            displayMessage("Bad request please contact admins ");
+            displayMessage("Bad request please contact admins");
         } else {
             displayMessage("Error , please try it latter");
         }

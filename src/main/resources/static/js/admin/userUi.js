@@ -1,11 +1,11 @@
-function displayCompanies(arr) {
-
+function displayUsersInUi(arr) {
     addObjectTheads(arr[0]);
+    console.log(arr)
     var tags='';
-    var comanyNames = [];
+    var users = [];
     Object.keys(arr).forEach(nr => {
-        comanyNames.push(arr[nr]["companyName"]);
-        tags += `<tr value="` + arr[nr]["companyName"] + `">`;
+        users.push(arr[nr]["username"]);
+        tags += `<tr value="` + arr[nr]["username"] + `">`;
         Object.keys(arr[nr]).forEach(key => {
             tags += `<td id="company_` + key + `">` + arr[nr][key] + `</td>`;
         });
@@ -15,16 +15,17 @@ function displayCompanies(arr) {
     });
     $("#tbody").empty();
     $("#tbody").append(tags);
-    comanyNames.forEach(function(company){
-        $('tr[value="'+company+'"]').on("click",function (tr) {
+    users.forEach(function(user){
+        $('tr[value="'+user+'"]').on("click",function (tr) {
             //SET value to edit company and open edit
-            var status=$('tr[value="'+company+'"] #company_status').text();
-            console.log($('#input_company_status input[value="'+status+'"]'));
+            var status=$('tr[value="'+user+'"] #company_status').text();
             $('#input_company_status input[value="'+status+'"]').prop("checked", true);
-            $("#company_name").text(company);
-            $("#editCompany").dialog('option', 'title', "Edit company");
+            console.log(user);
+            $('#editCompany #company_name').text(user);
             //$("#input_company_status").text(company);
+            $("#editCompany").dialog('option', 'title', "Edit user");
             $("#editCompany").dialog("open");
+
         });
     })
 
@@ -42,7 +43,7 @@ function addObjectTheads(data) {
     thead.prepend(tr);
 }
 
-function editCompanyInUi(name,data){
+function editUserInUi(name,data){
     var statusTd=$('tr[value="'+name+'"] #company_status');
     statusTd.text(data['status']);
 }

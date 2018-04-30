@@ -1,8 +1,9 @@
-package com.endava.service_system.controller;
+package com.endava.service_system.controller.rest;
 
 import com.endava.service_system.dto.CompanyAdminDTO;
 import com.endava.service_system.dto.CompanyRegistrationDTO;
 import com.endava.service_system.dto.CredentialDTO;
+import com.endava.service_system.dto.UserAdminDTO;
 import com.endava.service_system.enums.UserStatus;
 import com.endava.service_system.model.Company;
 import com.endava.service_system.service.CompanyService;
@@ -22,6 +23,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class CompanyRestController {
@@ -32,14 +34,13 @@ public class CompanyRestController {
     private ConversionService conversionService;
     private CredentialService credentialService;
 
-    @GetMapping("/companies")
+    @GetMapping("/admin/companies")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity getAllCompanies(@RequestParam(required = false,value = "status")UserStatus status) {
         List<Company> companyList=getCompaniesWithStatus(status);
-        List<CompanyAdminDTO> companyAdminDTOList=new ArrayList<>();
-        for(Company realCompany:companyList){
-            companyAdminDTOList.add(conversionService.convert(realCompany,CompanyAdminDTO.class));
-        }
+        List<CompanyAdminDTO> companyAdminDTOList=companyList.stream()
+                .map((company)->conversionService.convert(company,CompanyAdminDTO.class))
+                .collect(Collectors.toList());
         if(!companyAdminDTOList.isEmpty()) {
             return new ResponseEntity(companyAdminDTOList, HttpStatus.OK);
         }else {
@@ -57,24 +58,20 @@ public class CompanyRestController {
         return companyList;
     }
 
-    @PutMapping("/companies/{username}")
+    @PutMapping("/admin/companies/{username}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity changePasswordWithStatus(@PathVariable("username") String username,
                                                    @Validated @RequestBody CredentialDTO credentialDTO,
                                                    BindingResult bindingResult) {
+        System.out.println("username:"+username);
+        System.out.println("CredentialDTO:"+credentialDTO.toString());
         if (bindingResult.hasErrors()) {
             return new ResponseEntity(bindingResult.getAllErrors(), HttpStatus.BAD_REQUEST);
         }
         try {
-            int entitiesUpdated = credentialService.updateStatusAndPassword(username, credentialDTO);
-            if (entitiesUpdated == 0) {
-                return new ResponseEntity(HttpStatus.BAD_REQUEST);
-            } else if (entitiesUpdated == 1) {
-                String json = "{\"count\":\"1\"}";
-                return new ResponseEntity(json, HttpStatus.OK);
-            } else {
-                return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            int entitiesUpdated = companyService.updateStatusAndPassword(username, credentialDTO);
+            String json = "{\"count\":\"1\"}";
+            return new ResponseEntity(json, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);

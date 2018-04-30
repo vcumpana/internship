@@ -5,13 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContractDtoFromUser {
-
+    @Pattern(regexp = "^[^<'\">]+$",message = "You can't use tags and \"")
     private String companyName;
 
     private int serviceId;
