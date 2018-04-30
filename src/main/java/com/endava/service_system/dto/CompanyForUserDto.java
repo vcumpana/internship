@@ -1,4 +1,4 @@
-package com.endava.service_system.model;
+package com.endava.service_system.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
