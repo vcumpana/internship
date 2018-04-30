@@ -2,19 +2,12 @@ pipeline {
     agent any
     stages {
         
-        stage("Build") {
-             steps {
-                sh 'mvn compile'
-            }
-        }
-
         stage("Tests") {
              steps {
                 sh 'mvn test'
             }
         }
-
-        stage("Deploy") {
+        stage("Install") {
              steps {
                 sh 'mvn install -DskipTests'
             }
