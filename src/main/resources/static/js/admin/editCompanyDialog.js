@@ -10,13 +10,29 @@ $(document).ready(function () {
     });
 // Validating Form Fields.....
     $("#edit_company").click(function (e) {
-        var name = $("#company_name").val();
+        var name = $("#editCompany #company_name").text();
+        var status=$("#input_company_status input:checked").val();
+        var password=$("#input_company_password").val();
+        var repeatedPassword=$("#input_company_repeated_password").val();
         //TODO add functionality
-        if (name === '') {
-            displayMessage("Please fill name");
-        } else {
-            displayMessage(name)
-            //saveCategoryInDb(name)
+        if (password !== repeatedPassword) {
+            displayMessage("Password should match");
+        }else {
+            var data;
+            if(password==''){
+                data={'status':status};
+            }else{
+                data={
+                    'status':status,
+                    'password':password,
+                    'confirmPassword':repeatedPassword
+                }
+            }
+            if($("#editCompany").dialog( "option", "title" )=="Edit user") {
+                updateUser(name,data)
+            }else {
+                updateCompany(name, data);
+            }
         }
     });
 });

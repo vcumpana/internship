@@ -1,5 +1,5 @@
 function addCategoryInUi(category) {
-    if (CURRENT_TABLE!==CATEGORY_TABLE) {
+    if (getCurrentTable()!==CATEGORY_TABLE) {
         return;
     }
     console.log(category);
@@ -50,16 +50,7 @@ function createChangeCategoryButton(value){
 
 function deleteCategoryFromUi(category){
     var categoryName=category[0]['name'];
-    displayMessage(categoryName);
     $("#tr_".concat(categoryName)).remove();
-}
-
-function createUserThead() {
-
-}
-
-function createCompanyThead() {
-
 }
 
 function editCategoryInUi(oldName,newName) {
@@ -70,10 +61,6 @@ function editCategoryInUi(oldName,newName) {
     changeValuesAndIds("btn_delete",oldName,newName);
     getButton("btn_delete",newName).on("click",deleteCategory);
     getButton("btn_change",newName).on("click",changeCategory);
-    // $("#tr_"+oldName).prop("id",newName);
-    // $("#input_"+oldName).prop("id",newName);
-    // $("#btn_change_"+oldName).prop("id","#btn_change_"+newName);
-    // $("#btn_delete_"+oldName).prop("id","#btn_change_"+newName);
 }
 
 function changeValuesAndIds(tag,oldValue,newValue){
@@ -84,9 +71,6 @@ function changeValuesAndIds(tag,oldValue,newValue){
 function getButton(prefix,id){
     return $("#"+prefix+"_"+id);
 }
-
-var CURRENT_TABLE=CATEGORY_TABLE;
-
 
 function getColumnNr() {
     if ($("#thead") != null) {
@@ -121,3 +105,8 @@ function createCategoryThead() {
 
 var CATEGORY_TABLE=0;
 var NOT_FOUND=-1;
+function getCurrentTable(){
+    if(getColumnNr()==3){
+        return CATEGORY_TABLE;
+    }
+}

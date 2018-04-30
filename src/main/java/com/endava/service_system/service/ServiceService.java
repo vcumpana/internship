@@ -1,8 +1,11 @@
 package com.endava.service_system.service;
 
 import com.endava.service_system.dao.ServiceDao;
+import com.endava.service_system.dao.ServiceToUserDao;
 import com.endava.service_system.dto.ServiceToUserDto;
 import com.endava.service_system.model.Service;
+import com.endava.service_system.model.ServiceDtoFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Component;
 
@@ -17,14 +20,8 @@ public class ServiceService {
 
     private ServiceDao serviceDao;
     private CompanyService companyService;
-    private final ConversionService conversionService;
-
-
-    public ServiceService(ServiceDao serviceDao, CompanyService companyService, ConversionService conversionService) {
-        this.serviceDao = serviceDao;
-        this.companyService = companyService;
-        this.conversionService = conversionService;
-    }
+    private ConversionService conversionService;
+    private ServiceToUserDao serviceToUserDao;
 
     public Service saveService(Service service) {
         return serviceDao.save(service);
@@ -46,16 +43,14 @@ public class ServiceService {
     }
 
     public List<ServiceToUserDto> getServicesByCategoryName(String categoryName) {
-        List<ServiceToUserDto> services = new ArrayList<>();
-        List<Map> maps = serviceDao.getByCategoryName(categoryName);
-        for (Map map: maps)
-            services.add( conversionService.convert(map, ServiceToUserDto.class));
-        return services;
+        ServiceDtoFilter dtoFilter=new ServiceDtoFilter();
+        dtoFilter.setCategoryName(categoryName);
+        return serviceToUserDao.getAllServices(dtoFilter);
     }
 
-//    public boolean updateService(Service service) {
-//       return serviceDao.updateService(service);
-//    }
+    public List<ServiceToUserDto> getServicesWithFilter(ServiceDtoFilter dtoFilter){
+        return serviceToUserDao.getAllServices(dtoFilter);
+    }
 
     public Optional<Service> deleteService(int id) {
         return serviceDao.deleteServicesById(id);
@@ -63,5 +58,25 @@ public class ServiceService {
 
     public Optional<Service> getServiceById(int serviceId) {
         return serviceDao.getById(serviceId);
+    }
+
+    @Autowired
+    public void setServiceDao(ServiceDao serviceDao) {
+        this.serviceDao = serviceDao;
+    }
+
+    @Autowired
+    public void setCompanyService(CompanyService companyService) {
+        this.companyService = companyService;
+    }
+
+    @Autowired
+    public void setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
+
+    @Autowired
+    public void setServiceToUserDao(ServiceToUserDao serviceToUserDao) {
+        this.serviceToUserDao = serviceToUserDao;
     }
 }

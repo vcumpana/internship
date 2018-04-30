@@ -1,16 +1,22 @@
 package com.endava.service_system.service;
 
 import com.endava.service_system.dao.UserDao;
+import com.endava.service_system.dto.CredentialDTO;
 import com.endava.service_system.dto.UserDto;
 import com.endava.service_system.dto.UserDtoToShow;
+import com.endava.service_system.enums.UserStatus;
 import com.endava.service_system.model.Credential;
 import com.endava.service_system.model.Role;
 import com.endava.service_system.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,11 +24,7 @@ import java.util.Optional;
 public class UserService {
     private UserDao userDao;
     private CredentialService credentialService;
-
-    public UserService(UserDao userDao, CredentialService credentialService) {
-        this.userDao = userDao;
-        this.credentialService = credentialService;
-    }
+    private PasswordEncoder passwordEncoder;
 
     public void saveUser(User user){
         credentialService.save(user.getCredential());
@@ -46,7 +48,31 @@ public class UserService {
 
     public void updateUserPassword(String username, String newPassword){
         Credential credential = credentialService.getByUsername(username).get();
-        credential.setPassword(new BCryptPasswordEncoder().encode(newPassword));
+        credential.setPassword(passwordEncoder.encode(newPassword));
         credentialService.save(credential);
     }
+
+    public List<User> getAllWithCredentials(){
+        return userDao.getAllWithCredentials();
+    }
+
+    public List<User> getAllWithCredentialsAndStatus(UserStatus status) {
+        return userDao.getAllWithCredentialsAndStatus(status);
+    }
+
+    @Autowired
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    @Autowired
+    public void setCredentialService(CredentialService credentialService) {
+        this.credentialService = credentialService;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
 }

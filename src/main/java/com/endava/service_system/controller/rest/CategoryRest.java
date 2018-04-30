@@ -1,8 +1,15 @@
 package com.endava.service_system.controller.rest;
 
+import com.endava.service_system.dao.ServiceDao;
+import com.endava.service_system.dao.ServiceToUserDao;
+import com.endava.service_system.dto.ServiceToUserDto;
 import com.endava.service_system.model.Category;
+import com.endava.service_system.model.ServiceDtoFilter;
 import com.endava.service_system.service.CategoryService;
+import com.endava.service_system.service.ServiceService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,13 +21,10 @@ import java.util.List;
 @RestController
 public class CategoryRest {
 
-    private final CategoryService categoryService;
+    private CategoryService categoryService;
+    private ServiceService serviceService;
 
-    public CategoryRest(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
-
-    @PostMapping("/category")
+    @PostMapping("/admin/category")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity addCategory(@RequestBody Category category) {
         try {
@@ -40,7 +44,7 @@ public class CategoryRest {
         return new ResponseEntity(categoryService.getAll(), HttpStatus.OK);
     }
 
-    @DeleteMapping("/category/{name}")
+    @DeleteMapping("/admin/category/{name}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity deleteCategory(@PathVariable("name") String name) {
         try {
@@ -55,7 +59,7 @@ public class CategoryRest {
         }
     }
 
-    @PutMapping("/category/{name}")
+    @PutMapping("/admin/category/{name}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity changeCategory(@PathVariable("name") String name, @RequestBody Category category) {
         try {
@@ -73,5 +77,15 @@ public class CategoryRest {
         } catch (Exception e) {
             return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Autowired
+    public void setCategoryService(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
+
+    @Autowired
+    public void setServiceService(ServiceService serviceService) {
+        this.serviceService = serviceService;
     }
 }
