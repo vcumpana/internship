@@ -1,47 +1,69 @@
 var listOfServices = [];
-var ascArrow = "<i class=\"fa fa-arrow-down\"></i>";
-var descArrow = "<i class=\"fa fa-arrow-up\"></i>";
 var currentCompanyName = "";
 var currentServiceId;
+var currentPage = 1;
+var size = 12;
 
 $(document).ready(function () {
-    downloadServices();
+    getDataForTable();
 });
 
-function downloadServices() {
+$("#signContract").click(function () {
+    var data = {
+        "companyName": currentCompanyName,
+        "serviceId": currentServiceId,
+        "startDate": $("#startDate").val(),
+        "endDate": $("#endDate").val()
+    };
+    $.ajax({
+        type: "POST",
+        contentType: "application/json",
+        url: "/newContract",
+        data: JSON.stringify(data),
+        success: function () {
+            $("#startDate").val("");
+            $("#endDate").val("");
+            $("#serviceInfo").modal('hide');
+            $("#successContract").show();
+            window.setTimeout(function () {
+                $("#successContract").hide();
+            }, 3500);
+        }
+    });
+});
+
+$("#activateFilter").click(function () {
+    currentPage = 1;
+    getDataForTable();
+});
+
+$("#nextPage").click(function () {
+    currentPage++;
+    getDataForTable();
+    verifyIfPreviousExists();
+    verifyIfNextExists();
+});
+
+$("#previousPage").click(function () {
+    currentPage--;
+    getDataForTable();
+    verifyIfPreviousExists();
+    verifyIfNextExists();
+});
+
+function getDataForTable(){
+    var url = makeURL(currentPage);
     $.ajax({
         type: "GET",
-        url: "/services",
+        url: url,
         success: function (result) {
             listOfServices = result;
-            listOfServices.sort(comparatorForCategory);
             fillTableWithServices();
         }
     });
+    verifyIfPreviousExists();
+    verifyIfNextExists();
 }
-
-$("th[scopeForSort='sort']").click(function () {
-    var field = $(this).attr("field");
-    removeTypeOfSort(field);
-    if (field === "category") {
-        listOfServices.sort(comparatorForCategory);
-    }
-    if (field === "companyName") {
-        listOfServices.sort(comparatorForCompanyName);
-    }
-    if (field === "price") {
-        listOfServices.sort(comparatorForPrice);
-    }
-    if ($(this).attr("typeOfSort") === "asc") {
-        listOfServices.reverse();
-        setArrowForSort(field, "desc");
-        $(this).attr("typeOfSort", "desc");
-    } else {
-        setArrowForSort(field, "asc");
-        $(this).attr("typeOfSort", "asc");
-    }
-    fillTableWithServices();
-});
 
 function fillTableWithServices() {
     $("#tableWithServices tbody").html("");
@@ -75,94 +97,57 @@ function showServiceInfo(id) {
     });
 }
 
-$("#signContract").click(function () {
+function makeURL(page){
+    var url = "/services?page=" + page  + "&size=" + size + "&";
     var data = {
-        "companyName": currentCompanyName,
-        "serviceId": currentServiceId,
-        "startDate": $("#startDate").val(),
-        "endDate": $("#endDate").val()
+        "min": $("#minPrice").val(),
+        "max": $("#maxPrice").val(),
+        "orderByPrice": $("#orderByPrice").val(),
+        "companyId": $("#companyName").val(),
+        "categoryId": $("#categoryName").val()
     };
-    $.ajax({
-        type: "POST",
-        contentType: "application/json",
-        url: "/newContract",
-        data: JSON.stringify(data),
-        success: function () {
-            $("#startDate").val("");
-            $("#endDate").val("");
-            $("#serviceInfo").modal('hide');
-            $("#successContract").show();
-            window.setTimeout(function () {
-                $("#successContract").hide();
-            }, 3500);
+    for (key in data) {
+        if (data[key] !== "") {
+            url += key + "=" + data[key] + "&";
         }
-    });
-});
+    }
+    url = url.substring(0, url.length - 1);
+    return url;
+}
 
-$("#activateFilter").click(function () {
-    var data = {
-        "min" : $("#minPrice").val(),
-        "max" : $("#maxPrice").val(),
-        "orderByPrice" : $("#orderByPrice").val(),
-        "company" : $("#companyName").val(),
-        "category" : $("#categoryName").val()
-    };
-    console.log(data);
+function resetServiceFilter() {
+    $("#minPrice").val("");
+    $("#maxPrice").val("");
+    $("#orderByPrice").val("asc");
+    $("#companyName").val("");
+    $("#categoryName").val("");
+    currentPage = 1;
+    getDataForTable();
+}
+
+function verifyIfPreviousExists(){
+    if(currentPage === 1){
+        $("#previousPage").addClass("disabled");
+        $("#previousPage").attr("disabled", true);
+    } else {
+        $("#previousPage").removeClass("disabled");
+        $("#previousPage").attr("disabled", false);
+    }
+}
+
+function verifyIfNextExists(){
+    var url = makeURL(currentPage + 1);
     $.ajax({
         type: "GET",
-        contentType: "application/json",
-        url: "/services",
-        data: JSON.stringify(data),
+        url: url,
         success: function (result) {
-            console.log(result);
-        }
-    });
-});
-
-function comparatorForCategory(a, b) {
-    if (a.category < b.category)
-        return -1;
-    if (a.category > b.category)
-        return 1;
-    return 0;
-}
-
-function comparatorForCompanyName(a, b) {
-    if (a.companyName < b.companyName)
-        return -1;
-    if (a.companyName > b.companyName)
-        return 1;
-    return 0;
-}
-
-function comparatorForPrice(a, b) {
-    if (a.price < b.price)
-        return -1;
-    if (a.price > b.price)
-        return 1;
-    return 0;
-}
-
-function removeTypeOfSort(value) {
-    $("th[scopeForSort='sort']").each(function () {
-        var field = $(this).attr("field");
-        if (field !== value) {
-            $(this).attr("typeOfSort", "null");
-        }
-    });
-}
-
-function setArrowForSort(value, type) {
-    $("span[scopeForSort='icon']").each(function () {
-        var field = $(this).attr("field");
-        if (field === value) {
-            if (type === "asc") {
-                $(this).html(ascArrow);
+            if(result.length === 0){
+                $("#nextPage").addClass("disabled");
+                $("#nextPage").attr("disabled", true);
             } else {
-                $(this).html(descArrow);
+                $("#nextPage").removeClass("disabled");
+                $("#nextPage").attr("disabled", false);
             }
-        } else {
-            $(this).html("");
         }
     });
 }
