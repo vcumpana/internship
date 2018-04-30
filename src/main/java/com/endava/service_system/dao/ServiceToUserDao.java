@@ -39,7 +39,7 @@ public class ServiceToUserDao {
             filter.setSize(DEFAULT_PAGE_SIZE);
         }
         if (filter.getMin() != null || filter.getCategoryId() != null ||
-                filter.getMax() != null || filter.getDirection() != null ||
+                filter.getMax() != null ||
                 filter.getCompanyId() != null ||filter.getCategoryName()!=null||filter.getCompanyName()!=null) {
             builder.append("WHERE");
         }

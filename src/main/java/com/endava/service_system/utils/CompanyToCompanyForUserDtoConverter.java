@@ -1,7 +1,7 @@
 package com.endava.service_system.utils;
 
 import com.endava.service_system.model.Company;
-import com.endava.service_system.model.CompanyForUserDto;
+import com.endava.service_system.dto.CompanyForUserDto;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
