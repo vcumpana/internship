@@ -7,6 +7,7 @@ import com.endava.service_system.service.CategoryService;
 import com.endava.service_system.service.CompanyService;
 import com.endava.service_system.service.UserService;
 import com.endava.service_system.utils.AuthUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,14 +26,6 @@ public class UserController {
     private AuthUtils authUtils;
     private CategoryService categoryService;
     private CompanyService companyService;
-
-    public UserController(UserService userService, ConversionService conversionService, AuthUtils authUtils, CategoryService categoryService, CompanyService companyService) {
-        this.userService = userService;
-        this.conversionService = conversionService;
-        this.authUtils = authUtils;
-        this.categoryService = categoryService;
-        this.companyService = companyService;
-    }
 
     @GetMapping("/user")
     public String adminIndex() {
@@ -107,5 +100,30 @@ public class UserController {
 
     private void addCategoriesToModel(Model model){
         model.addAttribute("categories",categoryService.getAll());
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
+
+    @Autowired
+    public void setAuthUtils(AuthUtils authUtils) {
+        this.authUtils = authUtils;
+    }
+
+    @Autowired
+    public void setCategoryService(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
+
+    @Autowired
+    public void setCompanyService(CompanyService companyService) {
+        this.companyService = companyService;
     }
 }
