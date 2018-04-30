@@ -1,4 +1,4 @@
-package com.endava.service_system.controller;
+package com.endava.service_system.controller.rest;
 
 import com.endava.service_system.dto.ContractDtoFromUser;
 import com.endava.service_system.service.CompanyService;

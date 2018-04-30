@@ -21,10 +21,12 @@ public class CompanyRegistrationDTO {
 
     @NotEmpty
     @NameInUseConstraint
+    @Pattern(regexp = "^[^<'\">]+$",message = "You can't use  tags and \"")
     private String name;
 
     @NotEmpty
     @UsernameInUseConstraint()
+    @Pattern(regexp = "^[^<'\">]+$",message = "You can't use  tags and \"")
     private String username;
 
     @NotEmpty
@@ -32,11 +34,12 @@ public class CompanyRegistrationDTO {
     private String password;
 
     private String confirmPassword;
-
+    @Pattern(regexp = "^[^<'\">]+$",message = "You can't use tags and \"")
     private String address;
 
     @NotEmpty
     @Email
     @EmailInUseConstraint()
+    @Pattern(regexp = "^[^<'\">]+$",message = "You can't use tags and \"")
     private String email;
 }

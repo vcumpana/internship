@@ -1,5 +1,6 @@
 package com.endava.service_system.dao;
 
+import com.endava.service_system.dto.ServiceToUserDto;
 import com.endava.service_system.model.Service;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -34,8 +35,6 @@ public interface ServiceDao extends JpaRepository<Service,Long> {
             "join categories cat " +
             "on cat.id = s.category_id", nativeQuery = true)
     List<Map> getAll();
-
-
 
     @Query(value = "select s.id as id, s.description as description , s.price as price, s.title as title, c.name as companyName, cat.name as category from service s " +
             "join company_services cs " +
