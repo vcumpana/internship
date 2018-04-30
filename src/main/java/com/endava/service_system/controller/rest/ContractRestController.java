@@ -18,7 +18,7 @@ public class ContractRestController {
         this.contractService = contractService;
     }
 
-    @PostMapping("/newcontract")
+    @PostMapping("/newContract")
     public ResponseEntity newContract(@RequestBody ContractDtoFromUser contractDto){
         if (contractService.saveContract(contractDto) == null)
             return new ResponseEntity(HttpStatus.CONFLICT);

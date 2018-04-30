@@ -46,4 +46,13 @@ public interface ServiceDao extends JpaRepository<Service,Long> {
     List<Map> getByCategoryName(@Param("categoryName") String categoryName);
 
     Optional<Service> deleteServicesById(int id);
+
+    @Query(value = "select s.id as id, s.description as description , s.price as price, s.title as title, c.name as companyName, cat.name as category from service s " +
+            "join company_services cs " +
+            "on cs.services_id = s.id " +
+            "join company c " +
+            "on c.id = cs.company_id " +
+            "join categories cat " +
+            "on cat.id = s.category_id WHERE s.id=:id", nativeQuery = true)
+    List<Map> getServiceDtoById(@Param("id") int id);
 }

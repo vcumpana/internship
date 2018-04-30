@@ -26,17 +26,25 @@ public class ServiceRestController {
     }
 
     @PostMapping("service")
-    public ResponseEntity addService(@RequestBody Service service){
+    public ResponseEntity addService(@RequestBody Service service) {
         if (serviceService.saveService(service) == null)
             return new ResponseEntity(HttpStatus.CONFLICT);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @DeleteMapping("service/{id}")
-    public ResponseEntity deleteService(@PathVariable("id") int id){
+    public ResponseEntity deleteService(@PathVariable("id") int id) {
         if (!serviceService.deleteService(id).isPresent())
             return new ResponseEntity(HttpStatus.CONFLICT);
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @GetMapping("/services/{id}")
+    public ResponseEntity getAllServices(@PathVariable("id") int id){
+        ServiceToUserDto service = serviceService.getServiceToUserDtoById(id);
+        if (service == null)
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        return new ResponseEntity( service, HttpStatus.OK);
     }
 
 //    @PutMapping("service")
@@ -47,17 +55,17 @@ public class ServiceRestController {
 //    }
 
     @GetMapping("/services")
-    public List<ServiceToUserDto> getServices(@RequestParam(value = "categoryId",required = false) Integer categoryId,
-                                              @RequestParam(value = "size",required = false) Integer size,
-                                              @RequestParam(value = "page",required = false) Integer page,
-                                              @RequestParam(required = false,value = "min") Integer min,
-                                              @RequestParam(required = false,value = "companyId") Integer companyId,
-                                              @RequestParam(required = false,value = "company") String companyName,
-                                              @RequestParam(required = false,value = "category") String categoryName,
-                                              @RequestParam(required = false,value = "max") Integer max,
-                                              @RequestParam(required = false,value = "orderByPrice")String order){
-        Sort.Direction direction=getDirection(order);
-        ServiceDtoFilter filter=ServiceDtoFilter.builder()
+    public List<ServiceToUserDto> getServices(@RequestParam(value = "categoryId", required = false) Integer categoryId,
+                                              @RequestParam(value = "size", required = false) Integer size,
+                                              @RequestParam(value = "page", required = false) Integer page,
+                                              @RequestParam(required = false, value = "min") Integer min,
+                                              @RequestParam(required = false, value = "companyId") Integer companyId,
+                                              @RequestParam(required = false, value = "company") String companyName,
+                                              @RequestParam(required = false, value = "category") String categoryName,
+                                              @RequestParam(required = false, value = "max") Integer max,
+                                              @RequestParam(required = false, value = "orderByPrice") String order) {
+        Sort.Direction direction = getDirection(order);
+        ServiceDtoFilter filter = ServiceDtoFilter.builder()
                 .size(size)
                 .direction(direction)
                 .min(min)
@@ -72,26 +80,24 @@ public class ServiceRestController {
     }
 
     @GetMapping("/{companyName}/services")
-    public ResponseEntity getServicesByCompanyName(@PathVariable("companyName") String companyName){
+    public ResponseEntity getServicesByCompanyName(@PathVariable("companyName") String companyName) {
         List<Service> services = serviceService.getServicesByCompanyName(companyName);
         if (services != null)
             return new ResponseEntity(services, HttpStatus.OK);
         return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
-    private Sort.Direction getDirection(String order){
+    private Sort.Direction getDirection(String order) {
         Sort.Direction direction;
-        if(order==null){
-            direction=null;
-        }else if(order.equalsIgnoreCase("asc")) {
-            direction =Sort.Direction.ASC;
-        }else if(order.equalsIgnoreCase("desc")){
-            direction =Sort.Direction.DESC;
-        }else{
-            direction=null;
+        if (order == null) {
+            direction = null;
+        } else if (order.equalsIgnoreCase("asc")) {
+            direction = Sort.Direction.ASC;
+        } else if (order.equalsIgnoreCase("desc")) {
+            direction = Sort.Direction.DESC;
+        } else {
+            direction = null;
         }
         return direction;
     }
-
-
 }
