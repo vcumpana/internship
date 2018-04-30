@@ -1,6 +1,8 @@
 var listOfServices = [];
 var ascArrow = "<i class=\"fa fa-arrow-down\"></i>";
 var descArrow = "<i class=\"fa fa-arrow-up\"></i>";
+var currentCompanyName = "";
+var currentServiceId;
 
 $(document).ready(function () {
     downloadServices();
@@ -49,7 +51,7 @@ function fillTableWithServices() {
         row += "<td>" + listOfServices[i].companyName + "</td>";
         row += "<td>" + listOfServices[i].title + "</td>";
         row += "<td>" + listOfServices[i].description + "</td>";
-        row += "<td>" + listOfServices[i].price + "</td>";
+        row += "<td>" + listOfServices[i].price + " MDL</td>";
         row += "<td><i class=\"fa fa-paw filter\" onclick='showServiceInfo(" + listOfServices[i].id + ")'></i></td>";
         row += "</tr>";
         $("#tableWithServices tbody").append(row);
@@ -60,12 +62,62 @@ function showServiceInfo(id) {
     $("#serviceInfo").modal('show');
     $.ajax({
         type: "GET",
-        url: "/service/getById/" + id,
-        success: function(result){
-            cosnole.log(result);
+        url: "/services/" + id,
+        success: function (result) {
+            currentServiceId = id;
+            currentCompanyName = result.companyName;
+            $("#categoryInModal").text(result.category);
+            $("#companyInModal").text(result.companyName);
+            $("#titleInModal").text(result.title);
+            $("#priceInModal").text(result.price + " MDL");
+            $("#descriptionInModal").text(result.description);
         }
     });
 }
+
+$("#signContract").click(function () {
+    var data = {
+        "companyName": currentCompanyName,
+        "serviceId": currentServiceId,
+        "startDate": $("#startDate").val(),
+        "endDate": $("#endDate").val()
+    };
+    $.ajax({
+        type: "POST",
+        contentType: "application/json",
+        url: "/newContract",
+        data: JSON.stringify(data),
+        success: function () {
+            $("#startDate").val("");
+            $("#endDate").val("");
+            $("#serviceInfo").modal('hide');
+            $("#successContract").show();
+            window.setTimeout(function () {
+                $("#successContract").hide();
+            }, 3500);
+        }
+    });
+});
+
+$("#activateFilter").click(function () {
+    var data = {
+        "min" : $("#minPrice").val(),
+        "max" : $("#maxPrice").val(),
+        "orderByPrice" : $("#orderByPrice").val(),
+        "company" : $("#companyName").val(),
+        "category" : $("#categoryName").val()
+    };
+    console.log(data);
+    $.ajax({
+        type: "GET",
+        contentType: "application/json",
+        url: "/services",
+        data: JSON.stringify(data),
+        success: function (result) {
+            console.log(result);
+        }
+    });
+});
 
 function comparatorForCategory(a, b) {
     if (a.category < b.category)
