@@ -16,6 +16,6 @@ insert into company_services(company_id, services_id) values (1,8),(1,14), (2,10
 insert into company_services(company_id, services_id) values (1,15),(1,21), (2,17),(3,16),(4,18), (5,20),(6,19);
 insert into company_services(company_id, services_id) values (1,22),(1,28), (2,24),(3,23),(4,25), (5,27),(6,26);
 INSERT INTO credentials(username,password,status,role) VALUES ('login_user','$2a$10$O2M/QcKwMyboENRAtMvEXebcyWkwO.yCbTb6orzCKROvS8lFqVVK2','ACCEPTED','ROLE_USER');
-INSERT INTO users(name, surname, email, credential_id) VALUES ('name', 'surname','user@mail.ru', 10);
+INSERT INTO users(name, surname, email, credential_id) VALUES ('name', 'surname','user@mail.ru', 1);
 INSERT INTO credentials(username,password,status,role) VALUES ('admin','$2a$10$O2M/QcKwMyboENRAtMvEXebcyWkwO.yCbTb6orzCKROvS8lFqVVK2','ACCEPTED','ROLE_ADMIN');
-INSERT INTO admins(credential_id) VALUES ( 11);
+INSERT INTO admins(credential_id) VALUES ( 2);
