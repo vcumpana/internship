@@ -6,10 +6,14 @@ import com.endava.service_system.dao.ContractsToUserDao;
 import com.endava.service_system.dto.ContractDtoFromUser;
 import com.endava.service_system.dto.ContractToUserDto;
 import com.endava.service_system.model.Contract;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.endava.service_system.model.ContractForUserDtoFilter;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 import java.util.List;
 
@@ -22,15 +26,6 @@ public class ContractService {
     private UserService userService;
     private ContractsToUserDao contractsToUserDao;
 
-    public ContractService(CompanyDao companyDao, ConversionService conversionService, ContractDao contractDao, ServiceService serviceService, UserService userService, ContractsToUserDao contractsToUserDao) {
-        this.companyDao = companyDao;
-        this.conversionService = conversionService;
-        this.contractDao = contractDao;
-        this.serviceService = serviceService;
-        this.userService = userService;
-        this.contractsToUserDao = contractsToUserDao;
-    }
-
     public Contract saveContract(ContractDtoFromUser contractDto) {
         Contract contract;
         contract = conversionService.convert(contractDto, Contract.class);
@@ -39,6 +34,39 @@ public class ContractService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         contract.setUser(userService.getByUsername(username).get());
         return contractDao.save(contract);
+    }
+
+    public Contract getContractById(long id){
+        return contractDao.getContractWithDetails(id);
+    }
+
+    public List<Contract> getAllContractsByCompanyUsername(String companyUsername){
+        return contractDao.getAllContractsByCompanyUsername(companyUsername);
+    }
+
+    @Autowired
+    public void setCompanyDao(CompanyDao companyDao) {
+        this.companyDao = companyDao;
+    }
+
+    @Autowired
+    public void setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
+
+    @Autowired
+    public void setContractDao(ContractDao contractDao) {
+        this.contractDao = contractDao;
+    }
+
+    @Autowired
+    public void setServiceService(ServiceService serviceService) {
+        this.serviceService = serviceService;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
     public List<ContractToUserDto> getUserContracts(ContractForUserDtoFilter filter) {

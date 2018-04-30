@@ -6,6 +6,7 @@ import static com.endava.service_system.model.Role.ROLE_USER;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 @Component
 public class AuthUtils {
@@ -30,6 +31,11 @@ public class AuthUtils {
 		return auth.getAuthorities()
 				.stream()
 				.anyMatch(g->g.getAuthority().equals(role));
+	}
+
+	public String getAuthenticatedUsername(){
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return authentication.getName();
 	}
 
 }

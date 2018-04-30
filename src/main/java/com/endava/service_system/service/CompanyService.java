@@ -4,10 +4,16 @@ import com.endava.service_system.dao.CompanyDao;
 import com.endava.service_system.dto.ContractDtoFromUser;
 import com.endava.service_system.dto.CredentialDTO;
 import com.endava.service_system.model.Company;
+import com.endava.service_system.model.Invoice;
+import com.endava.service_system.model.Service;
+import com.endava.service_system.utils.AuthUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import com.endava.service_system.enums.UserStatus;
 import com.endava.service_system.model.Credential;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +26,12 @@ public class CompanyService {
     private CompanyDao companyDao;
     private CredentialService credentialService;
     private ConversionService conversionService;
+
+
+
+    private AuthUtils authUtils;
+    private ServiceService serviceService;
+
 
     public Company save(Company company) {
         Credential credential = credentialService.save(company.getCredential());
@@ -55,6 +67,34 @@ public class CompanyService {
         return companyDao.getCompanyByNameWithServices(name);
     }
 
+
+
+    public Optional<Company> getCompanyByEmail(String email) {
+        return companyDao.getByEmail(email);
+    }
+
+    public Optional<Company> getCompanyNameByUsername(String name) {
+        return companyDao.getCompanyNameByUsername(name);
+    }
+
+    public void addNewService(Service service) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Company company = companyDao.getByUsername(username).get();
+        List<Service> services = serviceService.getServicesByCompanyName(company.getName());
+        services.add(service);
+        company.setServices(services);
+        companyDao.save(company);
+    }
+
+//    public void addNewInvoice(Invoice invoice) {
+//        Company company = companyDao.getByUsername(authUtils.getAuthenticatedUsername()).get();
+//        List<Invoice> services = serviceService.getServicesByCompanyName(company.getName());
+//        services.add(service);
+//        company.setServices(services);
+//        companyDao.save(company);
+//    }
+
     public Optional<Company> getCompanyByEmail(String email) {
         return companyDao.getByEmail(email);
     }
@@ -84,6 +124,14 @@ public class CompanyService {
         this.conversionService = conversionService;
     }
 
+    @Autowired
+    public void setServiceService(ServiceService serviceService) {
+        this.serviceService = serviceService;
+    }
+
+    @Autowired
+    public void setAuthUtils(AuthUtils authUtils) {
+        this.authUtils = authUtils;
     public Optional<Company> getCompanyNameByUsername(String name) {
         return companyDao.getCompanyNameByUsername(name);
     }

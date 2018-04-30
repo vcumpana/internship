@@ -4,6 +4,8 @@ import com.endava.service_system.dao.ServiceDao;
 import com.endava.service_system.dao.ServiceToUserDao;
 import com.endava.service_system.dto.ServiceToUserDto;
 import com.endava.service_system.model.Service;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.endava.service_system.model.ServiceDtoFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -20,6 +22,7 @@ public class ServiceService {
 
     private ServiceDao serviceDao;
     private CompanyService companyService;
+    private ConversionService conversionService;
     private ConversionService conversionService;
     private ServiceToUserDao serviceToUserDao;
 
@@ -47,7 +50,6 @@ public class ServiceService {
         dtoFilter.setCategoryName(categoryName);
         return serviceToUserDao.getAllServices(dtoFilter);
     }
-
     public List<ServiceToUserDto> getServicesWithFilter(ServiceDtoFilter dtoFilter){
         return serviceToUserDao.getAllServices(dtoFilter);
     }
@@ -69,6 +71,25 @@ public class ServiceService {
             return services.get(0);
         else
             return null;
+    }
+
+    public Service save(Service service) {
+        return serviceDao.save(service);
+    }
+
+    @Autowired
+    public void setConversionService(ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
+
+    @Autowired
+    public void setServiceDao(ServiceDao serviceDao) {
+        this.serviceDao = serviceDao;
+    }
+
+    @Autowired
+    public void setCompanyService(CompanyService companyService) {
+        this.companyService = companyService;
     }
 
     @Autowired
