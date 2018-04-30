@@ -24,10 +24,11 @@ public class ServiceToUserDao {
 
     public List<ServiceToUserDto> getAllServices(ServiceDtoFilter filter) {
         String hql = createQueryForSearch(filter);
-        System.out.println("hql:"+hql);
+        System.out.println("hql:" + hql);
         Query query = entityManager.createQuery(hql);
         setParamsForFilter(query, filter);
         List<ServiceToUserDto> result = (List<ServiceToUserDto>) query.getResultList().stream().map(ob -> conversionService.convert(ob, ServiceToUserDto.class)).collect(Collectors.toList());
+        System.out.println(result.size());
         return result;
     }
 
@@ -40,7 +41,7 @@ public class ServiceToUserDao {
         }
         if (filter.getMin() != null || filter.getCategoryId() != null ||
                 filter.getMax() != null ||
-                filter.getCompanyId() != null ||filter.getCategoryName()!=null||filter.getCompanyName()!=null) {
+                filter.getCompanyId() != null || filter.getCategoryName() != null || filter.getCompanyName() != null) {
             builder.append("WHERE");
         }
         if (filter.getMin() != null) {
@@ -48,30 +49,30 @@ public class ServiceToUserDao {
             needAnd = true;
         }
         if (filter.getMax() != null) {
-            appendIf(builder," AND ",needAnd);
+            appendIf(builder, " AND ", needAnd);
             builder.append(" s.price<=:max ");
             needAnd = true;
         }
         if (filter.getCategoryId() != null) {
-            appendIf(builder," AND ",needAnd);
+            appendIf(builder, " AND ", needAnd);
             builder.append(" cat.id=:catId ");
             needAnd = true;
         }
 
         if (filter.getCompanyId() != null) {
-            appendIf(builder," AND ",needAnd);
+            appendIf(builder, " AND ", needAnd);
             builder.append(" c.id=:companyId");
             needAnd = true;
         }
 
         if (filter.getCompanyName() != null) {
-            appendIf(builder," AND ",needAnd);
+            appendIf(builder, " AND ", needAnd);
             builder.append(" c.name=:companyName");
             needAnd = true;
         }
 
         if (filter.getCategoryName() != null) {
-            appendIf(builder," AND ",needAnd);
+            appendIf(builder, " AND ", needAnd);
             builder.append(" cat.name=:categoryName");
         }
 
@@ -86,8 +87,8 @@ public class ServiceToUserDao {
         return builder.toString();
     }
 
-    private void appendIf(StringBuilder body,String appendPart,boolean condition){
-        if(condition){
+    private void appendIf(StringBuilder body, String appendPart, boolean condition) {
+        if (condition) {
             body.append(appendPart);
         }
     }
@@ -111,8 +112,8 @@ public class ServiceToUserDao {
         if (filter.getPage() != null)
             query.setFirstResult((filter.getPage() - 1) * filter.getSize());
 
-        if (filter.getCompanyId()!=null)
-            query.setParameter("companyId",filter.getCompanyId());
+        if (filter.getCompanyId() != null)
+            query.setParameter("companyId", filter.getCompanyId());
 
         query.setMaxResults(filter.getSize());
     }

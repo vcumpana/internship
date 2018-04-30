@@ -66,6 +66,8 @@ public class UserController {
     @GetMapping(value = "/user/profile")
     public String userProfile(Model model){
         addUsernameToModel(model);
+        addCategoriesToModel(model);
+        addCompaniesToModel(model);
         return  "userProfile";
     }
 
@@ -75,6 +77,12 @@ public class UserController {
         addCategoriesToModel(model);
         addCompaniesToModel(model);
         return  "userServiceList";
+    }
+
+    @GetMapping(value = "/user/invoicesPage")
+    public String userInvoices(Model model){
+        addUsernameToModel(model);
+        return "userInvoices";
     }
 
     private void addCompaniesToModel(Model model) {
