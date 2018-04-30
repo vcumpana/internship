@@ -60,6 +60,17 @@ public class ServiceService {
         return serviceDao.getById(serviceId);
     }
 
+    public ServiceToUserDto getServiceToUserDtoById(int id) {
+        List<ServiceToUserDto> services = new ArrayList<>();
+        List<Map> maps = serviceDao.getServiceDtoById(id);
+        for (Map map: maps)
+            services.add( conversionService.convert(map, ServiceToUserDto.class));
+        if (services.size() == 1)
+            return services.get(0);
+        else
+            return null;
+    }
+
     @Autowired
     public void setServiceDao(ServiceDao serviceDao) {
         this.serviceDao = serviceDao;

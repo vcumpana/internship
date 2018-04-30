@@ -25,25 +25,6 @@ import static com.endava.service_system.enums.UserStatus.WAITING;
 @NoArgsConstructor
 public class ContractDtoFromUserConverter implements Converter<ContractDtoFromUser, Contract> {
 
-//    private CompanyService companyService;
-//    private UserService userService;
-//    private ServiceService serviceService;
-//
-//    @Autowired
-//    public void setCompanyService(CompanyService companyService) {
-//        this.companyService = companyService;
-//    }
-//
-//    @Autowired
-//    public void setUserService(UserService userService) {
-//        this.userService = userService;
-//    }
-//
-//    @Autowired
-//    public void setServiceService(ServiceService serviceService) {
-//        this.serviceService = serviceService;
-//    }
-
     @Override
     public Contract convert(ContractDtoFromUser contractDto){
         Contract contract = new Contract();

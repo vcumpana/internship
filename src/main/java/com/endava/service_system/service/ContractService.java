@@ -25,7 +25,7 @@ public class ContractService {
     }
 
     public Contract saveContract(ContractDtoFromUser contractDto) {
-        Contract contract = new Contract();
+        Contract contract;
         contract = conversionService.convert(contractDto, Contract.class);
         contract.setService(serviceService.getServiceById(contractDto.getServiceId()).get());
         contract.setCompany(companyDao.getByName(contractDto.getCompanyName()).get());
