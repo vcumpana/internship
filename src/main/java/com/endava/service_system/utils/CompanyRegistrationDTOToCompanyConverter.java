@@ -20,7 +20,7 @@ public class CompanyRegistrationDTOToCompanyConverter implements Converter<Compa
         Credential credential = new Credential();
         company.setName(companyRegistrationDTO.getName());
         credential.setUsername(companyRegistrationDTO.getUsername());
-        credential.setPassword(new BCryptPasswordEncoder().encode(companyRegistrationDTO.getPassword()));
+        credential.setPassword(companyRegistrationDTO.getPassword());
         company.setAddress(companyRegistrationDTO.getAddress());
         company.setEmail(companyRegistrationDTO.getEmail());
         credential.setStatus(ACCEPTED);

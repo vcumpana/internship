@@ -23,7 +23,6 @@ public class ServiceService {
     private ServiceDao serviceDao;
     private CompanyService companyService;
     private ConversionService conversionService;
-    private ConversionService conversionService;
     private ServiceToUserDao serviceToUserDao;
 
     public Service saveService(Service service) {
@@ -83,32 +82,17 @@ public class ServiceService {
     }
 
     @Autowired
-    public void setServiceDao(ServiceDao serviceDao) {
-        this.serviceDao = serviceDao;
-    }
-
-    @Autowired
-    public void setCompanyService(CompanyService companyService) {
-        this.companyService = companyService;
-    }
-
-    @Autowired
-    public void setServiceDao(ServiceDao serviceDao) {
-        this.serviceDao = serviceDao;
-    }
-
-    @Autowired
-    public void setCompanyService(CompanyService companyService) {
-        this.companyService = companyService;
-    }
-
-    @Autowired
-    public void setConversionService(ConversionService conversionService) {
-        this.conversionService = conversionService;
-    }
-
-    @Autowired
     public void setServiceToUserDao(ServiceToUserDao serviceToUserDao) {
         this.serviceToUserDao = serviceToUserDao;
+    }
+
+    @Autowired
+    public void setServiceDao(ServiceDao serviceDao) {
+        this.serviceDao = serviceDao;
+    }
+
+    @Autowired
+    public void setCompanyService(CompanyService companyService) {
+        this.companyService = companyService;
     }
 }
