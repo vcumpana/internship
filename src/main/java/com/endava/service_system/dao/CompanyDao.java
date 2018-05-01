@@ -17,7 +17,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface CompanyDao extends JpaRepository<Company,Long> {
 
-    Optional<Company> getById(int aLong);
+    Optional<Company> getById(long id);
 
     @Query("SELECT c FROM Company c INNER JOIN FETCH c.credential cr WHERE cr.username=:username")
     Optional<Company> getByUsername(@Param("username") String username);
@@ -25,11 +25,11 @@ public interface CompanyDao extends JpaRepository<Company,Long> {
     @Query("SELECT c FROM Company c INNER JOIN FETCH c.credential cr WHERE cr.status=:status")
     List<Company> getAllWithStatus(@Param("status")UserStatus userStatus);
 
-    @Query("SELECT c FROM Company c join fetch c.services s")
+    @Query("SELECT c FROM Company c LEFT join fetch c.services s")
     List<Company> getAll();
 
-    @Query("SELECT c FROM Company c INNER JOIN FETCH c.credential cr JOIN FETCH c.services s WHERE cr.username=:username")
-    Optional<Company> getCompanyByNameWithServices(@Param("username")String name);
+    @Query("SELECT c FROM Company c LEFT JOIN c.services s WHERE c.name=:name")
+    Optional<Company> getCompanyByNameWithServices(@Param("name")String name);
 
     Optional<Company> getByName(String name);
 
@@ -38,4 +38,7 @@ public interface CompanyDao extends JpaRepository<Company,Long> {
     @Query("SELECT cr.username FROM Company c INNER JOIN c.credential cr WHERE c.name=:name")
     Optional<String> getCredentialUsernameByName(@Param("name") String name);
 
+
+    @Query("SELECT c FROM Company c INNER JOIN FETCH c.credential cr WHERE cr.username=:username")
+    Optional<Company> getCompanyNameByUsername(@Param("username") String username);
 }

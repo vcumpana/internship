@@ -17,7 +17,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface ServiceDao extends JpaRepository<Service,Long> {
 
-    Optional<Service> getById(int id);
+    Optional<Service> getById(long id);
 
 //    @Query("SELECT c FROM Company c INNER JOIN FETCH c.credential cr WHERE cr.email=:email")
 //    Optional<Company> getByEmail(@PathParam("email") String email);
@@ -45,7 +45,8 @@ public interface ServiceDao extends JpaRepository<Service,Long> {
             "on cat.id = s.category_id WHERE cat.name=:categoryName", nativeQuery = true)
     List<Map> getByCategoryName(@Param("categoryName") String categoryName);
 
-    Optional<Service> deleteServicesById(int id);
+    Optional<Service> deleteServicesById(long id);
+
 
     @Query(value = "select s.id as id, s.description as description , s.price as price, s.title as title, c.name as companyName, cat.name as category from service s " +
             "join company_services cs " +
@@ -54,5 +55,5 @@ public interface ServiceDao extends JpaRepository<Service,Long> {
             "on c.id = cs.company_id " +
             "join categories cat " +
             "on cat.id = s.category_id WHERE s.id=:id", nativeQuery = true)
-    List<Map> getServiceDtoById(@Param("id") int id);
+    List<Map> getServiceDtoById(@Param("id") long id);
 }

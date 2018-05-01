@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class ServiceToUserDTOConverter implements Converter<Map, ServiceToUserDt
     public ServiceToUserDto convert(Map map){
             ServiceToUserDto service = new ServiceToUserDto();
             service.setCategory((String)map.get("category"));
-            service.setId((int)map.get("id"));
+            service.setId(((BigInteger)map.get("id")).longValue());
             service.setCompanyName((String)map.get("companyName"));
             service.setDescription((String)map.get("description"));
             service.setPrice((BigDecimal) map.get("price"));

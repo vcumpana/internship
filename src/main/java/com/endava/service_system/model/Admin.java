@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class Admin  {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 	@OneToOne
 	private Credential credential;
 }
