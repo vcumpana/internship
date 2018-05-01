@@ -15,7 +15,7 @@ public class ObjectArrayToContractToUserDto implements Converter<Object[],Contra
     @Override
     public ContractToUserDto convert(Object[] source) {
         ContractToUserDto contractToUserDto=new ContractToUserDto();
-        contractToUserDto.setId((Integer) source[0]);
+        contractToUserDto.setId((Long) source[0]);
         contractToUserDto.setCompanyName((String) source[1]);
         contractToUserDto.setServiceTitle((String) source[2]);
         contractToUserDto.setCategoryName((String) source[3]);

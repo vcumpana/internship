@@ -19,10 +19,10 @@ public class InvoiceFilter {
     private String currentUserUsername;
     //complete only if userType == User
     private String companyTitle;
-    private Integer companyId;
+    private Long companyId;
     private InvoiceStatus invoiceStatus;
     private String categoryName;
-    private Integer categoryId;
+    private Long categoryId;
     private Integer size;
     private Integer page;
     private Sort.Direction orderByDueDateDirection;

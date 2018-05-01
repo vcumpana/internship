@@ -36,7 +36,9 @@ public class ServiceSystemApplication {
 		//TODO add all paths that requires you to be authenticated
 		@Override
 		public void addInterceptors(InterceptorRegistry registry) {
-			registry.addInterceptor(logoutNotAcceptedStatus).addPathPatterns("/admin/**","/user/**");
+			registry.addInterceptor(logoutNotAcceptedStatus)
+					.addPathPatterns("/admin/**","/user/**","/company/**")
+					.excludePathPatterns("/company/registration","/user/registration");
 		}
 
 		@Autowired

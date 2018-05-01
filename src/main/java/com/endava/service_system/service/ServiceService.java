@@ -4,6 +4,8 @@ import com.endava.service_system.dao.ServiceDao;
 import com.endava.service_system.dao.ServiceToUserDao;
 import com.endava.service_system.dto.ServiceToUserDto;
 import com.endava.service_system.model.Service;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.endava.service_system.model.ServiceDtoFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -47,20 +49,19 @@ public class ServiceService {
         dtoFilter.setCategoryName(categoryName);
         return serviceToUserDao.getAllServices(dtoFilter);
     }
-
     public List<ServiceToUserDto> getServicesWithFilter(ServiceDtoFilter dtoFilter){
         return serviceToUserDao.getAllServices(dtoFilter);
     }
 
-    public Optional<Service> deleteService(int id) {
+    public Optional<Service> deleteService(long id) {
         return serviceDao.deleteServicesById(id);
     }
 
-    public Optional<Service> getServiceById(int serviceId) {
+    public Optional<Service> getServiceById(long serviceId) {
         return serviceDao.getById(serviceId);
     }
 
-    public ServiceToUserDto getServiceToUserDtoById(int id) {
+    public ServiceToUserDto getServiceToUserDtoById(long id) {
         List<ServiceToUserDto> services = new ArrayList<>();
         List<Map> maps = serviceDao.getServiceDtoById(id);
         for (Map map: maps)
@@ -71,14 +72,8 @@ public class ServiceService {
             return null;
     }
 
-    @Autowired
-    public void setServiceDao(ServiceDao serviceDao) {
-        this.serviceDao = serviceDao;
-    }
-
-    @Autowired
-    public void setCompanyService(CompanyService companyService) {
-        this.companyService = companyService;
+    public Service save(Service service) {
+        return serviceDao.save(service);
     }
 
     @Autowired
@@ -89,5 +84,15 @@ public class ServiceService {
     @Autowired
     public void setServiceToUserDao(ServiceToUserDao serviceToUserDao) {
         this.serviceToUserDao = serviceToUserDao;
+    }
+
+    @Autowired
+    public void setServiceDao(ServiceDao serviceDao) {
+        this.serviceDao = serviceDao;
+    }
+
+    @Autowired
+    public void setCompanyService(CompanyService companyService) {
+        this.companyService = companyService;
     }
 }

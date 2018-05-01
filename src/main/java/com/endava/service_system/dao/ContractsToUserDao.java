@@ -33,7 +33,9 @@ public class ContractsToUserDao {
         System.out.println("hql:"+hql);
         Query query = entityManager.createQuery(hql);
         setParamsForFilter(query, filter);
-        List<ContractToUserDto> result = (List<ContractToUserDto>) query.getResultList().stream().map(ob -> conversionService.convert(ob, ContractToUserDto.class)).collect(Collectors.toList());
+        List<ContractToUserDto> result = (List<ContractToUserDto>) query.getResultList().stream()
+                .map(ob -> conversionService.convert(ob, ContractToUserDto.class))
+                .collect(Collectors.toList());
         return result;
     }
 
