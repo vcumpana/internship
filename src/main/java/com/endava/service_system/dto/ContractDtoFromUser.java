@@ -15,7 +15,7 @@ public class ContractDtoFromUser {
     @Pattern(regexp = "^[^<'\">]+$",message = "You can't use tags and \"")
     private String companyName;
 
-    private int serviceId;
+    private long serviceId;
 
    // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private String startDate;

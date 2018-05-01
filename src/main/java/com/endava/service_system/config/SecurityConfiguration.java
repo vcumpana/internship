@@ -50,7 +50,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         //TODO add csrf in all forms and enable crsf (for protection)!!
         http.logout().deleteCookies()
                 .logoutUrl("/logout").invalidateHttpSession(true).clearAuthentication(true)
-                .logoutSuccessUrl("/").logoutSuccessHandler(logoutSuccessHandler);
+                .logoutSuccessUrl("/login").logoutSuccessHandler(logoutSuccessHandler);
     }
 
 

@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ContractToUserDto {
 
-    private int id;
+    private long id;
 
     private String serviceTitle;
 

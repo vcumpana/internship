@@ -1,15 +1,10 @@
 package com.endava.service_system.controller.rest;
 
-import com.endava.service_system.dao.ServiceDao;
-import com.endava.service_system.dao.ServiceToUserDao;
-import com.endava.service_system.dto.ServiceToUserDto;
 import com.endava.service_system.model.Category;
-import com.endava.service_system.model.ServiceDtoFilter;
 import com.endava.service_system.service.CategoryService;
 import com.endava.service_system.service.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -5,20 +5,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ServiceToUserDto {
+public class NewServiceDTO {
 
-    private long id;
+        private String title;
 
-    private String title;
+        private String category;
 
-    private String category;
+        private String description;
 
-    private String companyName;
-
-    private String description;
-
-    private BigDecimal price;
+        private BigDecimal price;
 }

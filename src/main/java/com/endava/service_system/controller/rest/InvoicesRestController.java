@@ -24,11 +24,11 @@ public class InvoicesRestController {
     @GetMapping("/invoices")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_COMPANY')")
     public List getInvoices(Authentication authentication,
-                            @RequestParam(value = "categoryId",required = false) Integer categoryId,
+                            @RequestParam(value = "categoryId",required = false) Long categoryId,
                             @RequestParam(value = "size",required = false) Integer size,
                             @RequestParam(value = "page",required = false) Integer page,
                             @RequestParam(value = "status",required = false) InvoiceStatus status,
-                            @RequestParam(required = false,value = "companyId") Integer companyId,
+                            @RequestParam(required = false,value = "companyId") Long companyId,
                             @RequestParam(required = false,value = "company") String companyName,
                             @RequestParam(required = false,value = "category") String categoryName,
                             @RequestParam(required = false,value = "orderByDueDate")String order

@@ -35,11 +35,11 @@ public class ContractRestController {
 
     @GetMapping("user/contracts")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public List<ContractToUserDto> getUserContracts(@RequestParam(value = "categoryId",required = false) Integer categoryId,
+    public List<ContractToUserDto> getUserContracts(@RequestParam(value = "categoryId",required = false) Long categoryId,
                                                     @RequestParam(value = "size",required = false) Integer size,
                                                     @RequestParam(value = "page",required = false) Integer page,
                                                     @RequestParam(value = "status",required = false) ContractStatus contractStatus,
-                                                    @RequestParam(required = false,value = "companyId") Integer companyId,
+                                                    @RequestParam(required = false,value = "companyId") Long companyId,
                                                     @RequestParam(required = false,value = "company") String companyName,
                                                     @RequestParam(required = false,value = "category") String categoryName,
                                                     @RequestParam(required = false,value = "orderByEndDate")String order,
