@@ -22,6 +22,7 @@ public class ObjectArrayToContractToUserDto implements Converter<Object[],Contra
         contractForShowingDto.setStartDate((LocalDate) source[5]);
         contractForShowingDto.setEndDate((LocalDate) source[6]);
         contractForShowingDto.setContractStatus((ContractStatus) source[7]);
+        contractForShowingDto.setFullName((String) source[8]);
         return contractForShowingDto;
     }
 }

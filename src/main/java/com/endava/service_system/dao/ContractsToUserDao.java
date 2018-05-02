@@ -38,7 +38,7 @@ public class ContractsToUserDao {
     }
 
     private String createQueryForSearch(ContractForUserDtoFilter filter) {
-        StringBuilder builder = new StringBuilder("SELECT cont.id,comp.name,s.title,cat.name,s.price,cont.startDate,cont.endDate,cont.status" +
+        StringBuilder builder = new StringBuilder("SELECT cont.id,comp.name,s.title,cat.name,s.price,cont.startDate,cont.endDate,cont.status,concat(u.name,' ',u.surname) " +
                 " FROM Contract cont INNER JOIN cont.user u INNER JOIN cont.company comp ");
 
         if(filter.getUserType()== UserType.USER){
