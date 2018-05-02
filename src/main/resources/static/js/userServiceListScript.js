@@ -2,7 +2,7 @@ var listOfServices = [];
 var currentCompanyName = "";
 var currentServiceId;
 var currentPage = 1;
-var size = 12;
+var size = 10;
 
 $(document).ready(function () {
     getDataForTable();
@@ -51,7 +51,7 @@ $("#previousPage").click(function () {
     verifyIfNextExists();
 });
 
-function getDataForTable(){
+function getDataForTable() {
     var url = makeURL(currentPage);
     $.ajax({
         type: "GET",
@@ -97,8 +97,8 @@ function showServiceInfo(id) {
     });
 }
 
-function makeURL(page){
-    var url = "/services?page=" + page  + "&size=" + size + "&";
+function makeURL(page) {
+    var url = "/services?page=" + page + "&size=" + size + "&";
     var data = {
         "min": $("#minPrice").val(),
         "max": $("#maxPrice").val(),
@@ -125,8 +125,8 @@ function resetServiceFilter() {
     getDataForTable();
 }
 
-function verifyIfPreviousExists(){
-    if(currentPage === 1){
+function verifyIfPreviousExists() {
+    if (currentPage === 1) {
         $("#previousPage").addClass("disabled");
         $("#previousPage").attr("disabled", true);
     } else {
@@ -135,13 +135,13 @@ function verifyIfPreviousExists(){
     }
 }
 
-function verifyIfNextExists(){
+function verifyIfNextExists() {
     var url = makeURL(currentPage + 1);
     $.ajax({
         type: "GET",
         url: url,
         success: function (result) {
-            if(result.length === 0){
+            if (result.length === 0) {
                 $("#nextPage").addClass("disabled");
                 $("#nextPage").attr("disabled", true);
             } else {
