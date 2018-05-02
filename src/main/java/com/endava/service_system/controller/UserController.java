@@ -75,6 +75,8 @@ public class UserController {
     @GetMapping(value = "/user/invoicesPage")
     public String userInvoices(Model model){
         addUsernameToModel(model);
+        addCategoriesToModel(model);
+        addCompaniesToModel(model);
         return "userInvoices";
     }
 

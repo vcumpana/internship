@@ -1,4 +1,4 @@
-var listOfContracts = [];
+var listOfInvoices = [];
 var currentPage = 1;
 var size = 10;
 
@@ -31,23 +31,23 @@ function getDataForTable() {
         type: "GET",
         url: url,
         success: function (result) {
-            listOfContracts = result;
-            fillTableWithContracts();
+            listOfInvoices = result;
+            fillTableWithInvoices();
         }
     });
     verifyIfPreviousExists();
     verifyIfNextExists();
 }
 
-function makeURL(page){
-    var url = "/user/contracts?page=" + page + "&size=" + size;
+function makeURL(page) {
+    var url = "/invoices?page=" + page + "&size=" + size + "&";
     var data = {
-        "status" : $("#status").val(),
-        "companyId" : $("#companyName").val(),
-        "categoryId" : $("#categoryName").val()
+        "companyId": $("#companyName").val(),
+        "categoryId": $("#categoryName").val(),
+        "orderByDueDate": $("#orderByDueDate").val()
     };
-    for(key in data){
-        if(data[key] !== ""){
+    for (key in data) {
+        if (data[key] !== "") {
             url += key + "=" + data[key] + "&";
         }
     }
@@ -55,32 +55,24 @@ function makeURL(page){
     return url;
 }
 
-function fillTableWithContracts() {
-    $("#tableWithContracts tbody").html("");
-    for (var i = 0; i < listOfContracts.length; i++) {
+function fillTableWithInvoices() {
+    $("#tableWithInvoices tbody").html("");
+    for (var i = 0; i < listOfInvoices.length; i++) {
         var row = "<tr>";
-        row += "<td>" + listOfContracts[i].categoryName + "</td>";
-        row += "<td>" + listOfContracts[i].companyName + "</td>";
-        row += "<td>" + listOfContracts[i].serviceTitle + "</td>";
-        row += "<td>" + listOfContracts[i].servicePrice + " MDL</td>";
-        row += "<td>" + listOfContracts[i].startDate + "</td>";
-        row += "<td>" + listOfContracts[i].endDate + "</td>";
-        var status = listOfContracts[i].contractStatus;
-        if(status === "SIGNEDBYCLIENT"){
-            row += "<td class='text-warning'><strong>Waiting</strong></td>";
-        } else if (status === "ACTIVE"){
-            row += "<td class='text-success'><strong>Active</strong></td>";
-        } else {
-            row += "<td class='text-danger'><strong>Inactive</strong></td>";
-        }
-        row += "<td><i class=\"fa fa-paw filter\" onclick='showServiceInfo(" + listOfContracts[i].id + ")'></i></td>";
-        row += "</tr>";
-        $("#tableWithContracts tbody").append(row);
+        row += "<td>" + listOfInvoices[i].companyTitle + "</td>";
+        row += "<td>" + listOfInvoices[i].serviceTitle + "</td>";
+        row += "<td>" + listOfInvoices[i].price + "</td>";
+        row += "<td>" + listOfInvoices[i].fromDate + "</td>";
+        row += "<td>" + listOfInvoices[i].tillDate + "</td>";
+        row += "<td>" + listOfInvoices[i].paymentDate + "</td>";
+        row += "<td>" + listOfInvoices[i].invoiceStatus + "</td>";
+        row += "<td></td></tr>";
+        $("#tableWithInvoices tbody").append(row);
     }
 }
 
-function resetContractFilter(){
-    $("#status").val("");
+function resetInvoiceFilter() {
+    $("#orderByDueDate").val("asc");
     $("#companyName").val("");
     $("#categoryName").val("");
     currentPage = 1;

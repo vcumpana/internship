@@ -134,6 +134,16 @@ function updateUser() {
 }
 
 $("#updatePassword").click(function () {
+    var errors = 0;
+    if(validatePassword("#newPassword") == false){
+        errors++;
+    }
+    if(checkPasswords() == false){
+        errors++;
+    }
+    if(errors > 0){
+        return;
+    }
     var data = {
         "oldPassword": $("#oldPassword").val(),
         "newPassword": $("#newPassword").val(),
