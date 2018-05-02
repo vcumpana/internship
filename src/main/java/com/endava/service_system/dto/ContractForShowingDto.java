@@ -21,6 +21,8 @@ public class ContractForShowingDto {
 
     private String companyName;
 
+    private String fullName;
+
     private LocalDate startDate;
 
     private LocalDate endDate;
