@@ -76,6 +76,12 @@ public class CompanyController {
         return  "companyServiceList";
     }
 
+    @GetMapping(value = "/company/mycontracts")
+    public String getMyContractsPage(Model model){
+        addCompanyNameToModel(model);
+        return  "companyContractList";
+    }
+
     @GetMapping("/company/addservice")
     public String getCompanyAddServiceForm(Model model) {
         model.addAttribute("service", new NewServiceDTO());
@@ -86,8 +92,6 @@ public class CompanyController {
 
     @PostMapping("/company/addservice")
     public String registerNewService(Model model, @ModelAttribute("service") @Valid NewServiceDTO newServiceDTO, BindingResult bindingResult) {
-        System.out.println(newServiceDTO);
-
         if (bindingResult.hasErrors()) {
             model.addAttribute("service", newServiceDTO);
             return "companyAddService";
