@@ -48,7 +48,7 @@ public class UserService {
 
     public void updateUserPassword(String username, String newPassword){
         Credential credential = credentialService.getByUsername(username).get();
-        credential.setPassword(passwordEncoder.encode(newPassword));
+        credential.setPassword(newPassword);
         credentialService.save(credential);
     }
 
