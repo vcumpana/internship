@@ -40,7 +40,7 @@ function getDataForTable() {
 }
 
 function makeURL(page){
-    var url = "/user/contracts?page=" + page + "&size=" + size;
+    var url = "/user/contracts?page=" + page + "&size=" + size+"&";
     var data = {
         "status" : $("#status").val(),
         "companyId" : $("#companyName").val(),
