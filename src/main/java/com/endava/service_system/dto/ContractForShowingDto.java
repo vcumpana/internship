@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ContractToUserDto {
+public class ContractForShowingDto {
 
     private long id;
 
