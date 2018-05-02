@@ -1,4 +1,4 @@
-var listOfServices = [];
+var listOfContracts = [];
 var ascArrow = "<i class=\"fa fa-arrow-down\"></i>";
 var descArrow = "<i class=\"fa fa-arrow-up\"></i>";
 
@@ -9,11 +9,11 @@ $(document).ready(function () {
 function downloadContracts() {
     $.ajax({
         type: "GET",
-        url: "/" + $("#companyName").text() + "/services/",
+        url: "/company/contracts/",
         success: function (result) {
-            listOfServices = result;
-            listOfServices.sort(comparatorForCategory);
-            fillTableWithServices();
+            listOfContracts = result;
+          //  listOfContracts.sort(comparatorForCategory);
+            fillTableWithContracts();
         }
     });
 }
@@ -38,18 +38,30 @@ $("th[scopeForSort='sort']").click(function () {
     fillTableWithServices();
 });
 
-function fillTableWithServices() {
-    $("#tableWithServices tbody").html("");
-    for (var i = 0; i < listOfServices.length; i++) {
+function fillTableWithContracts() {
+    $("#tableWithContracts tbody").html("");
+    for (var i = 0; i < listOfContracts.length; i++) {
         var row = "<tr>";
-        row += "<td>" + listOfServices[i].category.name + "</td>";
-        row += "<td>" + listOfServices[i].title + "</td>";
-        row += "<td>" + listOfServices[i].description + "</td>";
-        row += "<td>" + listOfServices[i].price + "</td>";
-        row += "<td><a href=" + "/contract/{id}/approve" + ">Approve</a>" + "/" + "<a href=" + "/contract/{id}/deny" + ">Deny</a></td>";
-        row += "<td><a href=" + "/contract/{id}/createInvoice" + ">Create invoice</a></td>";
+        row += "<td>" + listOfContracts[i].id+ "</td>";
+        row += "<td>" + listOfContracts[i].serviceTitle + "</td>";
+        row += "<td>" + listOfContracts[i].categoryName + "</td>";
+        row += "<td>" + listOfContracts[i].startDate + "</td>";
+        row += "<td>" + listOfContracts[i].endDate + "</td>";
+        row += "<td>" + listOfContracts[i].companyName + "</td>";
+        row += "<td>" + listOfContracts[i].servicePrice + "</td>";
+        row += "<td>" + listOfContracts[i].contractStatus + "</td>";
+        if (listOfContracts[i].contractStatus === "SIGNEDBYCLIENT") {
+            row += "<td><a href=" + "/contract/" + listOfContracts[i].id + "/approve" + ">Approve</a>" + "/" + "<a href=" + "/contract/" + listOfContracts[i].id + "/deny" + ">Deny</a></td>";
+            row +="<td></td>";
+        } else if (listOfContracts[i].contractStatus === "ACTIVE"){
+            row +="<td></td>";
+            row += "<td><a href=" + "/contract/"+ listOfContracts[i].id +"/createInvoice" + ">Create invoice</a></td>";
+        } else {
+            row +="<td></td>";
+            row +="<td></td>";
+        }
         row += "</tr>";
-        $("#tableWithServices tbody").append(row);
+        $("#tableWithContracts tbody").append(row);
     }
 }
 

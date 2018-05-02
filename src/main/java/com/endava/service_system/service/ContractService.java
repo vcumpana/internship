@@ -76,4 +76,8 @@ public class ContractService {
     public List<ContractForShowingDto> getContracts(ContractForUserDtoFilter filter) {
         return contractsToUserDao.getContracts(filter);
     }
+
+    public void update(Contract contract) {
+        contractDao.save(contract);
+    }
 }
