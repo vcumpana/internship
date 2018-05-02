@@ -4,24 +4,36 @@ import com.endava.service_system.dto.ContractDtoFromUser;
 import com.endava.service_system.dto.ContractForShowingDto;
 import com.endava.service_system.enums.ContractStatus;
 import com.endava.service_system.enums.UserType;
+import com.endava.service_system.model.Contract;
 import com.endava.service_system.model.ContractForUserDtoFilter;
+import com.endava.service_system.service.CompanyService;
 import com.endava.service_system.service.ContractService;
+import com.endava.service_system.utils.AuthUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
+import static com.endava.service_system.enums.ContractStatus.ACTIVE;
+import static com.endava.service_system.enums.ContractStatus.DENIED;
 
 @RestController
 public class ContractRestController {
 
     private ContractService contractService;
+    private CompanyService companyService;
+    private AuthUtils authUtils;
 
-    public ContractRestController(ContractService contractService) {
+    public ContractRestController(ContractService contractService, CompanyService companyService, AuthUtils authUtils) {
         this.contractService = contractService;
+        this.companyService = companyService;
+        this.authUtils = authUtils;
     }
 
     @PostMapping("/newContract")
@@ -85,4 +97,22 @@ public class ContractRestController {
         }
         return direction;
     }
+
+    @GetMapping("/contract/{id}/{action}")
+    public ModelAndView changeContractStatus(@PathVariable("id") Long contractId, @PathVariable("action") String action,
+                                             HttpServletRequest request){
+        Contract contract = contractService.getContractById(contractId);
+        if (contract != null) {
+            if(contract.getCompany().getCredential().getUsername().equals((authUtils.getAuthenticatedUsername()))){
+                if(action.toLowerCase().equals("approve"))
+                    contract.setStatus(ACTIVE);
+                else if(action.toLowerCase().equals("deny"))
+                    contract.setStatus(DENIED);
+                contractService.update(contract);
+            }
+        }
+        String referer = request.getHeader("Referer");
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("redirect:"+ referer);
+        return modelAndView;   }
 }
