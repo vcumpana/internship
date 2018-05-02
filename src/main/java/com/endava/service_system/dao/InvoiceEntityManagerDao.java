@@ -1,9 +1,7 @@
 package com.endava.service_system.dao;
 
-import com.endava.service_system.dto.ContractToUserDto;
 import com.endava.service_system.dto.InvoiceDisplayDto;
 import com.endava.service_system.enums.UserType;
-import com.endava.service_system.model.ContractForUserDtoFilter;
 import com.endava.service_system.model.InvoiceFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;

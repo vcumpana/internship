@@ -4,16 +4,13 @@ import com.endava.service_system.dao.CompanyDao;
 import com.endava.service_system.dao.ContractDao;
 import com.endava.service_system.dao.ContractsToUserDao;
 import com.endava.service_system.dto.ContractDtoFromUser;
-import com.endava.service_system.dto.ContractToUserDto;
+import com.endava.service_system.dto.ContractForShowingDto;
 import com.endava.service_system.model.Contract;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.endava.service_system.model.ContractForUserDtoFilter;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 import java.util.List;
 
@@ -76,7 +73,7 @@ public class ContractService {
         this.userService = userService;
     }
 
-    public List<ContractToUserDto> getUserContracts(ContractForUserDtoFilter filter) {
-        return contractsToUserDao.getUserContracts(filter);
+    public List<ContractForShowingDto> getContracts(ContractForUserDtoFilter filter) {
+        return contractsToUserDao.getContracts(filter);
     }
 }

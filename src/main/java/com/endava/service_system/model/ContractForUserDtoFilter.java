@@ -1,6 +1,7 @@
 package com.endava.service_system.model;
 
 import com.endava.service_system.enums.ContractStatus;
+import com.endava.service_system.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,5 +22,6 @@ public class ContractForUserDtoFilter {
     private String categoryName;
     private String companyName;
     private ContractStatus contractStatus;
+    private UserType userType;
 
 }
