@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Service List</title>
+    <title>Contracts</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
           integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -24,10 +24,10 @@
             <li class="nav-item">
                 <a class="nav-link" href="/company/profile">Page 1</a>
             </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="#">My services</a>
+            <li class="nav-item ">
+                <a class="nav-link" href="/company/serviceList">My services</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item active">
                 <a class="nav-link" href="/company/mycontracts">My contracts</a>
             </li>
         </ul>
@@ -60,15 +60,14 @@
                 <th class="filter" scopeForSort="sort" field="price" typeOfSort="null">Price
                     <span scopeForSort="icon" field="price" style="float:right"></span>
                 </th>
-                <th></th>
+                <th>Approve/Deny</th>
+                <th>Create invoice</th>
             </tr>
             </thead>
             <tbody></tbody>
         </table><br/>
-        <a href="/company/addservice">Add service</a>
-        <a href="/company/createInvoice">Create invoice</a>
     </div>
 </div>
-<script type="text/javascript" th:src="@{/js/companyServiceListScript.js}"></script>
+<script type="text/javascript" th:src="@{/js/companyContractListScript.js}"></script>
 </body>
 </html>
