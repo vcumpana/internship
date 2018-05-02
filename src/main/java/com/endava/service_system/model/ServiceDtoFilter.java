@@ -15,8 +15,8 @@ public class ServiceDtoFilter {
     private Integer size;
     private Integer min;
     private Integer max;
-    private Integer categoryId;
-    private Integer companyId;
+    private Long categoryId;
+    private Long companyId;
     private Sort.Direction direction;
     private String categoryName;
     private String companyName;

@@ -15,4 +15,9 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface ContractDao extends JpaRepository<Contract,Long> {
 
+    @Query("select c from Contract c join fetch c.company join fetch c.user where c.id=:id")
+    Contract getContractWithDetails(@Param("id") long id);
+
+    @Query("select c from Contract c join fetch c.company co join fetch co.credential cr where cr.username=:username")
+    List<Contract> getAllContractsByCompanyUsername(@Param("username")String companyUsername);
 }

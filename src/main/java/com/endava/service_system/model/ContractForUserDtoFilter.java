@@ -15,8 +15,8 @@ public class ContractForUserDtoFilter {
     private String username;
     private Integer page;
     private Integer size;
-    private Integer categoryId;
-    private Integer companyId;
+    private Long categoryId;
+    private Long companyId;
     private Sort.Direction direction;
     private String categoryName;
     private String companyName;
