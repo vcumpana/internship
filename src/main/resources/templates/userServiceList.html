@@ -40,6 +40,13 @@
                 <a class="nav-link" href="/user/cabinet">Personal cabinet <i class="fa fa-user"
                                                                              style="font-size:16px; color:white"></i></a>
             </li>
+            <li class="nav-item fa-stack">
+                <a class="nav-link" href="/user/notifications">
+                    <i class="fa fa-envelope fa-stack-2x" style="font-size: 20px; color:white">
+                        <i class="fa fa-circle fa-stack-1x" id="unreadMessages" style="color:red; font-size: 12px; top:-2px; left: 8px; display:none;"></i>
+                    </i>
+                </a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="/logout">Logout <i class="fa fa-sign-out"
                                                              style="font-size:16px; color:white"></i></a>
@@ -131,12 +138,11 @@
                 </button>
             </div>
             <div class="modal-body">
-                Category: <span id="categoryInModal"></span><br/>
                 Company: <span id="companyInModal"></span><br/>
-                Title: <span id="titleInModal"></span><br/>
-                Price: <span id="priceInModal"></span><br/>
-                Description: <br/>
-                <div id="descriptionInModal"></div>
+                Service category: <span id="categoryInModal"></span><br/>
+                Service title: <span id="titleInModal"></span><br/>
+                Service price per month: <span id="priceInModal"></span><br/>
+                Description:<span id="descriptionInModal"></span>
                 <br/>
                 <h5>Sign contract</h5>
                 <div class="form-group row">

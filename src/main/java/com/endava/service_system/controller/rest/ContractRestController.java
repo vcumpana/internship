@@ -7,8 +7,11 @@ import com.endava.service_system.enums.UserType;
 import com.endava.service_system.model.Contract;
 import com.endava.service_system.model.ContractForUserDtoFilter;
 import com.endava.service_system.service.CompanyService;
+import com.endava.service_system.model.Notification;
 import com.endava.service_system.service.ContractService;
 import com.endava.service_system.utils.AuthUtils;
+import com.endava.service_system.service.NotificationService;
+import com.endava.service_system.service.NotificationService;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,21 +34,25 @@ public class ContractRestController {
     private ContractService contractService;
     private CompanyService companyService;
     private AuthUtils authUtils;
+    private NotificationService notificationService;
 
-    public ContractRestController(ContractService contractService, CompanyService companyService, AuthUtils authUtils) {
+    public ContractRestController(ContractService contractService, CompanyService companyService, AuthUtils authUtils, NotificationService notificationService) {
         this.contractService = contractService;
         this.companyService = companyService;
         this.authUtils = authUtils;
+        this.notificationService = notificationService;
     }
 
     @PostMapping("/newContract")
-    public ResponseEntity newContract(@RequestBody ContractDtoFromUser contractDto){
-        if (contractService.saveContract(contractDto) == null)
-            return new ResponseEntity(HttpStatus.CONFLICT);
-        return new ResponseEntity(HttpStatus.CREATED);
+    public ResponseEntity newContract(@RequestBody ContractDtoFromUser contractDto) {
+        if (contractService.saveContract(contractDto) != null) {
+            notificationService.saveAboutContractFromUser(contractDto);
+            return new ResponseEntity(HttpStatus.CREATED);
+        }
+        return new ResponseEntity(HttpStatus.CONFLICT);
     }
 
-    @GetMapping(value={"user/contracts","company/contracts"})
+    @GetMapping(value = {"user/contracts", "company/contracts"})
     @PreAuthorize("hasRole('ROLE_USER')")
     public Map<String,Object> getUserContracts(@RequestParam(value = "categoryId",required = false) Long categoryId,
                                                @RequestParam(value = "size",required = false) Integer size,
@@ -87,6 +94,7 @@ public class ContractRestController {
                     contract.setStatus(ACTIVE);
                 else if(action.toLowerCase().equals("deny"))
                     contract.setStatus(DENIED);
+                notificationService.saveAboutContractFromCompany(contract);
                 contractService.update(contract);
             }
         }
@@ -96,30 +104,29 @@ public class ContractRestController {
         return modelAndView;
     }
 
-    private UserType getUserType(Authentication authentication){
+    private UserType getUserType(Authentication authentication) {
         UserType userType;
-        String authority=authentication.getAuthorities().stream().findAny().get().getAuthority();
-        if(authority.equalsIgnoreCase("ROLE_COMPANY")){
-            userType=UserType.COMPANY;
-        }else{
-            userType=UserType.USER;
+        String authority = authentication.getAuthorities().stream().findAny().get().getAuthority();
+        if (authority.equalsIgnoreCase("ROLE_COMPANY")) {
+            userType = UserType.COMPANY;
+        } else {
+            userType = UserType.USER;
         }
         return userType;
     }
 
     //TODO refactore Services has same method
-    private Sort.Direction getDirection(String order){
+    private Sort.Direction getDirection(String order) {
         Sort.Direction direction;
-        if(order==null){
-            direction=null;
-        }else if(order.equalsIgnoreCase("asc")) {
-            direction =Sort.Direction.ASC;
-        }else if(order.equalsIgnoreCase("desc")){
-            direction =Sort.Direction.DESC;
-        }else{
-            direction=null;
+        if (order == null) {
+            direction = null;
+        } else if (order.equalsIgnoreCase("asc")) {
+            direction = Sort.Direction.ASC;
+        } else if (order.equalsIgnoreCase("desc")) {
+            direction = Sort.Direction.DESC;
+        } else {
+            direction = null;
         }
         return direction;
     }
-
 }

@@ -5,6 +5,7 @@ var size = 10;
 
 $(document).ready(function () {
     getDataForTable();
+    isUnreadMessages();
 });
 
 $("#activateFilter").click(function () {
@@ -100,4 +101,16 @@ function verifyIfNextExists() {
         $("#nextPage").attr("disabled", false);
     }
 
+}
+
+function isUnreadMessages() {
+    $.ajax({
+        type: "GET",
+        url: "/notification/getNumberOfUnread",
+        success: function (result) {
+            if (result > 0) {
+                $("#unreadMessages").css('display', 'inline');
+            }
+        }
+    });
 }

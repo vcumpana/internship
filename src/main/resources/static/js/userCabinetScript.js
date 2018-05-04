@@ -6,6 +6,10 @@ var patternForPassword = /^(?=.*[A-Z])(?=.*\d)(?=.*[._?!])[A-Za-z\d._?!]{8,}$/;
 var errorMessagePassword = "<strong>Warning!</strong> Password must contain at least 8 chars, that includes at least one number, upper case character and symbol.";
 var errorMessageRepeatedPassword = "<strong>Warning!</strong> Password must be the same.";
 
+$(document).ready(function () {
+    isUnreadMessages();
+});
+
 $("a[scopeInThisDoc='update']").click(function () {
     var value = $(this).attr("value");
     hideCurrentButton(value);
@@ -249,4 +253,16 @@ function toNeutral(feedback, input){
     $(feedback).text("");
     $(input).removeClass("is-invalid");
     $(input).removeClass("is-valid");
+}
+
+function isUnreadMessages() {
+    $.ajax({
+        type: "GET",
+        url: "/notification/getNumberOfUnread",
+        success: function (result) {
+            if (result > 0) {
+                $("#unreadMessages").css('display', 'inline');
+            }
+        }
+    });
 }

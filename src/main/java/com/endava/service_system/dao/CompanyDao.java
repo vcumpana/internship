@@ -38,8 +38,4 @@ public interface CompanyDao extends JpaRepository<Company,Long> {
 
     @Query("SELECT cr.username FROM Company c INNER JOIN c.credential cr WHERE c.name=:name")
     Optional<String> getCredentialUsernameByName(@Param("name") String name);
-
-
-    @Query("SELECT c FROM Company c INNER JOIN FETCH c.credential cr WHERE cr.username=:username")
-    Optional<Company> getCompanyNameByUsername(@Param("username") String username);
 }
