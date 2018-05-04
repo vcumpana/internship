@@ -4,8 +4,10 @@ var currentServiceId;
 var currentPage = 1;
 var size = 10;
 var maxPageSize;
+
 $(document).ready(function () {
     getDataForTable();
+    isUnreadMessages();
 });
 
 $("#signContract").click(function () {
@@ -40,11 +42,15 @@ $("#activateFilter").click(function () {
 $("#nextPage").click(function () {
     currentPage++;
     getDataForTable();
+    verifyIfPreviousExists();
+    verifyIfNextExists();
 });
 
 $("#previousPage").click(function () {
     currentPage--;
     getDataForTable();
+    verifyIfPreviousExists();
+    verifyIfNextExists();
 });
 
 function getDataForTable() {
@@ -58,6 +64,8 @@ function getDataForTable() {
             fillTableWithServices();
         }
     });
+    verifyIfPreviousExists();
+    verifyIfNextExists();
 }
 
 function fillTableWithServices() {
@@ -141,4 +149,16 @@ function verifyIfNextExists() {
         $("#nextPage").removeClass("disabled");
         $("#nextPage").attr("disabled", false);
     }
+}
+
+function isUnreadMessages() {
+    $.ajax({
+        type: "GET",
+        url: "/notification/getNumberOfUnread",
+        success: function (result) {
+            if (result > 0) {
+                $("#unreadMessages").css('display', 'inline');
+            }
+        }
+    });
 }

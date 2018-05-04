@@ -70,7 +70,7 @@ public class CompanyService {
     }
 
     public Optional<Company> getCompanyNameByUsername(String name) {
-        return companyDao.getCompanyNameByUsername(name);
+        return companyDao.getByUsername(name);
     }
 
     public void addNewService(Service service) {
