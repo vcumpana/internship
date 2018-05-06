@@ -12,7 +12,7 @@ public class UserToUserDtoToShowConverter implements Converter<User, UserDtoToSh
         UserDtoToShow userDtoToShow = new UserDtoToShow();
         userDtoToShow.setName(user.getName());
         userDtoToShow.setSurname(user.getSurname());
-        userDtoToShow.setEmail(user.getEmail());
+        userDtoToShow.setEmail(user.getCredential().getEmail());
         return userDtoToShow;
     }
 }

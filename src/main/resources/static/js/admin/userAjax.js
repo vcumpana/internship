@@ -1,10 +1,10 @@
 //TODO change theader
-function getUsersFromDb(status) {
+function getUsersFromDb(userStatus) {
 
     request = $.ajax({
         type: "GET",
         contentType: "application/json; charset=utf-8",
-        url: HOST+"/admin/users?status="+status,
+        url: HOST+"/admin/users?status="+userStatus,
         dataType: "json"
     });
     request.done(function (response, textStatus, xhr) {
@@ -13,6 +13,7 @@ function getUsersFromDb(status) {
             displayMessage("Displaying users..");
             //check if we are displaying categories now if yes then show it;;
             displayUsersInUi(xhr.responseJSON);
+            selectButton([$("#navbarDropdownMenuLink1"),$(getUsersIdForStatus(userStatus))]);
             //addCategoryInUi(xhr.responseJSON);
         }else{
             displayMessage("There isn't any data");
@@ -26,6 +27,18 @@ function getUsersFromDb(status) {
             displayMessage("Error , please try it latter");
         }
     })
+}
+
+function getUsersIdForStatus(status){
+    if(status==""){
+        return "#all_users";
+    }else if(status=='WAITING'){
+        return "#not_verified_users"
+    }else if (status=='DENIED'){
+        return "#denied_users"
+    }else{
+        return "";
+    }
 }
 
 function updateUser(name,data){

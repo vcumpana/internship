@@ -1,18 +1,30 @@
 function displayCompanies(arr) {
-
-    addObjectTheads(arr[0]);
+    var theadsForCompany={
+        'Company Name':null,
+        'Email':null,
+        'Username':null,
+        'Bank Account':null,
+        'Address':null,
+        'Company status':null
+    };
+    addObjectTheads(theadsForCompany);
+    console.log(arr)
     var tags='';
     var comanyNames = [];
     Object.keys(arr).forEach(nr => {
-        comanyNames.push(arr[nr]["companyName"]);
-        tags += `<tr value="` + arr[nr]["companyName"] + `">`;
-        Object.keys(arr[nr]).forEach(key => {
-            tags += `<td id="company_` + key + `">` + arr[nr][key] + `</td>`;
-        });
+        comanyNames.push(arr[nr]["username"]);
+    tags += `<tr value="` + arr[nr]["username"] + `">`;
+    //Object.keys(arr[nr]).forEach(key => {
+    tags += `<td id="company_name">` + arr[nr]['companyName'] + `</td>`;
+    tags += `<td id="company_surname">` + arr[nr]['email'] + `</td>`;
+    tags += `<td id="company_username">` + arr[nr]['username'] + `</td>`;
+    tags += `<td id="company_bank_account">` + arr[nr]['bankAccount'] + `</td>`;
+    tags += `<td id="company_address">` + arr[nr]['address'] + `</td>`;
+    tags += `<td id="company_status">` + arr[nr]['status'] + `</td>`;
+    //});
+    tags += `</tr>`;
+});
 
-        ;
-        tags += `</tr>`;
-    });
     $("#tbody").empty();
     $("#tbody").append(tags);
     comanyNames.forEach(function(company){
@@ -21,7 +33,8 @@ function displayCompanies(arr) {
             var status=$('tr[value="'+company+'"] #company_status').text();
             console.log($('#input_company_status input[value="'+status+'"]'));
             $('#input_company_status input[value="'+status+'"]').prop("checked", true);
-            $("#company_name").text(company);
+            console.log(company);
+            $("#edit_company_name").text(company);
             $("#editCompany").dialog('option', 'title', "Edit company");
             //$("#input_company_status").text(company);
             $("#editCompany").dialog("open");

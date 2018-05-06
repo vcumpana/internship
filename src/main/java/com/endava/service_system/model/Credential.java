@@ -20,6 +20,7 @@ public class Credential {
     @Column(unique = true)
     private String username;
     private String password;
+    private String email;
     @Enumerated(EnumType.STRING)
     private UserStatus status;
     @Enumerated(EnumType.STRING)

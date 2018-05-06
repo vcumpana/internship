@@ -1,16 +1,25 @@
 function displayUsersInUi(arr) {
-    addObjectTheads(arr[0]);
+    var theadsForUser={
+        'Name':null,
+        'Surname':null,
+        'Username':null,
+        'Email':null,
+        'User status':null
+    };
+    addObjectTheads(theadsForUser);
     console.log(arr)
     var tags='';
     var users = [];
     Object.keys(arr).forEach(nr => {
         users.push(arr[nr]["username"]);
         tags += `<tr value="` + arr[nr]["username"] + `">`;
-        Object.keys(arr[nr]).forEach(key => {
-            tags += `<td id="company_` + key + `">` + arr[nr][key] + `</td>`;
-        });
-
-        ;
+        //Object.keys(arr[nr]).forEach(key => {
+        tags += `<td id="company_name">` + arr[nr]['name'] + `</td>`;
+        tags += `<td id="company_surname">` + arr[nr]['surname'] + `</td>`;
+        tags += `<td id="company_username">` + arr[nr]['username'] + `</td>`;
+        tags += `<td id="company_email">` + arr[nr]['email'] + `</td>`;
+        tags += `<td id="company_status">` + arr[nr]['status'] + `</td>`;
+        //});
         tags += `</tr>`;
     });
     $("#tbody").empty();
@@ -21,7 +30,9 @@ function displayUsersInUi(arr) {
             var status=$('tr[value="'+user+'"] #company_status').text();
             $('#input_company_status input[value="'+status+'"]').prop("checked", true);
             console.log(user);
-            $('#editCompany #company_name').text(user);
+            console.log("wtf2");
+            $("#edit_company_name").text(user);
+            console.log("wtf2");
             //$("#input_company_status").text(company);
             $("#editCompany").dialog('option', 'title', "Edit user");
             $("#editCompany").dialog("open");

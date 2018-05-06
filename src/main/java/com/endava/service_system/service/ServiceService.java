@@ -95,4 +95,8 @@ public class ServiceService {
     public void setCompanyService(CompanyService companyService) {
         this.companyService = companyService;
     }
+
+    public Long getPagesSize(ServiceDtoFilter filter) {
+        return serviceToUserDao.getPagesSize(filter);
+    }
 }

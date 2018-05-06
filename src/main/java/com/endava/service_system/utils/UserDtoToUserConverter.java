@@ -20,11 +20,12 @@ public class UserDtoToUserConverter implements Converter<UserDto, User> {
         credential.setPassword(new BCryptPasswordEncoder().encode(userDto.getPassword()));
         credential.setStatus(WAITING);
         credential.setRole(Role.ROLE_USER);
+        credential.setEmail(userDto.getEmail());
         User user = new User();
         user.setCredential(credential);
         user.setName(userDto.getName());
         user.setSurname(userDto.getSurname());
-        user.setEmail(userDto.getEmail());
+
         return user;
     }
 }

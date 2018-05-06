@@ -1,4 +1,5 @@
 var listOfInvoices = [];
+var maxPage;
 var currentPage = 1;
 var size = 10;
 
@@ -31,12 +32,13 @@ function getDataForTable() {
         type: "GET",
         url: url,
         success: function (result) {
-            listOfInvoices = result;
+            maxPage=result.pages
+            listOfInvoices = result.invoices;
             fillTableWithInvoices();
+            verifyIfPreviousExists();
+            verifyIfNextExists();
         }
     });
-    verifyIfPreviousExists();
-    verifyIfNextExists();
 }
 
 function makeURL(page) {
@@ -90,18 +92,12 @@ function verifyIfPreviousExists() {
 }
 
 function verifyIfNextExists() {
-    var url = makeURL(currentPage + 1);
-    $.ajax({
-        type: "GET",
-        url: url,
-        success: function (result) {
-            if (result.length === 0) {
-                $("#nextPage").addClass("disabled");
-                $("#nextPage").attr("disabled", true);
-            } else {
-                $("#nextPage").removeClass("disabled");
-                $("#nextPage").attr("disabled", false);
-            }
-        }
-    });
+    if (currentPage===maxPage||maxPage===0) {
+        $("#nextPage").addClass("disabled");
+        $("#nextPage").attr("disabled", true);
+    } else {
+        $("#nextPage").removeClass("disabled");
+        $("#nextPage").attr("disabled", false);
+    }
+
 }

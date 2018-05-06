@@ -32,4 +32,8 @@ public class InvoiceService {
     public void setInvoiceDao(InvoiceDao invoiceDao){
         this.invoiceDao=invoiceDao;
     }
+
+    public Long getInvoicePagesNr(InvoiceFilter filter) {
+        return invoiceEntityManagerDao.getPagesSizeForFilter(filter);
+    }
 }

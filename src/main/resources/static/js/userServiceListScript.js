@@ -3,7 +3,7 @@ var currentCompanyName = "";
 var currentServiceId;
 var currentPage = 1;
 var size = 10;
-
+var maxPageSize;
 $(document).ready(function () {
     getDataForTable();
 });
@@ -40,15 +40,11 @@ $("#activateFilter").click(function () {
 $("#nextPage").click(function () {
     currentPage++;
     getDataForTable();
-    verifyIfPreviousExists();
-    verifyIfNextExists();
 });
 
 $("#previousPage").click(function () {
     currentPage--;
     getDataForTable();
-    verifyIfPreviousExists();
-    verifyIfNextExists();
 });
 
 function getDataForTable() {
@@ -57,12 +53,11 @@ function getDataForTable() {
         type: "GET",
         url: url,
         success: function (result) {
-            listOfServices = result;
+            listOfServices = result.services;
+            maxPageSize=result.pages;
             fillTableWithServices();
         }
     });
-    verifyIfPreviousExists();
-    verifyIfNextExists();
 }
 
 function fillTableWithServices() {
@@ -77,6 +72,8 @@ function fillTableWithServices() {
         row += "<td><i class=\"fa fa-paw filter\" onclick='showServiceInfo(" + listOfServices[i].id + ")'></i></td>";
         row += "</tr>";
         $("#tableWithServices tbody").append(row);
+        verifyIfPreviousExists();
+        verifyIfNextExists();
     }
 }
 
@@ -137,17 +134,11 @@ function verifyIfPreviousExists() {
 
 function verifyIfNextExists() {
     var url = makeURL(currentPage + 1);
-    $.ajax({
-        type: "GET",
-        url: url,
-        success: function (result) {
-            if (result.length === 0) {
-                $("#nextPage").addClass("disabled");
-                $("#nextPage").attr("disabled", true);
-            } else {
-                $("#nextPage").removeClass("disabled");
-                $("#nextPage").attr("disabled", false);
-            }
-        }
-    });
+    if (currentPage === maxPageSize||maxPageSize==0) {
+        $("#nextPage").addClass("disabled");
+        $("#nextPage").attr("disabled", true);
+    } else {
+        $("#nextPage").removeClass("disabled");
+        $("#nextPage").attr("disabled", false);
+    }
 }

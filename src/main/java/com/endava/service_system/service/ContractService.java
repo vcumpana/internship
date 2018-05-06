@@ -77,6 +77,10 @@ public class ContractService {
         return contractsToUserDao.getContracts(filter);
     }
 
+    public Long getPagesSizeForFilter(ContractForUserDtoFilter filter){
+        return contractsToUserDao.getPagesSizeForFilter(filter);
+    }
+
     public void update(Contract contract) {
         contractDao.save(contract);
     }
