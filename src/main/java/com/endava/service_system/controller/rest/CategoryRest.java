@@ -34,7 +34,6 @@ public class CategoryRest {
     }
 
     @GetMapping("/category")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_COMPANY','ROLE_USER')")
     public ResponseEntity getAllCategories() {
         return new ResponseEntity(categoryService.getAll(), HttpStatus.OK);
     }

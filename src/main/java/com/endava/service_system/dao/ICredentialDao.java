@@ -31,4 +31,7 @@ public interface ICredentialDao extends JpaRepository<Credential,Long>{
 	@Modifying
 	@Query("UPDATE Credential SET password=:password WHERE username=:username")
 	int updatePassword(@Param("username") String username,@Param("password") String password);
+
+	Optional<Credential> getByEmail(String email);
+
 }

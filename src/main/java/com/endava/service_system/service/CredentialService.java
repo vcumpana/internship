@@ -5,6 +5,7 @@ import com.endava.service_system.dto.CredentialDTO;
 import com.endava.service_system.enums.UserStatus;
 import com.endava.service_system.model.Company;
 import com.endava.service_system.model.Credential;
+import com.endava.service_system.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class CredentialService {
         return credentialDao.updateStatus(username,status);
     }
 
-    private int updatePassword(String username,String password){
+    public int updatePassword(String username,String password){
         return credentialDao.updatePassword(username,password);
     }
 
@@ -70,5 +71,9 @@ public class CredentialService {
         this.passwordEncoder=passwordEncoder;
     }
 
+
+    public Optional<Credential> getByEmail(String email) {
+        return credentialDao.getByEmail(email);
+    }
 
 }

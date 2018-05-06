@@ -8,9 +8,11 @@ import com.endava.service_system.service.ServiceService;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -55,7 +57,8 @@ public class ServiceRestController {
 //    }
 
     @GetMapping("/services")
-    public List<ServiceToUserDto> getServices(@RequestParam(value = "categoryId", required = false) Long categoryId,
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public Map<String,Object> getServices(@RequestParam(value = "categoryId", required = false) Long categoryId,
                                               @RequestParam(value = "size", required = false) Integer size,
                                               @RequestParam(value = "page", required = false) Integer page,
                                               @RequestParam(required = false, value = "min") Integer min,
@@ -64,6 +67,7 @@ public class ServiceRestController {
                                               @RequestParam(required = false, value = "category") String categoryName,
                                               @RequestParam(required = false, value = "max") Integer max,
                                               @RequestParam(required = false, value = "orderByPrice") String order) {
+        Map<String,Object> map=new HashMap<>();
         Sort.Direction direction = getDirection(order);
         ServiceDtoFilter filter = ServiceDtoFilter.builder()
                 .size(size)
@@ -76,7 +80,9 @@ public class ServiceRestController {
                 .max(max)
                 .page(page)
                 .build();
-        return serviceService.getServicesWithFilter(filter);
+        map.put("services",serviceService.getServicesWithFilter(filter));
+        map.put("pages",serviceService.getPagesSize(filter));
+        return map;
     }
 
     @GetMapping("/{companyName}/services")

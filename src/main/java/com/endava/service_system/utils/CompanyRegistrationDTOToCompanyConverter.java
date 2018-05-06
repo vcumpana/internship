@@ -22,7 +22,7 @@ public class CompanyRegistrationDTOToCompanyConverter implements Converter<Compa
         credential.setUsername(companyRegistrationDTO.getUsername());
         credential.setPassword(companyRegistrationDTO.getPassword());
         company.setAddress(companyRegistrationDTO.getAddress());
-        company.setEmail(companyRegistrationDTO.getEmail());
+        credential.setEmail(companyRegistrationDTO.getEmail());
         credential.setStatus(ACCEPTED);
         credential.setRole(ROLE_COMPANY);
         company.setCredential(credential);

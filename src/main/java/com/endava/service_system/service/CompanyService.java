@@ -23,12 +23,8 @@ public class CompanyService {
     private CompanyDao companyDao;
     private CredentialService credentialService;
     private ConversionService conversionService;
-
-
-
     private AuthUtils authUtils;
     private ServiceService serviceService;
-
 
     public Company save(Company company) {
         Credential credential = credentialService.save(company.getCredential());
@@ -83,24 +79,6 @@ public class CompanyService {
         services.add(service);
         company.setServices(services);
         companyDao.save(company);
-    }
-
-//    public void addNewInvoice(Invoice invoice) {
-//        Company company = companyDao.getByUsername(authUtils.getAuthenticatedUsername()).get();
-//        List<Invoice> services = serviceService.getServicesByCompanyName(company.getName());
-//        services.add(service);
-//        company.setServices(services);
-//        companyDao.save(company);
-//    }
-
-    public int updateStatusAndPassword(String name, CredentialDTO credential) {
-        Optional<String> username=companyDao.getCredentialUsernameByName(name);
-        if(username.isPresent()){
-            return credentialService.updateStatusAndPassword(username.get(),credential);
-        }else{
-            username.orElseThrow(()->new RuntimeException("Company not found"));
-        }
-        return 0;
     }
 
     @Autowired

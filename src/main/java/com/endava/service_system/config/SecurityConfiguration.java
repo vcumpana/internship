@@ -38,8 +38,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.authorizeRequests()
-                .antMatchers("/", "/login", "/index","/user/registration","/company/registration", "/services").permitAll()
-                .antMatchers("/logout").authenticated()
+                .antMatchers("/", "/login", "/index", "/services").permitAll()
+                .antMatchers("/user/registration","/company/registration").not().authenticated()
+                .antMatchers("/logout","/category").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_COMPANY')")
+                .antMatchers("/invoces").access("hasRole('ROLE_USER') or hasRole('ROLE_COMPANY')")
                 .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
                 .antMatchers("/user/**").access("hasRole('ROLE_USER')")
                 .antMatchers("/company/**").access("hasRole('ROLE_COMPANY')")

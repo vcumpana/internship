@@ -1,7 +1,7 @@
 var listOfContracts = [];
 var currentPage = 1;
 var size = 10;
-
+var maxPageSize;
 $(document).ready(function () {
     getDataForTable();
 });
@@ -21,8 +21,6 @@ $("#nextPage").click(function () {
 $("#previousPage").click(function () {
     currentPage--;
     getDataForTable();
-    verifyIfPreviousExists();
-    verifyIfNextExists();
 });
 
 function getDataForTable() {
@@ -31,12 +29,13 @@ function getDataForTable() {
         type: "GET",
         url: url,
         success: function (result) {
-            listOfContracts = result;
+            listOfContracts = result.contracts;
+            maxPageSize=result.pages;
             fillTableWithContracts();
+            verifyIfPreviousExists();
+            verifyIfNextExists();
         }
     });
-    verifyIfPreviousExists();
-    verifyIfNextExists();
 }
 
 function makeURL(page){
@@ -98,18 +97,11 @@ function verifyIfPreviousExists() {
 }
 
 function verifyIfNextExists() {
-    var url = makeURL(currentPage + 1);
-    $.ajax({
-        type: "GET",
-        url: url,
-        success: function (result) {
-            if (result.length === 0) {
-                $("#nextPage").addClass("disabled");
-                $("#nextPage").attr("disabled", true);
-            } else {
-                $("#nextPage").removeClass("disabled");
-                $("#nextPage").attr("disabled", false);
-            }
-        }
-    });
+    if (currentPage === maxPageSize||maxPageSize===0) {
+        $("#nextPage").addClass("disabled");
+        $("#nextPage").attr("disabled", true);
+    } else {
+        $("#nextPage").removeClass("disabled");
+        $("#nextPage").attr("disabled", false);
+    }
 }

@@ -33,7 +33,8 @@ public interface CompanyDao extends JpaRepository<Company,Long> {
 
     Optional<Company> getByName(String name);
 
-    Optional<Company> getByEmail(String email);
+    @Query("SELECT c FROM Company c INNER JOIN c.credential cred WHERE cred.email=:email")
+    Optional<Company> getByEmail(@Param("email")String email);
 
     @Query("SELECT cr.username FROM Company c INNER JOIN c.credential cr WHERE c.name=:name")
     Optional<String> getCredentialUsernameByName(@Param("name") String name);

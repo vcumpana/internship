@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.endava.service_system.enums.ContractStatus.ACTIVE;
 import static com.endava.service_system.enums.ContractStatus.DENIED;
@@ -45,15 +47,16 @@ public class ContractRestController {
 
     @GetMapping(value={"user/contracts","company/contracts"})
     @PreAuthorize("hasRole('ROLE_USER')")
-    public List<ContractForShowingDto> getUserContracts(@RequestParam(value = "categoryId",required = false) Long categoryId,
-                                                        @RequestParam(value = "size",required = false) Integer size,
-                                                        @RequestParam(value = "page",required = false) Integer page,
-                                                        @RequestParam(value = "status",required = false) ContractStatus contractStatus,
-                                                        @RequestParam(required = false,value = "companyId") Long companyId,
-                                                        @RequestParam(required = false,value = "company") String companyName,
-                                                        @RequestParam(required = false,value = "category") String categoryName,
-                                                        @RequestParam(required = false,value = "orderByEndDate")String order,
-                                                        Authentication authentication){
+    public Map<String,Object> getUserContracts(@RequestParam(value = "categoryId",required = false) Long categoryId,
+                                               @RequestParam(value = "size",required = false) Integer size,
+                                               @RequestParam(value = "page",required = false) Integer page,
+                                               @RequestParam(value = "status",required = false) ContractStatus contractStatus,
+                                               @RequestParam(required = false,value = "companyId") Long companyId,
+                                               @RequestParam(required = false,value = "company") String companyName,
+                                               @RequestParam(required = false,value = "category") String categoryName,
+                                               @RequestParam(required = false,value = "orderByEndDate")String order,
+                                               Authentication authentication){
+        Map<String,Object> map=new HashMap<>();
         String username=authentication.getName();
         Sort.Direction direction=getDirection(order);
         UserType userType=getUserType(authentication);
@@ -69,7 +72,28 @@ public class ContractRestController {
                 .companyName(companyName)
                 .page(page)
                 .build();
-        return contractService.getContracts(filter);
+        map.put("contracts",contractService.getContracts(filter));
+        map.put("pages",contractService.getPagesSizeForFilter(filter));
+        return map;
+    }
+
+    @GetMapping("/contract/{id}/{action}")
+    public ModelAndView changeContractStatus(@PathVariable("id") Long contractId, @PathVariable("action") String action,
+                                             HttpServletRequest request){
+        Contract contract = contractService.getContractById(contractId);
+        if (contract != null) {
+            if(contract.getCompany().getCredential().getUsername().equals((authUtils.getAuthenticatedUsername()))){
+                if(action.toLowerCase().equals("approve"))
+                    contract.setStatus(ACTIVE);
+                else if(action.toLowerCase().equals("deny"))
+                    contract.setStatus(DENIED);
+                contractService.update(contract);
+            }
+        }
+        String referer = request.getHeader("Referer");
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("redirect:"+ referer);
+        return modelAndView;
     }
 
     private UserType getUserType(Authentication authentication){
@@ -98,21 +122,4 @@ public class ContractRestController {
         return direction;
     }
 
-    @GetMapping("/contract/{id}/{action}")
-    public ModelAndView changeContractStatus(@PathVariable("id") Long contractId, @PathVariable("action") String action,
-                                             HttpServletRequest request){
-        Contract contract = contractService.getContractById(contractId);
-        if (contract != null) {
-            if(contract.getCompany().getCredential().getUsername().equals((authUtils.getAuthenticatedUsername()))){
-                if(action.toLowerCase().equals("approve"))
-                    contract.setStatus(ACTIVE);
-                else if(action.toLowerCase().equals("deny"))
-                    contract.setStatus(DENIED);
-                contractService.update(contract);
-            }
-        }
-        String referer = request.getHeader("Referer");
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("redirect:"+ referer);
-        return modelAndView;   }
 }

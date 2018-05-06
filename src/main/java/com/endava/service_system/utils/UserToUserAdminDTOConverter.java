@@ -10,7 +10,7 @@ public class UserToUserAdminDTOConverter implements Converter<User, UserAdminDTO
     @Override
     public UserAdminDTO convert(User source) {
         UserAdminDTO adminDTO=new UserAdminDTO();
-        adminDTO.setEmail(source.getEmail());
+        adminDTO.setEmail(source.getCredential().getEmail());
         adminDTO.setName(source.getName());
         adminDTO.setStatus(source.getCredential().getStatus());
         adminDTO.setSurname(source.getSurname());
