@@ -1,10 +1,10 @@
-var listOfContracts = [];
+var listOfInvoices = [];
 var ascArrow = "<i class=\"fa fa-arrow-down\"></i>";
 var descArrow = "<i class=\"fa fa-arrow-up\"></i>";
 var arr = new Array();
 
 $(document).ready(function () {
-    downloadContracts();
+    downloadInvoices();
 });
 
 $('#select_all').change(function() {
@@ -18,19 +18,19 @@ function fillArray() {
     });
 }
 
-function downloadContracts() {
+function downloadInvoices() {
     $.ajax({
         type: "GET",
-        url: "/company/contracts/",
+        url: "/invoices/",
         success: function (result) {
-            listOfContracts = result.contracts;
+            listOfInvoices = result.invoices;
             //  listOfContracts.sort(comparatorForCategory);
-            fillTableWithContracts();
+            fillTableWithInvoices();
         }
     });
 }
 
-function sendContractsForInvoicesCreation() {
+function sendInvoices() {
     fillArray();
     data={
          info :arr
@@ -38,13 +38,35 @@ function sendContractsForInvoicesCreation() {
     console.log(data);
     $.ajax({
         type: "POST",
-        url: "/company/newinvoices/",
+        url: "/company/sendinvoices/",
         data: {info :arr},
         success: function (result) {
-            $("#successCreation").show();
+            $("#successSending").show();
             window.setTimeout(function () {
-                $("#successCreation").hide();
+                $("#successSending").hide();
             }, 5000);
+            downloadInvoices();
+        }
+    });
+    arr.length = 0;
+}
+
+function cancelInvoices() {
+    fillArray();
+    data={
+        info :arr
+    };
+    console.log(data);
+    $.ajax({
+        type: "POST",
+        url: "/company/cancelinvoices/",
+        data: {info :arr},
+        success: function (result) {
+            $("#successCancel").show();
+            window.setTimeout(function () {
+                $("#successCancel").hide();
+            }, 5000);
+            downloadInvoices();
         }
     });
     arr.length = 0;
@@ -67,38 +89,34 @@ $("th[scopeForSort='sort']").click(function () {
         setArrowForSort(field, "asc");
         $(this).attr("typeOfSort", "asc");
     }
-    fillTableWithServices();
+    fillTableWithInvoices();
 });
 
-function fillTableWithContracts() {
-    $("#tableWithContracts tbody").html("");
-    for (var i = 0; i < listOfContracts.length; i++) {
+function fillTableWithInvoices() {
+    $("#tableWithInvoices tbody").html("");
+    for (var i = 0; i < listOfInvoices.length; i++) {
         var row = "<tr>";
-        if (listOfContracts[i].contractStatus === "ACTIVE") {
-            row += "<td><input type=\"checkbox\" name='idInvoice' id=\"" + listOfContracts[i].id + "\"></td>";
+        if (listOfInvoices[i].invoiceStatus === "CREATED"){
+            row +="<td><input type=\"checkbox\" name='idInvoice' id=\"" + listOfInvoices[i].invoiceId + "\"></td>";
         } else
             row +="<td></td>";
-        //row +="<td><input type=\"checkbox\"></td>";
-        row += "<td>" + listOfContracts[i].id+ "</td>";
-        row += "<td>" + listOfContracts[i].serviceTitle + "</td>";
-        row += "<td>" + listOfContracts[i].categoryName + "</td>";
-        row += "<td>" + listOfContracts[i].startDate + "</td>";
-        row += "<td>" + listOfContracts[i].endDate + "</td>";
-        row += "<td>" + listOfContracts[i].companyName + "</td>";
-        row += "<td>" + listOfContracts[i].servicePrice + "</td>";
-        row += "<td>" + listOfContracts[i].contractStatus + "</td>";
-        if (listOfContracts[i].contractStatus === "SIGNEDBYCLIENT") {
-            row += "<td><a href=" + "/contract/" + listOfContracts[i].id + "/approve" + ">Approve</a>" + "/" + "<a href=" + "/contract/" + listOfContracts[i].id + "/deny" + ">Deny</a></td>";
-            row +="<td></td>";
-        } else if (listOfContracts[i].contractStatus === "ACTIVE"){
-            row +="<td></td>";
-            row += "<td><a href=" + "/contract/"+ listOfContracts[i].id +"/createInvoice" + ">Create invoice</a></td>";
+        row += "<td>" + listOfInvoices[i].invoiceId+ "</td>";
+        row += "<td>" + listOfInvoices[i].userTitle + "</td>";
+        row += "<td>" + listOfInvoices[i].price + "</td>";
+        row += "<td>" + listOfInvoices[i].serviceTitle + "</td>";
+        row += "<td>" + listOfInvoices[i].fromDate + "</td>";
+        row += "<td>" + listOfInvoices[i].tillDate + "</td>";
+        row += "<td>" + listOfInvoices[i].paymentDate + "</td>";
+        row += "<td>" + listOfInvoices[i].invoiceStatus + "</td>";
+        if (listOfInvoices[i].invoiceStatus === "CREATED") {
+            row += "<td><a href=" + "/invoice/" + listOfInvoices[i].invoiceId + "/send" + ">Send</a>" + "/" + "<a href=" + "/invoice/" + listOfInvoices[i].invoiceId + "/cancel" + ">Cancel</a></td>";
+            row += "<td><a href=" + "/invoice/"+ listOfInvoices[i].invoiceId +"/edit" + ">Edit</a></td>";
         } else {
             row +="<td></td>";
             row +="<td></td>";
         }
         row += "</tr>";
-        $("#tableWithContracts tbody").append(row);
+        $("#tableWithInvoices tbody").append(row);
     }
 }
 

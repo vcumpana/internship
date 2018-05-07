@@ -86,6 +86,12 @@ public class CompanyController {
         return  "companyContractList";
     }
 
+    @GetMapping(value = "/company/myinvoices")
+    public String getMyInvoicesPage(Model model){
+        addCompanyNameToModel(model);
+        return  "companyInvoices";
+    }
+
     @GetMapping("/company/addservice")
     public String getCompanyAddServiceForm(Model model) {
         model.addAttribute("service", new NewServiceDTO());
