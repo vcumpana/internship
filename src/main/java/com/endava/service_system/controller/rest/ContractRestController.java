@@ -14,6 +14,7 @@ import com.endava.service_system.utils.AuthUtils;
 import com.endava.service_system.utils.AuthUtils;
 import com.endava.service_system.service.NotificationService;
 import com.endava.service_system.service.NotificationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,7 @@ public class ContractRestController {
     private AuthUtils authUtils;
     private NotificationService notificationService;
 
-    public ContractRestController(ContractService contractService, CompanyService companyService, AuthUtils authUtils) {
+    public ContractRestController(ContractService contractService, CompanyService companyService, AuthUtils authUtils,NotificationService notificationService) {
         this.contractService = contractService;
         this.companyService = companyService;
         this.authUtils = authUtils;
