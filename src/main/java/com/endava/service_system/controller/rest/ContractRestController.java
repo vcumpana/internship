@@ -7,8 +7,10 @@ import com.endava.service_system.enums.UserType;
 import com.endava.service_system.model.Contract;
 import com.endava.service_system.model.ContractForUserDtoFilter;
 import com.endava.service_system.service.CompanyService;
+import com.endava.service_system.service.CompanyService;
 import com.endava.service_system.model.Notification;
 import com.endava.service_system.service.ContractService;
+import com.endava.service_system.utils.AuthUtils;
 import com.endava.service_system.utils.AuthUtils;
 import com.endava.service_system.service.NotificationService;
 import com.endava.service_system.service.NotificationService;
@@ -21,9 +23,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.endava.service_system.enums.ContractStatus.ACTIVE;
+import static com.endava.service_system.enums.ContractStatus.DENIED;
 
 import static com.endava.service_system.enums.ContractStatus.ACTIVE;
 import static com.endava.service_system.enums.ContractStatus.DENIED;
@@ -36,7 +42,7 @@ public class ContractRestController {
     private AuthUtils authUtils;
     private NotificationService notificationService;
 
-    public ContractRestController(ContractService contractService, CompanyService companyService, AuthUtils authUtils, NotificationService notificationService) {
+    public ContractRestController(ContractService contractService, CompanyService companyService, AuthUtils authUtils) {
         this.contractService = contractService;
         this.companyService = companyService;
         this.authUtils = authUtils;
