@@ -80,6 +80,12 @@ public class UserController {
         return "userInvoices";
     }
 
+    @GetMapping(value = "/user/notifications")
+    public String userNotifications(Model model){
+        addUsernameToModel(model);
+        return "userNotifications";
+    }
+
     private void addCompaniesToModel(Model model) {
         model.addAttribute("companies",companyService.getAll());
     }

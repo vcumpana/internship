@@ -4,6 +4,7 @@ var size = 10;
 var maxPageSize;
 $(document).ready(function () {
     getDataForTable();
+    isUnreadMessages();
 });
 
 $("#activateFilter").click(function () {
@@ -21,6 +22,8 @@ $("#nextPage").click(function () {
 $("#previousPage").click(function () {
     currentPage--;
     getDataForTable();
+    verifyIfPreviousExists();
+    verifyIfNextExists();
 });
 
 function getDataForTable() {
@@ -38,15 +41,15 @@ function getDataForTable() {
     });
 }
 
-function makeURL(page){
-    var url = "/user/contracts?page=" + page + "&size=" + size+"&";
+function makeURL(page) {
+    var url = "/user/contracts?page=" + page + "&size=" + size + "&";
     var data = {
-        "status" : $("#status").val(),
-        "companyId" : $("#companyName").val(),
-        "categoryId" : $("#categoryName").val()
+        "status": $("#status").val(),
+        "companyId": $("#companyName").val(),
+        "categoryId": $("#categoryName").val()
     };
-    for(key in data){
-        if(data[key] !== ""){
+    for (key in data) {
+        if (data[key] !== "") {
             url += key + "=" + data[key] + "&";
         }
     }
@@ -65,9 +68,9 @@ function fillTableWithContracts() {
         row += "<td>" + listOfContracts[i].startDate + "</td>";
         row += "<td>" + listOfContracts[i].endDate + "</td>";
         var status = listOfContracts[i].contractStatus;
-        if(status === "SIGNEDBYCLIENT"){
+        if (status === "SIGNEDBYCLIENT") {
             row += "<td class='text-warning'><strong>Waiting</strong></td>";
-        } else if (status === "ACTIVE"){
+        } else if (status === "ACTIVE") {
             row += "<td class='text-success'><strong>Active</strong></td>";
         } else {
             row += "<td class='text-danger'><strong>Inactive</strong></td>";
@@ -78,7 +81,7 @@ function fillTableWithContracts() {
     }
 }
 
-function resetContractFilter(){
+function resetContractFilter() {
     $("#status").val("");
     $("#companyName").val("");
     $("#categoryName").val("");
@@ -104,4 +107,16 @@ function verifyIfNextExists() {
         $("#nextPage").removeClass("disabled");
         $("#nextPage").attr("disabled", false);
     }
+}
+
+function isUnreadMessages() {
+    $.ajax({
+        type: "GET",
+        url: "/notification/getNumberOfUnread",
+        success: function (result) {
+            if (result > 0) {
+                $("#unreadMessages").css('display', 'inline');
+            }
+        }
+    });
 }
