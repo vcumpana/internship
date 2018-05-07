@@ -7,12 +7,10 @@ import com.endava.service_system.enums.UserType;
 import com.endava.service_system.model.Contract;
 import com.endava.service_system.model.ContractForUserDtoFilter;
 import com.endava.service_system.service.CompanyService;
-import com.endava.service_system.service.CompanyService;
 import com.endava.service_system.model.Notification;
 import com.endava.service_system.service.ContractService;
 import com.endava.service_system.utils.AuthUtils;
 import com.endava.service_system.utils.AuthUtils;
-import com.endava.service_system.service.NotificationService;
 import com.endava.service_system.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,23 +29,14 @@ import java.util.Map;
 import static com.endava.service_system.enums.ContractStatus.ACTIVE;
 import static com.endava.service_system.enums.ContractStatus.DENIED;
 
-import static com.endava.service_system.enums.ContractStatus.ACTIVE;
-import static com.endava.service_system.enums.ContractStatus.DENIED;
-
+@RequiredArgsConstructor
 @RestController
 public class ContractRestController {
 
-    private ContractService contractService;
-    private CompanyService companyService;
-    private AuthUtils authUtils;
-    private NotificationService notificationService;
-
-    public ContractRestController(ContractService contractService, CompanyService companyService, AuthUtils authUtils,NotificationService notificationService) {
-        this.contractService = contractService;
-        this.companyService = companyService;
-        this.authUtils = authUtils;
-        this.notificationService = notificationService;
-    }
+    private final ContractService contractService;
+    private final CompanyService companyService;
+    private final AuthUtils authUtils;
+    private final NotificationService notificationService;
 
     @PostMapping("/newContract")
     public ResponseEntity newContract(@RequestBody ContractDtoFromUser contractDto) {

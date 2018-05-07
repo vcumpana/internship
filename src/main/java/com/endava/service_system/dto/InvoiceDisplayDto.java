@@ -13,6 +13,7 @@ public class InvoiceDisplayDto {
     private String companyTitle;
     private String userTitle;
     private long invoiceId;
+    private long contractId;
     private BigDecimal price;
     private InvoiceStatus invoiceStatus;
     private String serviceTitle;

@@ -16,7 +16,7 @@
             crossorigin="anonymous"></script>
     <style>
         .error-message {
-            display: none;
+            /*display: none;*/
             width: 100%;
             margin-top: .25rem;
             font-size: 80%;
@@ -42,34 +42,33 @@
                                 <!--<div class="alert alert-danger" th:unless="${param.error == null}">Wrong username or-->
                                 <!--password-->
                                 <!--</div>-->
-                                <div class="form-group blu-margin">
-                                    <select class="form-control" th:field="${invoice.contractId}"  id="dropOperator">
-                                        <option value="">Select a contract</option>
-                                        <option th:each="contract : ${contracts}" th:value="${contract.id}" th:text="${contract.id}"></option>
-                                    </select>
+                                <div class="form-group">
+                                    <label for="contractId">Contract Id</label>
+                                    <input type="text" class="form-control form-control-lg rounded-0" th:field = "*{contractId}"
+                                           id="contractId" required="" th:readonly="readonly">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="fromDate">From date</label>
-                                    <input type="date" class="form-control form-control-lg rounded-0" name="fromDate"
+                                    <input type="date" class="form-control form-control-lg rounded-0" th:field = "*{fromDate}"
                                            id="fromDate" required="">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="tillDate">Till date</label>
-                                    <input type="date" class="form-control form-control-lg rounded-0" name="tillDate"
+                                    <input type="date" class="form-control form-control-lg rounded-0" th:field = "*{tillDate}"
                                            id="tillDate" required="">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="dueDate">Due date</label>
-                                    <input type="date" class="form-control form-control-lg rounded-0" name="dueDate"
+                                    <input type="date" class="form-control form-control-lg rounded-0" th:field = "*{dueDate}"
                                            id="dueDate" required="">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="price">Price</label>
-                                    <input type="text" class="form-control form-control-lg rounded-0" name="price"
+                                    <input type="text" class="form-control form-control-lg rounded-0" th:field = "*{price}"
                                            id="price" required="">
                                     <div id="feedbackPrice"></div>
                                     <p class="error-message"
@@ -78,6 +77,9 @@
                                 </div>
                                 <button type="submit" class="btn btn-success btn-lg btn-block" id="btnRegister">
                                     Create
+                                </button>
+                                <button type="submit" class="btn btn-success btn-lg btn-block" id="btnCancel">
+                                    Cancel
                                 </button>
                                 <span> <a href="/" th:href="@{/company/serviceList}">Back to service list</a></span>
                             </form>

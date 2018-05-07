@@ -5,10 +5,7 @@ import com.endava.service_system.dao.*;
 import com.endava.service_system.dto.ContractDtoFromUser;
 import com.endava.service_system.dto.NotificationForUserDto;
 import com.endava.service_system.enums.ContractStatus;
-import com.endava.service_system.model.Company;
-import com.endava.service_system.model.Contract;
-import com.endava.service_system.model.Notification;
-import com.endava.service_system.model.User;
+import com.endava.service_system.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -104,6 +101,20 @@ public class NotificationService {
         if(notification.getRecipient().getUsername().equals(SecurityContextHolder.getContext().getAuthentication().getName())){
             notification.setNotificationStatus(READ);
         }
+        notificationDao.save(notification);
+    }
+
+    public void saveAboutInvoiceFromCompany(Invoice invoice){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Company company = invoice.getContract().getCompany();
+        User user =invoice.getContract().getUser();
+        Notification notification = new Notification();
+        notification.setRecipient(user.getCredential());
+        notification.setSender(company.getCredential());
+        notification.setMessage("Company " + company.getName() + " has sent an invoice to pay according to contract number "
+                                + invoice.getContract().getId() + " from " + invoice.getContract().getStartDate());
+        notification.setNotificationStatus(UNREAD);
+        notification.setDateTime(LocalDateTime.now());
         notificationDao.save(notification);
     }
 }

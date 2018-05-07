@@ -13,7 +13,7 @@ public class ObjectArrayToInvoiceDisplayCoverter implements Converter<Object[],I
     /**
      * user.name+' '+user.surname,company.name,invoice.id," +
      " invoice.price,invoice.invoiceStatus,service.title," +
-     " invoice.dueDate,invoice.fromDate,invoice.tillDate" +
+     " invoice.dueDate,invoice.fromDate,invoice.tillDate, contract.id" +
      */
     @Override
     public InvoiceDisplayDto convert(Object[] source) {
@@ -27,6 +27,7 @@ public class ObjectArrayToInvoiceDisplayCoverter implements Converter<Object[],I
                 .paymentDate((LocalDate) source[6])
                 .fromDate((LocalDate) source[7])
                 .tillDate((LocalDate) source[8])
+                .contractId((Long) source[9])
                 .build();
     }
 }

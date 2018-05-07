@@ -3,6 +3,7 @@ package com.endava.service_system.service;
 import com.endava.service_system.dao.CurrentDateDao;
 import com.endava.service_system.dao.InvoiceEntityManagerDao;
 import com.endava.service_system.dto.InvoiceDisplayDto;
+import com.endava.service_system.model.*;
 import com.endava.service_system.enums.ContractStatus;
 import com.endava.service_system.enums.InvoiceStatus;
 import com.endava.service_system.model.*;
@@ -10,15 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.endava.service_system.dao.InvoiceDao;
 import com.endava.service_system.model.Invoice;
-
-import javax.persistence.criteria.CriteriaBuilder;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.Collection;
 import java.util.List;
 
 import static com.endava.service_system.enums.ContractStatus.ACTIVE;
@@ -31,6 +27,12 @@ public class InvoiceService {
     private InvoiceDao invoiceDao;
     private ContractService contractService;
     private CurrentDateDao currentDateDao;
+    private NotificationService notificationService;
+
+    @Autowired
+    public void setNotificationService(NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
 
     @Autowired
     public void setCurrentDateDao(CurrentDateDao currentDateDao) {
@@ -41,15 +43,6 @@ public class InvoiceService {
         this.contractService = contractService;
     }
 
-
-    public List<InvoiceDisplayDto> getAllInvoices(InvoiceFilter filter) {
-        return invoiceEntityManagerDao.getAllInvoices(filter);
-    }
-
-    public Invoice save(Invoice invoice) {
-        return invoiceDao.save(invoice);
-    }
-
     @Autowired
     public void setInvoiceEntityManagerDao(InvoiceEntityManagerDao invoiceEntityManagerDao) {
         this.invoiceEntityManagerDao = invoiceEntityManagerDao;
@@ -58,6 +51,14 @@ public class InvoiceService {
     @Autowired
     public void setInvoiceDao(InvoiceDao invoiceDao){
         this.invoiceDao=invoiceDao;
+    }
+
+    public List<InvoiceDisplayDto> getAllInvoices(InvoiceFilter filter) {
+        return invoiceEntityManagerDao.getAllInvoices(filter);
+    }
+
+    public Invoice save(Invoice invoice) {
+        return invoiceDao.save(invoice);
     }
 
     public Long getInvoicePagesNr(InvoiceFilter filter) {
@@ -77,8 +78,9 @@ public class InvoiceService {
             Company company = contract.getCompany();
             List<Invoice> invoices = contract.getInvoices();
             if (invoices != null && invoices.size() > 0) {
-                if (invoices.get(invoices.size() - 1).getTillDate().plusDays(1).isAfter(currentDateDao.findById(new Long(1)).get().getLocalDate()))
-                    return;
+                if (invoices.get(invoices.size() - 1).getTillDate().plusDays(1).isAfter(currentDateDao.findById(new Long(1)).get().getLocalDate()) ||
+                        invoices.get(invoices.size() - 1).getTillDate().plusDays(1).isAfter(contract.getEndDate()))
+                    continue;
                 invoice.setFromDate(invoices.get(invoices.size() - 1).getTillDate().plusDays(1));
             } else
                 invoice.setFromDate(contract.getStartDate());
@@ -89,15 +91,10 @@ public class InvoiceService {
             invoice.setDueDate(invoice.getTillDate().plusDays(10));
             invoice.setPrice(contract.getService().getPrice().multiply(new BigDecimal(getPeriodBetweenDates(invoice.getFromDate(),invoice.getTillDate()).getMonths()))
                     .add(contract.getService().getPrice()
-                            .multiply(new BigDecimal(getPeriodBetweenDates(invoice.getFromDate(), invoice.getTillDate()).getDays()))
+                            .multiply(new BigDecimal(getPeriodBetweenDates(invoice.getFromDate(), invoice.getTillDate()).getDays() + 1))
                             .divide(new BigDecimal(invoice.getFromDate().lengthOfMonth()), 2, RoundingMode.HALF_UP)));
             invoiceDao.save(invoice);
         }
-    }
-
-    public long getNumberOfDaysBetweenDates(LocalDate firstInputDate, LocalDate secondInputDate) {
-        final long days = ChronoUnit.DAYS.between(firstInputDate, secondInputDate);
-        return days;
     }
 
     public Period getPeriodBetweenDates(LocalDate firstInputDate, LocalDate secondInputDate) {
@@ -106,7 +103,6 @@ public class InvoiceService {
         return period;
     }
 
-
     public void sendInvoicesFromBulk(List<String> ids) {
         Invoice invoice;
         for (int i = 0;i < ids.size(); i++){
@@ -114,6 +110,7 @@ public class InvoiceService {
             if (invoice.getInvoiceStatus() == CREATED){
                 invoice.setInvoiceStatus(SENT);
                 invoiceDao.save(invoice);
+                notificationService.saveAboutInvoiceFromCompany(invoice);
             }
         }
     }
