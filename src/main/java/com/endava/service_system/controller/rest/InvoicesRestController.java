@@ -125,7 +125,7 @@ public class InvoicesRestController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    @PostMapping("/invoice/{id}/{action}")
+    @GetMapping("/invoice/{id}/{action}")
     public ResponseEntity sendOrCancelInvoice(@PathVariable("id") Long invoiceId, @PathVariable("action") String action,
                                              HttpServletRequest request, Model model) {
         Invoice invoice = invoiceService.getInvoiceById(invoiceId);
