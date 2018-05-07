@@ -85,9 +85,26 @@ function fillTableWithContracts() {
         row += "<td>" + listOfContracts[i].categoryName + "</td>";
         row += "<td>" + listOfContracts[i].startDate + "</td>";
         row += "<td>" + listOfContracts[i].endDate + "</td>";
-        row += "<td>" + listOfContracts[i].companyName + "</td>";
+        row += "<td>" + listOfContracts[i].fullName + "</td>";
         row += "<td>" + listOfContracts[i].servicePrice + "</td>";
-        row += "<td>" + listOfContracts[i].contractStatus + "</td>";
+        switch (listOfContracts[i].contractStatus){
+            case "SIGNEDBYCLIENT":
+                row += "<td class='text-warning'><strong>Waiting</strong></td>";
+                break;
+            case "ACTIVE":
+                row += "<td class='text-success'><strong>Active</strong></td>";
+                break;
+            case "DENIED":
+                row += "<td class='text-danger'><strong>Denied</strong></td>";
+                break;
+            case "EXPIRED":
+                row += "<td class='text-dark'><strong>Expired</strong></td>";
+                break;
+            case "CANCELED":
+                row += "<td class='text-danger'><strong>Canceled</strong></td>";
+                break;
+            default:
+        }
         if (listOfContracts[i].contractStatus === "SIGNEDBYCLIENT") {
             row += "<td><a href=" + "/contract/" + listOfContracts[i].id + "/approve" + ">Approve</a>" + "/" + "<a href=" + "/contract/" + listOfContracts[i].id + "/deny" + ">Deny</a></td>";
             row +="<td></td>";

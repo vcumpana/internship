@@ -90,7 +90,7 @@ public class InvoiceEntityManagerDao {
     private String createQueryForSearch(InvoiceFilter filter) {
         StringBuilder builder = new StringBuilder("SELECT concat(user.name, ' ', user.surname),company.name,invoice.id,");
                 builder.append(" invoice.price,invoice.invoiceStatus,service.title,");
-                builder.append(" invoice.dueDate,invoice.fromDate,invoice.tillDate");
+                builder.append(" invoice.dueDate,invoice.fromDate,invoice.tillDate,contract.id");
                 builder.append(getSqlWithoutOrder(filter));
                 builder.append(getOrderSqlExtension(filter));
         return builder.toString();

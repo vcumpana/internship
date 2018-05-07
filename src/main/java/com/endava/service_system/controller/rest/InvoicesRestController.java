@@ -88,8 +88,6 @@ public class InvoicesRestController {
         return userType;
     }
 
-
-
     private Sort.Direction getDirection(String order) {
         Sort.Direction direction;
         if (order == null) {
@@ -146,23 +144,23 @@ public class InvoicesRestController {
     }
 
     @GetMapping("/invoice/{id}/edit")
-    public String editInvoice(@PathVariable("id") Long invoiceId, @PathVariable("action") String action,
-                              HttpServletRequest request, Model model) {
+    public ModelAndView editInvoice(@PathVariable("id") Long invoiceId, HttpServletRequest request, Model model) {
         Invoice invoice = invoiceService.getInvoiceById(invoiceId);
+        ModelAndView modelAndView = new ModelAndView();
         if (invoice != null) {
             if (invoice.getContract().getCompany().getCredential().getUsername().equals((authUtils.getAuthenticatedUsername()))) {
-                if (action.toLowerCase().equals("edit")) {
-                    NewInvoiceDTO newInvoiceDTO = new NewInvoiceDTO();
-                    newInvoiceDTO.setContractId(invoice.getContract().getId());
-                    newInvoiceDTO.setDueDate(invoice.getDueDate());
-                    newInvoiceDTO.setPrice(invoice.getPrice());
-                    newInvoiceDTO.setFromDate(invoice.getFromDate());
-                    newInvoiceDTO.setTillDate(invoice.getTillDate());
-                    model.addAttribute("invoice", newInvoiceDTO);
-                    return "companyCreateInvoice";
-                }
+                NewInvoiceDTO newInvoiceDTO = new NewInvoiceDTO();
+                newInvoiceDTO.setContractId(invoice.getContract().getId());
+                newInvoiceDTO.setDueDate(invoice.getDueDate());
+                newInvoiceDTO.setPrice(invoice.getPrice());
+                newInvoiceDTO.setFromDate(invoice.getFromDate());
+                newInvoiceDTO.setTillDate(invoice.getTillDate());
+                modelAndView.setViewName("companyCreateInvoice");
+                modelAndView.addObject("invoice", newInvoiceDTO);
+                return modelAndView;
             }
         }
-        return "redirect:/company/invoices";
+        modelAndView.setViewName("redirect:/company/invoices");
+        return modelAndView;
     }
 }

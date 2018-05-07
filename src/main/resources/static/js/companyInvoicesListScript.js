@@ -100,14 +100,29 @@ function fillTableWithInvoices() {
             row +="<td><input type=\"checkbox\" name='idInvoice' id=\"" + listOfInvoices[i].invoiceId + "\"></td>";
         } else
             row +="<td></td>";
-        row += "<td>" + listOfInvoices[i].invoiceId+ "</td>";
+        row += "<td>" + listOfInvoices[i].invoiceId + "</td>";
+        row += "<td>" + listOfInvoices[i].contractId + "</td>";
         row += "<td>" + listOfInvoices[i].userTitle + "</td>";
         row += "<td>" + listOfInvoices[i].price + "</td>";
         row += "<td>" + listOfInvoices[i].serviceTitle + "</td>";
         row += "<td>" + listOfInvoices[i].fromDate + "</td>";
         row += "<td>" + listOfInvoices[i].tillDate + "</td>";
         row += "<td>" + listOfInvoices[i].paymentDate + "</td>";
-        row += "<td>" + listOfInvoices[i].invoiceStatus + "</td>";
+        switch (listOfInvoices[i].invoiceStatus){
+            case "CREATED":
+                row += "<td class='text-secondary'><strong>Created</strong></td>";
+                break;
+            case "PAID":
+                row += "<td class='text-success'><strong>Paid</strong></td>";
+                break;
+            case "OVERDUE":
+                row += "<td class='text-danger'><strong>Overdue</strong></td>";
+                break;
+            case "SENT":
+                row += "<td class='text-warning'><strong>Sent</strong></td>";
+                break;
+            default:
+        }
         if (listOfInvoices[i].invoiceStatus === "CREATED") {
             row += "<td><a href=" + "/invoice/" + listOfInvoices[i].invoiceId + "/send" + ">Send</a>" + "/" + "<a href=" + "/invoice/" + listOfInvoices[i].invoiceId + "/cancel" + ">Cancel</a></td>";
             row += "<td><a href=" + "/invoice/"+ listOfInvoices[i].invoiceId +"/edit" + ">Edit</a></td>";
