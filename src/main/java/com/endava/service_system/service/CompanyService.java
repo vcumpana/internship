@@ -1,11 +1,15 @@
 package com.endava.service_system.service;
 
 import com.endava.service_system.dao.CompanyDao;
+import com.endava.service_system.dao.InvoiceEntityManagerDao;
 import com.endava.service_system.dto.ContractDtoFromUser;
 import com.endava.service_system.dto.CredentialDTO;
 import com.endava.service_system.model.Company;
 import com.endava.service_system.model.Invoice;
 import com.endava.service_system.utils.AuthUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import com.endava.service_system.enums.UserStatus;
@@ -19,7 +23,7 @@ import java.util.Optional;
 
 @org.springframework.stereotype.Service
 public class CompanyService {
-
+    private static final Logger LOGGER= LogManager.getLogger(CompanyService.class);
     private CompanyDao companyDao;
     private CredentialService credentialService;
     private ConversionService conversionService;
@@ -57,7 +61,7 @@ public class CompanyService {
     }
 
     Optional<Company> getCompanyByNameWithServices(String name){
-        System.out.println("companyName:"+name);
+        LOGGER.log(Level.DEBUG,"companyName:"+name);
         return companyDao.getCompanyByNameWithServices(name);
     }
 
@@ -72,9 +76,9 @@ public class CompanyService {
     public void addNewService(Service service) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        System.out.println(username);
+        LOGGER.log(Level.DEBUG,username);
         Company company = companyDao.getByUsername(username).get();
-        System.out.println(company);
+        LOGGER.log(Level.DEBUG,company);
         List<Service> services = serviceService.getServicesByCompanyName(company.getName());
         services.add(service);
         company.setServices(services);
