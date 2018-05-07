@@ -6,9 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -35,4 +37,7 @@ public class Contract {
 
     @Enumerated(EnumType.STRING)
     private ContractStatus status;
+
+    @OneToMany(cascade=CascadeType.ALL,mappedBy="contract")
+    private List<Invoice> invoices;
 }

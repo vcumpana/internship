@@ -28,7 +28,8 @@ public class Invoice {
 
     private LocalDate dueDate;
 
-    @ManyToOne
+    @ManyToOne(optional=false)
+    @JoinColumn(name="contract_id", referencedColumnName="id")
     private Contract contract;
 
     @Enumerated(EnumType.STRING)

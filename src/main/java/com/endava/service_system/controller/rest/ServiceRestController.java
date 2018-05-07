@@ -93,6 +93,8 @@ public class ServiceRestController {
         return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
+
+
     private Sort.Direction getDirection(String order) {
         Sort.Direction direction;
         if (order == null) {
