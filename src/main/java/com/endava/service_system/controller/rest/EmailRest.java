@@ -6,6 +6,9 @@ import com.endava.service_system.service.CredentialService;
 import com.endava.service_system.service.EmailService;
 import com.endava.service_system.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,7 +31,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 public class EmailRest {
-
+    private static Logger LOGGER= LogManager.getLogger(EmailRest.class);
     private  EmailService emailService;
     private  CredentialService credentialService;
     private  UserService userService;
@@ -76,9 +79,9 @@ public class EmailRest {
     @PostMapping("/email/test")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String sendEmail(@RequestParam("to") String to, @RequestParam("subject")String subject, @RequestParam("message") String message){
-        System.out.println("to:"+to);
-        System.out.println("subject:"+subject);
-        System.out.println("message:"+message);
+        LOGGER.log(Level.DEBUG,"to:"+to);
+        LOGGER.log(Level.DEBUG,"subject:"+subject);
+        LOGGER.log(Level.DEBUG,"message:"+message);
         emailService.sendEmail(to,subject,message);
         return "emailForm";
     }
@@ -88,7 +91,7 @@ public class EmailRest {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity adminResetPassword(@RequestBody Map<String,Object> data){
         String username= (String) data.get("username");
-        System.out.println(username);
+        LOGGER.log(Level.DEBUG,username);
         try {
             resetPasswordToUser(credentialService.getByUsername(username).get());
             return new ResponseEntity( HttpStatus.OK);
@@ -107,7 +110,7 @@ public class EmailRest {
 
     @PostMapping(value = "/resetPassword")
     public ResponseEntity resetPassword(@RequestBody Map<String,Object> responseBody) {
-        System.out.println(responseBody);
+        LOGGER.log(Level.DEBUG,responseBody);
         String email= (String) responseBody.get("email");
         Optional<Credential> credentialOptional=credentialService.getByEmail(email);
         if(credentialOptional.isPresent()) {
