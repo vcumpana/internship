@@ -5,6 +5,10 @@ import com.endava.service_system.exception.DeniedException;
 import com.endava.service_system.exception.InAprovalException;
 import com.endava.service_system.exception.WrongUsernameException;
 import com.endava.service_system.model.Credential;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +23,7 @@ import java.util.stream.Stream;
 
 @Service("userDetailsService")
 public class CredentialDetailsServiceImpl implements UserDetailsService{
-
+    
     private final CredentialService credentialService;
 
     public CredentialDetailsServiceImpl(CredentialService credentialService) {
@@ -29,10 +33,10 @@ public class CredentialDetailsServiceImpl implements UserDetailsService{
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Credential> credentialOptional = credentialService.getByUsername(username);
-        credentialOptional.orElseThrow(()->new WrongUsernameException());
+        credentialOptional.orElseThrow(() -> new WrongUsernameException());
         Credential user = credentialOptional.get();
-        if(user.getStatus()!= UserStatus.ACCEPTED){
-            if(user.getStatus()==UserStatus.DENIED){
+        if (user.getStatus() != UserStatus.ACCEPTED) {
+            if (user.getStatus() == UserStatus.DENIED) {
                 throw new DeniedException();
             }
             throw new InAprovalException();

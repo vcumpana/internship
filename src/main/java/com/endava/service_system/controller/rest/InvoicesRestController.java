@@ -6,6 +6,9 @@ import com.endava.service_system.enums.UserType;
 import com.endava.service_system.model.InvoiceFilter;
 import com.endava.service_system.model.User;
 import com.endava.service_system.service.InvoiceService;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +24,7 @@ import java.util.Map;
 @RestController
 public class InvoicesRestController {
 
+    private static final Logger LOGGER= LogManager.getLogger(InvoicesRestController.class);
     private InvoiceService invoiceService;
 
     @GetMapping("/invoices")
@@ -34,7 +38,7 @@ public class InvoicesRestController {
                                           @RequestParam(required = false,value = "category") String categoryName,
                                           @RequestParam(required = false,value = "orderByDueDate")String order
                             ){
-        System.out.println(authentication);
+        LOGGER.log(Level.DEBUG,authentication);
         Map<String,Object> result=new HashMap<>();
         UserType userType=getUserType(authentication);
         String username=authentication.getName();

@@ -6,6 +6,9 @@ import com.endava.service_system.dao.ContractsToUserDao;
 import com.endava.service_system.dto.ContractDtoFromUser;
 import com.endava.service_system.dto.ContractForShowingDto;
 import com.endava.service_system.model.Contract;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.endava.service_system.model.ContractForUserDtoFilter;
 import org.springframework.core.convert.ConversionService;
@@ -19,6 +22,7 @@ import java.util.List;
 
 @Service
 public class ContractService {
+    private static final Logger LOGGER= LogManager.getLogger(ContractService.class);
     private CompanyDao companyDao;
     private ConversionService conversionService;
     private ContractDao contractDao;
@@ -33,7 +37,7 @@ public class ContractService {
         contract.setService(serviceService.getServiceById(contractDto.getServiceId()).get());
         contract.setCompany(companyDao.getByName(contractDto.getCompanyName()).get());
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println("username:"+username);
+        LOGGER.log(Level.DEBUG,"username:"+username);
         contract.setUser(userService.getByUsername(username).get());
         return contractDao.save(contract);
     }

@@ -6,6 +6,9 @@ import com.endava.service_system.dto.NewServiceDTO;
 import com.endava.service_system.dto.UserDtoToShow;
 import com.endava.service_system.model.*;
 import com.endava.service_system.service.*;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.security.core.Authentication;
@@ -26,6 +29,7 @@ import java.util.Optional;
 @Controller
 public class CompanyController {
 
+    private static Logger LOGGER= LogManager.getLogger(CompanyController.class);
     private CompanyService companyService;
     private ConversionService conversionService;
     private CategoryService categoryService;
@@ -41,7 +45,7 @@ public class CompanyController {
 
     @PostMapping("/company/registration")
     public String registerCompany(Model model, @ModelAttribute("company") @Valid CompanyRegistrationDTO companyRegistrationDTO, BindingResult bindingResult) {
-        System.out.println(companyRegistrationDTO);
+        LOGGER.log(Level.DEBUG,companyRegistrationDTO);
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("company", companyRegistrationDTO);
@@ -111,8 +115,8 @@ public class CompanyController {
 
     @PostMapping("/company/createInvoice")
     public String registerNewService(Model model, @ModelAttribute("invoice") @Valid NewInvoiceDTO newInvoiceDTO, BindingResult bindingResult) {
-        System.out.println(newInvoiceDTO);
-        System.out.println(bindingResult.getAllErrors());
+        LOGGER.log(Level.DEBUG,newInvoiceDTO);
+        LOGGER.log(Level.DEBUG,bindingResult.getAllErrors());
         if (bindingResult.hasErrors()) {
             model.addAttribute("invoice", newInvoiceDTO);
             return "companyCreateInvoice";

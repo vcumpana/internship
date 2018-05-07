@@ -3,6 +3,9 @@ package com.endava.service_system.dao;
 import com.endava.service_system.dto.ServiceToUserDto;
 import com.endava.service_system.model.ServiceDtoFilter;
 import com.sun.xml.internal.ws.util.ServiceFinder;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Sort;
@@ -17,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Repository
 public class ServiceToUserDao {
+    private static final Logger LOGGER= LogManager.getLogger(ServiceToUserDao.class);
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
@@ -25,17 +29,17 @@ public class ServiceToUserDao {
 
     public List<ServiceToUserDto> getAllServices(ServiceDtoFilter filter) {
         String hql = createQueryForSearch(filter);
-        System.out.println("hql:" + hql);
+        LOGGER.log(Level.DEBUG,"hql:" + hql);
         Query query = entityManager.createQuery(hql);
         setParamsForFilter(query, filter);
         List<ServiceToUserDto> result = (List<ServiceToUserDto>) query.getResultList().stream().map(ob -> conversionService.convert(ob, ServiceToUserDto.class)).collect(Collectors.toList());
-        System.out.println(result.size());
+        LOGGER.log(Level.DEBUG,result.size());
         return result;
     }
 
     private String getCommonSql(ServiceDtoFilter filter){
         StringBuilder builder=new StringBuilder("FROM Company c INNER JOIN c.services s INNER JOIN s.category cat ");
-        System.out.println(filter);
+        LOGGER.log(Level.DEBUG,filter);
         boolean needAnd = false;
         if (filter.getSize() == null||filter.getSize()<=0) {
             filter.setSize(DEFAULT_PAGE_SIZE);
@@ -130,7 +134,7 @@ public class ServiceToUserDao {
 
     public Long getPagesSize(ServiceDtoFilter filter) {
         String hql = getPagesSql(filter);
-        System.out.println("hql:"+hql);
+        LOGGER.log(Level.DEBUG,"hql:"+hql);
         Query query = entityManager.createQuery(hql);
         setParamsWithoutLimit(query, filter);
         Long totalNrOfInvoices= (Long)query.getSingleResult();

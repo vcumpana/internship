@@ -5,6 +5,9 @@ import com.endava.service_system.enums.InvoiceStatus;
 import com.endava.service_system.enums.UserType;
 import com.endava.service_system.model.ContractForUserDtoFilter;
 import com.endava.service_system.model.InvoiceFilter;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Sort;
@@ -18,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Repository
 public class ContractsToUserDao {
+    private static final Logger LOGGER= LogManager.getLogger(ContractsToUserDao.class);
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
@@ -30,7 +34,7 @@ public class ContractsToUserDao {
         }
         String hql = createQueryForSearch(filter);
 
-        System.out.println("hql:"+hql);
+        LOGGER.log(Level.DEBUG,"hql:"+hql);
         Query query = entityManager.createQuery(hql);
         setParamsForFilter(query, filter);
         List<ContractForShowingDto> result = (List<ContractForShowingDto>) query.getResultList().stream()
@@ -44,7 +48,7 @@ public class ContractsToUserDao {
             filter.setSize(DEFAULT_PAGE_SIZE);
         }
         String hql = getPagesSql(filter);
-        System.out.println("hql:"+hql);
+        LOGGER.log(Level.DEBUG,"hql:"+hql);
         Query query = entityManager.createQuery(hql);
         setParamsForFilterWithoutLimit(query, filter);
         Long totalNrOfInvoices= (Long)query.getSingleResult();
@@ -71,7 +75,6 @@ public class ContractsToUserDao {
         }
 
         builder.append(" INNER JOIN cont.service s INNER JOIN s.category cat");
-        System.out.println(filter);
 
         builder.append(" WHERE credent.username=:username ");
 
