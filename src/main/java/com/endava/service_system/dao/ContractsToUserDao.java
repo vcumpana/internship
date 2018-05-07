@@ -1,8 +1,10 @@
 package com.endava.service_system.dao;
 
 import com.endava.service_system.dto.ContractForShowingDto;
+import com.endava.service_system.enums.InvoiceStatus;
 import com.endava.service_system.enums.UserType;
 import com.endava.service_system.model.ContractForUserDtoFilter;
+import com.endava.service_system.model.InvoiceFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Sort;
@@ -37,9 +39,30 @@ public class ContractsToUserDao {
         return result;
     }
 
-    private String createQueryForSearch(ContractForUserDtoFilter filter) {
-        StringBuilder builder = new StringBuilder("SELECT cont.id,comp.name,s.title,cat.name,s.price,cont.startDate,cont.endDate,cont.status,concat(u.name,' ',u.surname) " +
-                " FROM Contract cont INNER JOIN cont.user u INNER JOIN cont.company comp ");
+    public Long getPagesSizeForFilter(ContractForUserDtoFilter filter){
+        if (filter.getSize() == null||filter.getSize()<=0) {
+            filter.setSize(DEFAULT_PAGE_SIZE);
+        }
+        String hql = getPagesSql(filter);
+        System.out.println("hql:"+hql);
+        Query query = entityManager.createQuery(hql);
+        setParamsForFilterWithoutLimit(query, filter);
+        Long totalNrOfInvoices= (Long)query.getSingleResult();
+        Long number=totalNrOfInvoices/filter.getSize();
+        if(totalNrOfInvoices%filter.getSize()!=0){
+            number++;
+        }
+        return number;
+    }
+
+    private String getPagesSql(ContractForUserDtoFilter filter) {
+        StringBuilder builder=new StringBuilder(" SELECT COUNT(cont) ");
+        builder.append(getSqlWithoutOrder(filter));
+        return builder.toString();
+    }
+
+    private String getSqlWithoutOrder(ContractForUserDtoFilter filter){
+        StringBuilder builder=new StringBuilder(" FROM Contract cont INNER JOIN cont.user u INNER JOIN cont.company comp ");
 
         if(filter.getUserType()== UserType.USER){
             builder.append(" INNER JOIN u.credential credent ");
@@ -68,6 +91,12 @@ public class ContractsToUserDao {
         }else if(filter.getCategoryId() != null) {
             builder.append(" AND cat.id=:categoryId ");
         }
+        return builder.toString();
+    }
+
+    private String createQueryForSearch(ContractForUserDtoFilter filter) {
+        StringBuilder builder = new StringBuilder("SELECT cont.id,comp.name,s.title,cat.name,s.price,cont.startDate,cont.endDate,cont.status,concat(u.name,' ',u.surname) ");
+        builder.append(getSqlWithoutOrder(filter));
 
         if (filter.getDirection() != null) {
             builder.append(" ORDER BY cont.endDate ");
@@ -81,6 +110,13 @@ public class ContractsToUserDao {
     }
 
     private void setParamsForFilter(Query query, ContractForUserDtoFilter filter) {
+        setParamsForFilterWithoutLimit(query,filter);
+        if (filter.getPage() != null)
+            query.setFirstResult((filter.getPage() - 1) * filter.getSize());
+        query.setMaxResults(filter.getSize());
+    }
+
+    private void setParamsForFilterWithoutLimit(Query query, ContractForUserDtoFilter filter) {
 
         query.setParameter("username",filter.getUsername());
 
@@ -99,10 +135,5 @@ public class ContractsToUserDao {
 
         if (filter.getContractStatus() != null)
             query.setParameter("contractStatus", filter.getContractStatus());
-
-
-        if (filter.getPage() != null)
-            query.setFirstResult((filter.getPage() - 1) * filter.getSize());
-        query.setMaxResults(filter.getSize());
     }
 }

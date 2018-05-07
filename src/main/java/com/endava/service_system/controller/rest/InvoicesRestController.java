@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class InvoicesRestController {
@@ -22,17 +24,18 @@ public class InvoicesRestController {
     private InvoiceService invoiceService;
 
     @GetMapping("/invoices")
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_COMPANY')")
-    public List getInvoices(Authentication authentication,
-                            @RequestParam(value = "categoryId",required = false) Long categoryId,
-                            @RequestParam(value = "size",required = false) Integer size,
-                            @RequestParam(value = "page",required = false) Integer page,
-                            @RequestParam(value = "status",required = false) InvoiceStatus status,
-                            @RequestParam(required = false,value = "companyId") Long companyId,
-                            @RequestParam(required = false,value = "company") String companyName,
-                            @RequestParam(required = false,value = "category") String categoryName,
-                            @RequestParam(required = false,value = "orderByDueDate")String order
+    public Map<String,Object> getInvoices(Authentication authentication,
+                                          @RequestParam(value = "categoryId",required = false) Long categoryId,
+                                          @RequestParam(value = "size",required = false) Integer size,
+                                          @RequestParam(value = "page",required = false) Integer page,
+                                          @RequestParam(value = "status",required = false) InvoiceStatus status,
+                                          @RequestParam(required = false,value = "companyId") Long companyId,
+                                          @RequestParam(required = false,value = "company") String companyName,
+                                          @RequestParam(required = false,value = "category") String categoryName,
+                                          @RequestParam(required = false,value = "orderByDueDate")String order
                             ){
+        System.out.println(authentication);
+        Map<String,Object> result=new HashMap<>();
         UserType userType=getUserType(authentication);
         String username=authentication.getName();
         InvoiceFilter filter=InvoiceFilter.builder()
@@ -47,7 +50,9 @@ public class InvoicesRestController {
                 .invoiceStatus(status)
                 .page(page)
                 .build();
-        return invoiceService.getAllInvoices(filter);
+        result.put("invoices",invoiceService.getAllInvoices(filter));
+        result.put("pages",invoiceService.getInvoicePagesNr(filter));
+        return result;
     }
 
     private UserType getUserType(Authentication authentication){

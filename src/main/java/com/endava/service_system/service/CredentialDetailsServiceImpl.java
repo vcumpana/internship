@@ -3,10 +3,8 @@ package com.endava.service_system.service;
 import com.endava.service_system.enums.UserStatus;
 import com.endava.service_system.exception.DeniedException;
 import com.endava.service_system.exception.InAprovalException;
+import com.endava.service_system.exception.WrongUsernameException;
 import com.endava.service_system.model.Credential;
-import com.endava.service_system.model.User;
-import com.endava.service_system.service.UserService;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,13 +29,13 @@ public class CredentialDetailsServiceImpl implements UserDetailsService{
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Credential> credentialOptional = credentialService.getByUsername(username);
-        credentialOptional.orElseThrow(()->new UsernameNotFoundException("User with username " + username + " not found"));
+        credentialOptional.orElseThrow(()->new WrongUsernameException());
         Credential user = credentialOptional.get();
         if(user.getStatus()!= UserStatus.ACCEPTED){
             if(user.getStatus()==UserStatus.DENIED){
-                throw new DeniedException("User "+username+" access denied");
+                throw new DeniedException();
             }
-            throw new InAprovalException(" You should wait for admin approval");
+            throw new InAprovalException();
         }
         Set<GrantedAuthority> grantedAuthorities = Stream.of(new SimpleGrantedAuthority(user.getRole().name()))
                 .collect(Collectors.toSet());

@@ -35,7 +35,7 @@ public class CompanyRestController {
     private CredentialService credentialService;
 
     @GetMapping("/admin/companies")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity getAllCompanies(@RequestParam(required = false,value = "status")UserStatus status) {
         List<Company> companyList=getCompaniesWithStatus(status);
         List<CompanyAdminDTO> companyAdminDTOList=companyList.stream()
@@ -69,7 +69,7 @@ public class CompanyRestController {
             return new ResponseEntity(bindingResult.getAllErrors(), HttpStatus.BAD_REQUEST);
         }
         try {
-            int entitiesUpdated = companyService.updateStatusAndPassword(username, credentialDTO);
+            int entitiesUpdated = credentialService.updateStatusAndPassword(username, credentialDTO);
             String json = "{\"count\":\"1\"}";
             return new ResponseEntity(json, HttpStatus.OK);
         } catch (Exception e) {

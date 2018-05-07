@@ -48,6 +48,7 @@ function getAllCategoriesFromDb(){
                 addCategoryInUi(category);
             });
             displayMessage("Showing categories ...");
+            selectButton([$("#categories")]);
         },
         error: function (s) {
             displayMessage("Error retrieving categories");

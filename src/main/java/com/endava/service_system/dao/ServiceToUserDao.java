@@ -2,6 +2,7 @@ package com.endava.service_system.dao;
 
 import com.endava.service_system.dto.ServiceToUserDto;
 import com.endava.service_system.model.ServiceDtoFilter;
+import com.sun.xml.internal.ws.util.ServiceFinder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Sort;
@@ -32,12 +33,15 @@ public class ServiceToUserDao {
         return result;
     }
 
-    private String createQueryForSearch(ServiceDtoFilter filter) {
-        StringBuilder builder = new StringBuilder("SELECT c.name as name,s.id,s.title,cat.name,s.description,s.price FROM Company c INNER JOIN c.services s INNER JOIN s.category cat ");
+    private String getCommonSql(ServiceDtoFilter filter){
+        StringBuilder builder=new StringBuilder("FROM Company c INNER JOIN c.services s INNER JOIN s.category cat ");
         System.out.println(filter);
         boolean needAnd = false;
-        if (filter.getSize() == null) {
+        if (filter.getSize() == null||filter.getSize()<=0) {
             filter.setSize(DEFAULT_PAGE_SIZE);
+        }
+        if(filter.getPage()==null||filter.getPage()==0){
+            filter.setPage(1);
         }
         if (filter.getMin() != null || filter.getCategoryId() != null ||
                 filter.getMax() != null ||
@@ -75,7 +79,12 @@ public class ServiceToUserDao {
             appendIf(builder, " AND ", needAnd);
             builder.append(" cat.name=:categoryName");
         }
-
+        return builder.toString();
+    }
+    
+    private String createQueryForSearch(ServiceDtoFilter filter) {
+        StringBuilder builder = new StringBuilder("SELECT c.name as name,s.id,s.title,cat.name,s.description,s.price ");
+        builder.append(getCommonSql(filter));
         if (filter.getDirection() != null) {
             builder.append(" ORDER BY s.price ");
             if (filter.getDirection() == Sort.Direction.ASC) {
@@ -94,6 +103,13 @@ public class ServiceToUserDao {
     }
 
     private void setParamsForFilter(Query query, ServiceDtoFilter filter) {
+        setParamsWithoutLimit(query,filter);
+        if (filter.getPage() != null)
+            query.setFirstResult((filter.getPage() - 1) * filter.getSize());
+        query.setMaxResults(filter.getSize());
+    }
+
+    private void setParamsWithoutLimit(Query query,ServiceDtoFilter filter){
         if (filter.getMin() != null)
             query.setParameter("min", new BigDecimal(filter.getMin()));
 
@@ -108,13 +124,26 @@ public class ServiceToUserDao {
 
         if (filter.getCategoryName() != null)
             query.setParameter("categoryName", filter.getCategoryName());
-
-        if (filter.getPage() != null)
-            query.setFirstResult((filter.getPage() - 1) * filter.getSize());
-
         if (filter.getCompanyId() != null)
             query.setParameter("companyId", filter.getCompanyId());
+    }
 
-        query.setMaxResults(filter.getSize());
+    public Long getPagesSize(ServiceDtoFilter filter) {
+        String hql = getPagesSql(filter);
+        System.out.println("hql:"+hql);
+        Query query = entityManager.createQuery(hql);
+        setParamsWithoutLimit(query, filter);
+        Long totalNrOfInvoices= (Long)query.getSingleResult();
+        Long number=totalNrOfInvoices/filter.getSize();
+        if(totalNrOfInvoices%filter.getSize()!=0){
+            number++;
+        }
+        return number;
+    }
+
+    private String getPagesSql(ServiceDtoFilter filter) {
+        StringBuilder builder = new StringBuilder("SELECT count(s) ");
+        builder.append(getCommonSql(filter));
+        return builder.toString();
     }
 }

@@ -16,7 +16,8 @@ public interface UserDao extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u INNER JOIN FETCH u.credential c WHERE c.username=:username")
     Optional<User> getByUsername(@Param("username") String username);
 
-    Optional<User> getByEmail(String email);
+    @Query("SELECT u FROM User u INNER JOIN FETCH u.credential c WHERE c.email=:email")
+    Optional<User> getByEmail(@Param("email") String email);
 
     @Query("SELECT u FROM User u INNER JOIN FETCH u.credential c")
     List<User> getAllWithCredentials();

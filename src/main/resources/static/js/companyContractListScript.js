@@ -9,9 +9,9 @@ $(document).ready(function () {
 function downloadContracts() {
     $.ajax({
         type: "GET",
-        url: "/company/contracts/",
+        url: "/company/contracts",
         success: function (result) {
-            listOfContracts = result;
+            listOfContracts = result.contracts;
           //  listOfContracts.sort(comparatorForCategory);
             fillTableWithContracts();
         }

@@ -9,7 +9,7 @@ function addCategoryInUi(category) {
     var td = document.createElement("td");
     var input=document.createElement("input");
     input.value=categoryName;
-    input.className="btn btn-default";
+    input.className="form-control btn-default";
     input.id="input_".concat(categoryName);
     td.appendChild(input);
     tr.appendChild(td);
@@ -86,13 +86,14 @@ function getColumnNr() {
 function createCategoryThead() {
     var tr = document.createElement("tr");
     var nameTd = document.createElement("th");
-    nameTd.appendChild(document.createTextNode('name'));
+    nameTd.appendChild(document.createTextNode('Service Categories'));
 
     var changeTd = document.createElement("th");
-    changeTd.appendChild(document.createTextNode('change'));
-
+    changeTd.appendChild(document.createTextNode('Edit'));
+    changeTd.classList=['pl-4'];
     var deleteTd = document.createElement("th");
-    deleteTd.appendChild(document.createTextNode('delete'));
+    deleteTd.appendChild(document.createTextNode('Drop'));
+    deleteTd.classList=['pl-4'];
 
     tr.appendChild(nameTd);
     tr.appendChild(changeTd);

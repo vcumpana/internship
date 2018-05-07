@@ -10,7 +10,7 @@ $(document).ready(function () {
     });
 // Validating Form Fields.....
     $("#edit_company").click(function (e) {
-        var name = $("#editCompany #company_name").text();
+        var name = $("#editCompany #edit_company_name").text();
         var status=$("#input_company_status input:checked").val();
         var password=$("#input_company_password").val();
         var repeatedPassword=$("#input_company_repeated_password").val();
