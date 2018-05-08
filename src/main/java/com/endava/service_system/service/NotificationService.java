@@ -6,8 +6,11 @@ import com.endava.service_system.dto.ContractDtoFromUser;
 import com.endava.service_system.dto.NotificationForUserDto;
 import com.endava.service_system.enums.ContractStatus;
 import com.endava.service_system.model.*;
+import com.endava.service_system.enums.NotificationStatus;
+import com.endava.service_system.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -81,6 +84,33 @@ public class NotificationService {
         notification.setNotificationStatus(UNREAD);
         notification.setDateTime(LocalDateTime.now());
         notificationDao.save(notification);
+    }
+
+    public void saveNotifications(List<Notification> notifications){
+        notificationDao.saveAll(notifications);
+    }
+
+    private Notification createNotificationForCredential(Credential from, Credential to, LocalDateTime now, String message){
+        Notification notification=new Notification();
+        notification.setNotificationStatus(NotificationStatus.UNREAD);
+        notification.setDateTime(now);
+        notification.setMessage(message);
+        notification.setSender(from);
+        notification.setRecipient(to);
+        notification.setMessage(message);
+        return notification;
+    }
+
+    public Notification createNotificationForCompany(User user, Company company,Credential adminCredential,Contract contract, LocalDateTime now){
+        String message=user.getName()+" "+user.getSurname()+" has overdued payment for "+contract.getService().getTitle()+" .Contract Nr "+contract.getId()+" ";
+        Notification notification=createNotificationForCredential(adminCredential,company.getCredential(),now,message);
+        return notification;
+    }
+
+    public Notification createNotificationForUser(User user, Company company,Credential adminCredential,Contract contract, LocalDateTime now){
+        String message="You have overdued payment to "+company.getName()+" for "+contract.getService().getTitle()+" .Contract Nr "+contract.getId();
+        Notification notification=createNotificationForCredential(adminCredential,user.getCredential(),now,message);
+        return notification;
     }
 
     public List<NotificationForUserDto> getAllNotificationsForUser(int page){

@@ -2,6 +2,7 @@ package com.endava.service_system.service;
 
 import com.endava.service_system.dao.CurrentDateDao;
 import com.endava.service_system.dao.InvoiceEntityManagerDao;
+import com.endava.service_system.dao.InvoiceUpdateDao;
 import com.endava.service_system.dto.InvoiceDisplayDto;
 import com.endava.service_system.model.*;
 import com.endava.service_system.enums.ContractStatus;
@@ -11,10 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.endava.service_system.dao.InvoiceDao;
 import com.endava.service_system.model.Invoice;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static com.endava.service_system.enums.ContractStatus.ACTIVE;
@@ -32,6 +36,12 @@ public class InvoiceService {
     @Autowired
     public void setNotificationService(NotificationService notificationService) {
         this.notificationService = notificationService;
+    }
+    private InvoiceUpdateDao invoiceUpdateDao;
+
+    @Autowired
+    public void setInvoiceUpdateDao(InvoiceUpdateDao invoiceUpdateDao) {
+        this.invoiceUpdateDao = invoiceUpdateDao;
     }
 
     @Autowired
@@ -135,5 +145,18 @@ public class InvoiceService {
 
     public void update(Invoice invoice) {
         invoiceDao.save(invoice);
+    }
+
+    public List<Invoice> getSentInvoicesThatHaveDueDateBefore(LocalDate currentDate,Integer limit){
+        return invoiceUpdateDao.getSentInvoicesThatHaveDueDateBefore(currentDate,limit);
+    }
+
+    public void deleteForgotenInvoices(LocalDate currentDate){
+        invoiceUpdateDao.deleteForgotenInvoices(currentDate);
+    }
+
+    @Transactional
+    public void makeInvoicesOverdued(List<Long> invoceIds) {
+        invoiceDao.setStatus(InvoiceStatus.OVERDUE,invoceIds);
     }
 }

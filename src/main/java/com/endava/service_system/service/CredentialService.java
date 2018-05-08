@@ -5,6 +5,7 @@ import com.endava.service_system.dto.CredentialDTO;
 import com.endava.service_system.enums.UserStatus;
 import com.endava.service_system.model.Company;
 import com.endava.service_system.model.Credential;
+import com.endava.service_system.model.Role;
 import com.endava.service_system.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +30,10 @@ public class CredentialService {
     private void encodePassword(Credential credential){
         credential.setPassword(passwordEncoder.encode(credential.getPassword()));
     }
+
+    public Credential getDefaultAdminCredential(){
+        return credentialDao.getByUsername("admin").get();
+    };
 
     public int updateStatusAndPassword(String username,CredentialDTO credential) {
         String password=credential.getPassword();
