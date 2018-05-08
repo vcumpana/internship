@@ -8,7 +8,7 @@ $(document).ready(function () {
 });
 
 $(window).scroll(function () {
-    if ($(window).scrollTop() + $(window).height() == $(document).height() && !noMoreNotifications) {
+    if (Math.abs($(window).scrollTop() + $(window).height() - $(document).height()) < 100 && !noMoreNotifications) {
         loadNotifications();
     }
 });

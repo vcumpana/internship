@@ -20,6 +20,8 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -92,16 +94,18 @@ public class InvoiceService {
             Company company = contract.getCompany();
             List<Invoice> invoices = contract.getInvoices();
             if (invoices != null && invoices.size() > 0) {
-                if (invoices.get(invoices.size() - 1).getTillDate().plusDays(1).isAfter(currentDateDao.findById(new Long(1)).get().getLocalDate()) ||
-                        invoices.get(invoices.size() - 1).getTillDate().plusDays(1).isAfter(contract.getEndDate()))
+                if (invoices.get(invoices.size() - 1).getTillDate().getMonth().getValue() >= currentDateDao.findById(new Long(1)).get().getLocalDate().getMonth().getValue() ||
+                        invoices.get(invoices.size() - 1).getTillDate().getMonth().getValue() > contract.getEndDate().getMonth().getValue())
                     continue;
                 invoice.setFromDate(invoices.get(invoices.size() - 1).getTillDate().plusDays(1));
             } else
                 invoice.setFromDate(contract.getStartDate());
-            if (contract.getEndDate().isBefore(currentDateDao.findById(new Long(1)).get().getLocalDate()))
+            if (contract.getEndDate().getMonth().getValue() == currentDateDao.findById(new Long(1)).get().getLocalDate().getMonth().getValue())
                 invoice.setTillDate(contract.getEndDate());
             else
-                invoice.setTillDate(currentDateDao.findById(new Long(1)).get().getLocalDate());
+                invoice.setTillDate(currentDateDao.findById(new Long(1)).get().getLocalDate().with(TemporalAdjusters.lastDayOfMonth()));
+            if (invoice.getFromDate().isAfter(invoice.getTillDate()))
+                continue;
             invoice.setDueDate(invoice.getTillDate().plusDays(10));
             invoice.setPrice(contract.getService().getPrice().multiply(new BigDecimal(getPeriodBetweenDates(invoice.getFromDate(),invoice.getTillDate()).getMonths()))
                     .add(contract.getService().getPrice()
@@ -147,8 +151,9 @@ public class InvoiceService {
         return invoiceDao.getOne(invoiceId);
     }
 
-    public void update(Invoice invoice) {
+    public void sendInvoice(Invoice invoice) {
         invoiceDao.save(invoice);
+        notificationService.saveAboutInvoiceFromCompany(invoice);
     }
 
     public List<Invoice> getSentInvoicesThatHaveDueDateBefore(LocalDate currentDate,Integer limit){

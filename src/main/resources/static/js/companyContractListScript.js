@@ -6,6 +6,7 @@ var arr = new Array();
 $(document).ready(function () {
     downloadContracts();
     isUnreadMessages();
+    downloadBalance();
 });
 
 $('#select_all').change(function() {
@@ -73,6 +74,7 @@ $("th[scopeForSort='sort']").click(function () {
 
 function fillTableWithContracts() {
     $("#tableWithContracts tbody").html("");
+    var dateText;
     for (var i = 0; i < listOfContracts.length; i++) {
         var row = "<tr>";
         if (listOfContracts[i].contractStatus === "ACTIVE") {
@@ -83,8 +85,10 @@ function fillTableWithContracts() {
         row += "<td>" + listOfContracts[i].id+ "</td>";
         row += "<td>" + listOfContracts[i].serviceTitle + "</td>";
         row += "<td>" + listOfContracts[i].categoryName + "</td>";
-        row += "<td>" + listOfContracts[i].startDate + "</td>";
-        row += "<td>" + listOfContracts[i].endDate + "</td>";
+        dateText=moment(listOfContracts[i].startDate).format("DD/MM/YYYY");
+        row += "<td>" + dateText + "</td>";
+        dateText=moment(listOfContracts[i].endDate).format("DD/MM/YYYY");
+        row += "<td>" + dateText + "</td>";
         row += "<td>" + listOfContracts[i].fullName + "</td>";
         row += "<td>" + listOfContracts[i].servicePrice + "</td>";
         switch (listOfContracts[i].contractStatus){
@@ -176,6 +180,16 @@ function isUnreadMessages() {
             if (result > 0) {
                 $("#unreadMessages").css('display', 'inline');
             }
+        }
+    });
+}
+
+function downloadBalance(){
+    $.ajax({
+        type: "POST",
+        url: "/bank/balance",
+        success: function (result) {
+            $("#balance").text(result.balance + " MDL");
         }
     });
 }
