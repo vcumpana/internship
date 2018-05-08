@@ -87,6 +87,12 @@ public class CompanyController {
         return  "companyContractList";
     }
 
+    @GetMapping(value = "/company/notifications")
+    public String getMyNotificationsPage(Model model){
+        addCompanyNameToModel(model);
+        return  "companyNotifications";
+    }
+
     @GetMapping(value = "/company/myinvoices")
     public String getMyInvoicesPage(Model model){
         addCompanyNameToModel(model);
