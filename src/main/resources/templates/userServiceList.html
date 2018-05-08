@@ -59,6 +59,9 @@
         <strong>Success!</strong> You signed contract with company. Now wait aproove from company. You can see it and
         its status on main page.
     </div>
+    <div class="alert alert-danger" id="failContract" style="display:none">
+        <strong>Fail!</strong> You already have contract with this company in this period.
+    </div>
     <div class="row">
         <div class="col-sm-9 table-responsive">
             <table id="tableWithServices" class="table table-striped table-hover w-100">
@@ -142,13 +145,14 @@
                 Service category: <span id="categoryInModal"></span><br/>
                 Service title: <span id="titleInModal"></span><br/>
                 Service price per month: <span id="priceInModal"></span><br/>
-                Description:<span id="descriptionInModal"></span>
+                Description: <span id="descriptionInModal"></span>
                 <br/>
                 <h5>Sign contract</h5>
                 <div class="form-group row">
                     <label class="col-form-label col-3">Start date:</label>
                     <div class="col-6">
                         <input type="date" id="startDate" class="form-control"/>
+                        <div id="feedbackStartDate"></div>
                     </div>
                     <div id="feedbackPassword"></div>
                 </div>
@@ -156,6 +160,7 @@
                     <label class="col-form-label col-3">End date:</label>
                     <div class="col-6">
                         <input type="date" id="endDate" class="form-control"/>
+                        <div id="feedbackEndDate"></div>
                     </div>
                 </div>
             </div>

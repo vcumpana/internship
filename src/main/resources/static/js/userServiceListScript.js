@@ -11,27 +11,41 @@ $(document).ready(function () {
 });
 
 $("#signContract").click(function () {
+    var flag = true;
     var data = {
         "companyName": currentCompanyName,
         "serviceId": currentServiceId,
         "startDate": $("#startDate").val(),
         "endDate": $("#endDate").val()
     };
-    $.ajax({
-        type: "POST",
-        contentType: "application/json",
-        url: "/newContract",
-        data: JSON.stringify(data),
-        success: function () {
-            $("#startDate").val("");
-            $("#endDate").val("");
-            $("#serviceInfo").modal('hide');
-            $("#successContract").show();
-            window.setTimeout(function () {
-                $("#successContract").hide();
-            }, 3500);
-        }
-    });
+    flag = checkStartDate(data.startDate);
+    flag = checkEndDate(data.startDate, data.endDate) && flag;
+    if (flag) {
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            url: "/newContract",
+            data: JSON.stringify(data),
+            success: function () {
+                $("#startDate").val("");
+                $("#endDate").val("");
+                $("#serviceInfo").modal('hide');
+                $("#successContract").slideToggle();
+                window.setTimeout(function () {
+                    $("#successContract").slideToggle();
+                }, 3500);
+            },
+            statusCode: {
+                409: function () {
+                    $("#serviceInfo").modal('hide');
+                    $("#failContract").slideToggle();
+                    window.setTimeout(function () {
+                        $("#failContract").slideToggle();
+                    }, 3500);
+                }
+            }
+        });
+    }
 });
 
 $("#activateFilter").click(function () {
@@ -60,7 +74,7 @@ function getDataForTable() {
         url: url,
         success: function (result) {
             listOfServices = result.services;
-            maxPageSize=result.pages;
+            maxPageSize = result.pages;
             fillTableWithServices();
         }
     });
@@ -87,6 +101,8 @@ function fillTableWithServices() {
 
 function showServiceInfo(id) {
     $("#serviceInfo").modal('show');
+    toNeutral("#feedbackStartDate", "#startDate");
+    toNeutral("#feedbackEndDate", "#endDate");
     $.ajax({
         type: "GET",
         url: "/services/" + id,
@@ -142,7 +158,7 @@ function verifyIfPreviousExists() {
 
 function verifyIfNextExists() {
     var url = makeURL(currentPage + 1);
-    if (currentPage === maxPageSize||maxPageSize==0) {
+    if (currentPage === maxPageSize || maxPageSize == 0) {
         $("#nextPage").addClass("disabled");
         $("#nextPage").attr("disabled", true);
     } else {
@@ -163,14 +179,65 @@ function isUnreadMessages() {
     });
 }
 
-function checkDates(data){
+function checkStartDate(startDateString) {
+    if (startDateString === "") {
+        toFail("#feedbackStartDate", "#startDate", "Field can't be empty!");
+        return false;
+    }
     var currentDate = new Date();
-    var startDate = new Date(data.startDate);
-    var endDate = new Date(data.endDate);
-    if(currentDate > startDate){
-        console.log("Must be in future");
+    var startDate = new Date(startDateString);
+    if (currentDate > startDate) {
+        toFail("#feedbackStartDate", "#startDate", "Start date should be in future!");
+        return false;
+    } else {
+        toSuccess("#feedbackStartDate", "#startDate", "Looks good!");
+        return true;
     }
-    if(endDate < startDate){
-        console.log("end date bigger than start");
+}
+
+function checkEndDate(startDateString, endDateString) {
+    var flag = true;
+    if (startDateString === "") {
+        toFail("#feedbackStartDate", "#startDate", "Field can't be empty!");
+        flag = false;
     }
+    if (endDateString === "") {
+        toFail("#feedbackEndDate", "#endDate", "Field can't be empty!");
+        flag = false;
+        return flag;
+    }
+    var startDate = new Date(startDateString);
+    var endDate = new Date(endDateString);
+    if (startDate > endDate) {
+        toFail("#feedbackEndDate", "#endDate", "End date should be greater than start date!");
+        flag = false;
+    } else {
+        toSuccess("#feedbackEndDate", "#endDate", "Looks good!");
+    }
+    return flag;
+}
+
+
+function toSuccess(feedback, input, message) {
+    $(feedback).removeClass("invalid-feedback");
+    $(feedback).addClass("valid-feedback");
+    $(feedback).html(message);
+    $(input).removeClass("is-invalid");
+    $(input).addClass("is-valid");
+}
+
+function toFail(feedback, input, message) {
+    $(feedback).removeClass("valid-feedback");
+    $(feedback).addClass("invalid-feedback");
+    $(feedback).html(message);
+    $(input).removeClass("is-valid");
+    $(input).addClass("is-invalid");
+}
+
+function toNeutral(feedback, input) {
+    $(feedback).removeClass("invalid-feedback");
+    $(feedback).removeClass("valid-feedback");
+    $(feedback).html("");
+    $(input).removeClass("is-invalid");
+    $(input).removeClass("is-valid");
 }

@@ -42,11 +42,11 @@ public class ServiceRestController {
     }
 
     @GetMapping("/services/{id}")
-    public ResponseEntity getAllServices(@PathVariable("id") int id){
+    public ResponseEntity getAllServices(@PathVariable("id") int id) {
         ServiceToUserDto service = serviceService.getServiceToUserDtoById(id);
         if (service == null)
             return new ResponseEntity(HttpStatus.NOT_FOUND);
-        return new ResponseEntity( service, HttpStatus.OK);
+        return new ResponseEntity(service, HttpStatus.OK);
     }
 
 //    @PutMapping("service")
@@ -58,16 +58,16 @@ public class ServiceRestController {
 
     @GetMapping("/services")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public Map<String,Object> getServices(@RequestParam(value = "categoryId", required = false) Long categoryId,
-                                              @RequestParam(value = "size", required = false) Integer size,
-                                              @RequestParam(value = "page", required = false) Integer page,
-                                              @RequestParam(required = false, value = "min") Integer min,
-                                              @RequestParam(required = false, value = "companyId") Long companyId,
-                                              @RequestParam(required = false, value = "company") String companyName,
-                                              @RequestParam(required = false, value = "category") String categoryName,
-                                              @RequestParam(required = false, value = "max") Integer max,
-                                              @RequestParam(required = false, value = "orderByPrice") String order) {
-        Map<String,Object> map=new HashMap<>();
+    public Map<String, Object> getServices(@RequestParam(value = "categoryId", required = false) Long categoryId,
+                                           @RequestParam(value = "size", required = false) Integer size,
+                                           @RequestParam(value = "page", required = false) Integer page,
+                                           @RequestParam(required = false, value = "min") Integer min,
+                                           @RequestParam(required = false, value = "companyId") Long companyId,
+                                           @RequestParam(required = false, value = "company") String companyName,
+                                           @RequestParam(required = false, value = "category") String categoryName,
+                                           @RequestParam(required = false, value = "max") Integer max,
+                                           @RequestParam(required = false, value = "orderByPrice") String order) {
+        Map<String, Object> map = new HashMap<>();
         Sort.Direction direction = getDirection(order);
         ServiceDtoFilter filter = ServiceDtoFilter.builder()
                 .size(size)
@@ -80,8 +80,8 @@ public class ServiceRestController {
                 .max(max)
                 .page(page)
                 .build();
-        map.put("services",serviceService.getServicesWithFilter(filter));
-        map.put("pages",serviceService.getPagesSize(filter));
+        map.put("services", serviceService.getServicesWithFilter(filter));
+        map.put("pages", serviceService.getPagesSize(filter));
         return map;
     }
 
@@ -92,7 +92,6 @@ public class ServiceRestController {
             return new ResponseEntity(services, HttpStatus.OK);
         return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
-
 
 
     private Sort.Direction getDirection(String order) {
