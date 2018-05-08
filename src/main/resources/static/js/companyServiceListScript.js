@@ -4,6 +4,7 @@ var descArrow = "<i class=\"fa fa-arrow-up\"></i>";
 
 $(document).ready(function () {
     downloadServices();
+    isUnreadMessages();
 });
 
 function downloadServices() {
@@ -96,6 +97,18 @@ function setArrowForSort(value, type) {
             }
         } else {
             $(this).html("");
+        }
+    });
+}
+
+function isUnreadMessages() {
+    $.ajax({
+        type: "GET",
+        url: "/notification/getNumberOfUnread",
+        success: function (result) {
+            if (result > 0) {
+                $("#unreadMessages").css('display', 'inline');
+            }
         }
     });
 }

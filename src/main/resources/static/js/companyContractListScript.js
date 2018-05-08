@@ -5,6 +5,7 @@ var arr = new Array();
 
 $(document).ready(function () {
     downloadContracts();
+    isUnreadMessages();
 });
 
 $('#select_all').change(function() {
@@ -146,6 +147,18 @@ function setArrowForSort(value, type) {
             }
         } else {
             $(this).html("");
+        }
+    });
+}
+
+function isUnreadMessages() {
+    $.ajax({
+        type: "GET",
+        url: "/notification/getNumberOfUnread",
+        success: function (result) {
+            if (result > 0) {
+                $("#unreadMessages").css('display', 'inline');
+            }
         }
     });
 }
