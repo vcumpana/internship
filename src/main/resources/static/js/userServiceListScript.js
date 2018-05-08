@@ -17,21 +17,21 @@ $("#signContract").click(function () {
         "startDate": $("#startDate").val(),
         "endDate": $("#endDate").val()
     };
-    $.ajax({
-        type: "POST",
-        contentType: "application/json",
-        url: "/newContract",
-        data: JSON.stringify(data),
-        success: function () {
-            $("#startDate").val("");
-            $("#endDate").val("");
-            $("#serviceInfo").modal('hide');
-            $("#successContract").show();
-            window.setTimeout(function () {
-                $("#successContract").hide();
-            }, 3500);
-        }
-    });
+    // $.ajax({
+    //     type: "POST",
+    //     contentType: "application/json",
+    //     url: "/newContract",
+    //     data: JSON.stringify(data),
+    //     success: function () {
+    //         $("#startDate").val("");
+    //         $("#endDate").val("");
+    //         $("#serviceInfo").modal('hide');
+    //         $("#successContract").show();
+    //         window.setTimeout(function () {
+    //             $("#successContract").hide();
+    //         }, 3500);
+    //     }
+    // });
 });
 
 $("#activateFilter").click(function () {
@@ -161,4 +161,16 @@ function isUnreadMessages() {
             }
         }
     });
+}
+
+function checkDates(data){
+    var currentDate = new Date();
+    var startDate = new Date(data.startDate);
+    var endDate = new Date(data.endDate);
+    if(currentDate > startDate){
+        console.log("Must be in future");
+    }
+    if(endDate < startDate){
+        console.log("end date bigger than start");
+    }
 }
