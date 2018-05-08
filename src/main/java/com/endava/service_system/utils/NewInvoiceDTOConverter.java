@@ -29,7 +29,8 @@ public class NewInvoiceDTOConverter implements Converter<NewInvoiceDTO, Invoice>
         invoice.setDueDate(newInvoiceDTO.getDueDate());
         invoice.setPrice(newInvoiceDTO.getPrice());
         invoice.setInvoiceStatus(CREATED);
-
+        if (newInvoiceDTO.getInvoiceId() != null)
+            invoice.setId(newInvoiceDTO.getInvoiceId());
         return invoice;
     }
 

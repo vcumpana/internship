@@ -5,6 +5,7 @@ var descArrow = "<i class=\"fa fa-arrow-up\"></i>";
 $(document).ready(function () {
     downloadServices();
     isUnreadMessages();
+    downloadBalance();
 });
 
 function downloadServices() {
@@ -15,6 +16,16 @@ function downloadServices() {
             listOfServices = result;
             listOfServices.sort(comparatorForCategory);
             fillTableWithServices();
+        }
+    });
+}
+
+function downloadBalance(){
+    $.ajax({
+        type: "POST",
+        url: "/bank/balance",
+        success: function (result) {
+            $("#balance").text(result.balance + " MDL");
         }
     });
 }
