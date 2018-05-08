@@ -9,4 +9,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional(readOnly = true)
 public interface CurrentDateDao extends JpaRepository<CurrentDate,Long> {
+    CurrentDate getTopByIdOrderByIdAsc(long id);
 }

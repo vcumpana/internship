@@ -4,6 +4,7 @@ import com.endava.service_system.dto.CredentialDTO;
 import com.endava.service_system.enums.UserStatus;
 import com.endava.service_system.model.Admin;
 import com.endava.service_system.model.Credential;
+import com.endava.service_system.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -38,6 +39,6 @@ public interface ICredentialDao extends JpaRepository<Credential,Long>{
 	@Query("SELECT cr FROM Credential as cr JOIN Company as co ON cr.id = co.credential WHERE co.name = :companyName")
     Optional<Credential> getByCompanyName(@Param("companyName") String companyName);
 
-    @Query("SELECT cr FROM Credential as cr JOIN User as u ON cr.id = u.credential WHERE u.id = :userId")
+	@Query("SELECT cr FROM Credential as cr JOIN User as u ON cr.id = u.credential WHERE u.id = :userId")
     Optional<Credential> getByUserId(@Param("userId") long userId);
 }
