@@ -15,7 +15,7 @@ public class NotificationEntityMangerDao {
     private int PAGE_SIZE = 10;
 
     public List<Notification> getAllNotificationsForUser(String username, int page){
-        String hql = "SELECT n FROM Notification AS n JOIN n.recipient AS r WHERE r.username = :username";
+        String hql = "SELECT n FROM Notification AS n JOIN n.recipient AS r WHERE r.username = :username ORDER BY n.dateTime DESC";
         Query query = entityManager.createQuery(hql);
         query.setParameter("username", username);
         query.setFirstResult((page - 1) * PAGE_SIZE);

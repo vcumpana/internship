@@ -4,7 +4,7 @@
         <Console name="Console">
             <PatternLayout pattern="%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} - %msg%n" />
         </Console>
-        <File name="File" fileName="U:/app.log">
+        <File name="File" fileName="C:/Desktop/app.log">
             <PatternLayout pattern="%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-7level %m %ex%n" />
         </File>
     </Appenders>

@@ -31,12 +31,12 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 public class EmailRest {
-    private static Logger LOGGER= LogManager.getLogger(EmailRest.class);
-    private  EmailService emailService;
-    private  CredentialService credentialService;
-    private  UserService userService;
-    private  CompanyService companyService;
-    private  MailSender mailSender;
+    private static Logger LOGGER = LogManager.getLogger(EmailRest.class);
+    private EmailService emailService;
+    private CredentialService credentialService;
+    private UserService userService;
+    private CompanyService companyService;
+    private MailSender mailSender;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -72,64 +72,64 @@ public class EmailRest {
 
     @GetMapping("/email/test")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String getEmailForm(){
+    public String getEmailForm() {
         return "emailForm";
     }
 
     @PostMapping("/email/test")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String sendEmail(@RequestParam("to") String to, @RequestParam("subject")String subject, @RequestParam("message") String message){
-        LOGGER.log(Level.DEBUG,"to:"+to);
-        LOGGER.log(Level.DEBUG,"subject:"+subject);
-        LOGGER.log(Level.DEBUG,"message:"+message);
-        emailService.sendEmail(to,subject,message);
+    public String sendEmail(@RequestParam("to") String to, @RequestParam("subject") String subject, @RequestParam("message") String message) {
+        LOGGER.log(Level.DEBUG, "to:" + to);
+        LOGGER.log(Level.DEBUG, "subject:" + subject);
+        LOGGER.log(Level.DEBUG, "message:" + message);
+        emailService.sendEmail(to, subject, message);
         return "emailForm";
     }
 
-    @PostMapping(value = "/admin/resetpassword",consumes = MediaType.APPLICATION_JSON_VALUE,
+    @PostMapping(value = "/admin/resetpassword", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity adminResetPassword(@RequestBody Map<String,Object> data){
-        String username= (String) data.get("username");
-        LOGGER.log(Level.DEBUG,username);
+    public ResponseEntity adminResetPassword(@RequestBody Map<String, Object> data) {
+        String username = (String) data.get("username");
+        LOGGER.log(Level.DEBUG, username);
         try {
             resetPasswordToUser(credentialService.getByUsername(username).get());
-            return new ResponseEntity( HttpStatus.OK);
-        }catch (Throwable e){
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (Throwable e) {
             e.printStackTrace();
             return new ResponseEntity(e, HttpStatus.BAD_REQUEST);
         }
     }
 
     @GetMapping("/forgotPassword")
-    public ModelAndView getForgotPassword(){
-        ModelAndView modelAndView= new ModelAndView();
+    public ModelAndView getForgotPassword() {
+        ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("forgotPassword");
         return modelAndView;
     }
 
     @PostMapping(value = "/resetPassword")
-    public ResponseEntity resetPassword(@RequestBody Map<String,Object> responseBody) {
-        LOGGER.log(Level.DEBUG,responseBody);
-        String email= (String) responseBody.get("email");
-        Optional<Credential> credentialOptional=credentialService.getByEmail(email);
-        if(credentialOptional.isPresent()) {
+    public ResponseEntity resetPassword(@RequestBody Map<String, Object> responseBody) {
+        LOGGER.log(Level.DEBUG, responseBody);
+        String email = (String) responseBody.get("email");
+        Optional<Credential> credentialOptional = credentialService.getByEmail(email);
+        if (credentialOptional.isPresent()) {
             resetPasswordToUser(credentialOptional.get());
             return new ResponseEntity(HttpStatus.OK);
-        }else{
+        } else {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
     }
 
-    private void resetPasswordToUser(Credential user){
-        String token=getToken();
-        credentialService.updatePassword(user.getUsername(),passwordEncoder.encode(token));
-        String subject ="Password Reset in Payment System";
-        emailService.sendEmail(user.getEmail(),subject,"We have reseted your password for user "+user.getUsername()+". Your new password is "+token);
+    private void resetPasswordToUser(Credential user) {
+        String token = getToken();
+        credentialService.updatePassword(user.getUsername(), passwordEncoder.encode(token));
+        String subject = "Password Reset in Payment System";
+        emailService.sendEmail(user.getEmail(), subject, "We have reseted your password for user " + user.getUsername() + ". Your new password is " + token);
     }
 
 
-    private String getToken(){
+    private String getToken() {
         return UUID.randomUUID().toString();
     }
 }
