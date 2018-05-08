@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
@@ -86,16 +87,16 @@ public class CompanyController {
         return  "companyContractList";
     }
 
-    @GetMapping(value = "/company/notifications")
-    public String getMyNotificationsPage(Model model){
-        addCompanyNameToModel(model);
-        return  "companyNotifications";
-    }
-
     @GetMapping(value = "/company/myinvoices")
     public String getMyInvoicesPage(Model model){
         addCompanyNameToModel(model);
         return  "companyInvoices";
+    }
+
+    @GetMapping(value = "/company/notifications")
+    public String getNotificationsPage(Model model){
+        addCompanyNameToModel(model);
+        return  "companyNotifications";
     }
 
     @GetMapping("/company/addservice")
@@ -117,11 +118,14 @@ public class CompanyController {
         return "redirect:/company/serviceList";
     }
 
-    @GetMapping("/company/createInvoice")
-    public String getCompanyCreateInvoiceForm(Model model) {
-        model.addAttribute("invoice", new NewInvoiceDTO());
-        List<Contract> contracts = contractService.getAllContractsByCompanyUsername(getAuthenticatedUsername());
-        model.addAttribute("contracts", contracts);
+    @GetMapping("/contract/{id}/createInvoice")
+    public String getCompanyCreateInvoiceForm(Model model, @PathVariable("id") Long contractId) {
+        NewInvoiceDTO newInvoiceDTO = new NewInvoiceDTO();
+        newInvoiceDTO.setContractId(contractId);
+        model.addAttribute("invoice", newInvoiceDTO);
+
+        //List<Contract> contracts = contractService.getAllContractsByCompanyUsername(getAuthenticatedUsername());
+        //model.addAttribute("contracts", contracts);
         return "companyCreateInvoice";
     }
 

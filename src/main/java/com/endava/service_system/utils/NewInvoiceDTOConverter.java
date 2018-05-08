@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
+import static com.endava.service_system.enums.InvoiceStatus.CREATED;
 import static com.endava.service_system.enums.InvoiceStatus.SENT;
 
 @Component
@@ -27,7 +28,7 @@ public class NewInvoiceDTOConverter implements Converter<NewInvoiceDTO, Invoice>
         invoice.setTillDate(newInvoiceDTO.getTillDate());
         invoice.setDueDate(newInvoiceDTO.getDueDate());
         invoice.setPrice(newInvoiceDTO.getPrice());
-        invoice.setInvoiceStatus(SENT);
+        invoice.setInvoiceStatus(CREATED);
 
         return invoice;
     }
