@@ -4,6 +4,7 @@ import com.endava.service_system.dao.CurrentDateDao;
 import com.endava.service_system.dao.InvoiceEntityManagerDao;
 import com.endava.service_system.dao.InvoiceUpdateDao;
 import com.endava.service_system.dto.InvoiceDisplayDto;
+import com.endava.service_system.dto.InvoiceForPaymentDto;
 import com.endava.service_system.model.*;
 import com.endava.service_system.enums.ContractStatus;
 import com.endava.service_system.enums.InvoiceStatus;
@@ -13,16 +14,20 @@ import org.springframework.stereotype.Service;
 import com.endava.service_system.dao.InvoiceDao;
 import com.endava.service_system.model.Invoice;
 import org.springframework.transaction.annotation.Transactional;
+import sun.rmi.runtime.Log;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.endava.service_system.enums.ContractStatus.ACTIVE;
 import static com.endava.service_system.enums.InvoiceStatus.CREATED;
+import static com.endava.service_system.enums.InvoiceStatus.PAID;
 import static com.endava.service_system.enums.InvoiceStatus.SENT;
 
 @Service
@@ -159,4 +164,21 @@ public class InvoiceService {
     public void makeInvoicesOverdued(List<Long> invoceIds) {
         invoiceDao.setStatus(InvoiceStatus.OVERDUE,invoceIds);
     }
+
+    @Transactional
+    public void makeInvoicesPayed(List<Long> invoceIds){
+        invoiceDao.setStatus(InvoiceStatus.PAID,invoceIds);
+    }
+
+    @Transactional
+    public void makeInvoicePayed(Long id){
+        List ids=new ArrayList();
+        ids.add(id);
+        makeInvoicesPayed(ids);
+    }
+
+    public Optional<InvoiceForPaymentDto> getFullInvoiceById(int id) {
+        return invoiceDao.getFullInvoiceById(id);
+    }
+
 }

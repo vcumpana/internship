@@ -25,4 +25,6 @@ public class Credential {
     private UserStatus status;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @OneToOne
+    private BankAccount bankAccount;
 }
