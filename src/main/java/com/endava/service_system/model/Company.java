@@ -25,8 +25,6 @@ public class Company {
     @JsonIgnore
     private Credential credential;
 
-    private String bankAccount;
-
     private String address;
 
     @OneToMany

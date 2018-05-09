@@ -14,7 +14,6 @@ public class CompanyToCompanyAdminDTO implements Converter<Company,CompanyAdminD
         dto.setCompanyName(company.getName());
         dto.setStatus(company.getCredential().getStatus());
         dto.setAddress(company.getAddress());
-        dto.setBankAccount(company.getBankAccount());
         dto.setEmail(company.getCredential().getEmail());
         return dto;
     }

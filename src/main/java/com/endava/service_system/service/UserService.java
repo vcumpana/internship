@@ -5,6 +5,7 @@ import com.endava.service_system.dto.CredentialDTO;
 import com.endava.service_system.dto.UserDto;
 import com.endava.service_system.dto.UserDtoToShow;
 import com.endava.service_system.enums.UserStatus;
+import com.endava.service_system.model.BankAccount;
 import com.endava.service_system.model.Credential;
 import com.endava.service_system.model.Role;
 import com.endava.service_system.model.User;
@@ -24,10 +25,10 @@ import java.util.Optional;
 public class UserService {
     private UserDao userDao;
     private CredentialService credentialService;
-    private PasswordEncoder passwordEncoder;
-
+    private BankService bankService;
     public void saveUser(User user){
-        credentialService.save(user.getCredential());
+        Credential credential=credentialService.save(user.getCredential());
+        bankService.addBankAccount(credential);
         userDao.save(user);
     }
 
@@ -71,8 +72,7 @@ public class UserService {
     }
 
     @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
+    public void setBankService(BankService bankService) {
+        this.bankService = bankService;
     }
-
 }
