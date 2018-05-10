@@ -52,9 +52,9 @@ public class ScheduledTasks {
                 User user=invoice.getContract().getUser();
                 Company company=invoice.getContract().getCompany();
                 Contract contract=invoice.getContract();
-                Notification userNotification=notificationService.createNotificationForCompany(user,company,admin,contract,LocalDateTime.now());
-                //Notification companyNotification=createNotificationForCompany(user,company,admin,contract,LocalDateTime.now());
-                Notification companyNotification=notificationService.createNotificationForUser(user,company,admin,contract,LocalDateTime.now());
+                Notification userNotification=notificationService.createNotificationPaymentOverduedForCompany(user,company,admin,contract,LocalDateTime.now());
+                //Notification companyNotification=createNotificationPaymentOverduedForCompany(user,company,admin,contract,LocalDateTime.now());
+                Notification companyNotification=notificationService.createNotificationPaymentOverduedForUser(user,company,admin,contract,LocalDateTime.now());
                 notifications.add(userNotification);
                 notifications.add(companyNotification);
                 invoceIds.add(invoice.getId());

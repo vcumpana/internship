@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import com.endava.service_system.dao.InvoiceDao;
 import com.endava.service_system.model.Invoice;
 import org.springframework.transaction.annotation.Transactional;
-import sun.rmi.runtime.Log;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

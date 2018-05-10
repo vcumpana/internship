@@ -22,7 +22,6 @@ public class Company {
     private String name;
 
     @OneToOne
-    @JsonIgnore
     private Credential credential;
 
     private String address;

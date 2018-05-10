@@ -31,6 +31,7 @@ public class CompanyService {
     private ServiceService serviceService;
 
     public Company save(Company company) {
+        credentialService.encodePassword(company.getCredential());
         Credential credential = credentialService.save(company.getCredential());
         company.setCredential(credential);
         return companyDao.save(company);

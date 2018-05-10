@@ -101,15 +101,29 @@ public class NotificationService {
         return notification;
     }
 
-    public Notification createNotificationForCompany(User user, Company company,Credential adminCredential,Contract contract, LocalDateTime now){
+    public Notification createNotificationPaymentOverduedForCompany(User user, Company company, Credential adminCredential, Contract contract, LocalDateTime now){
         String message=user.getName()+" "+user.getSurname()+" has overdued payment for "+contract.getService().getTitle()+" .Contract Nr "+contract.getId()+" ";
         Notification notification=createNotificationForCredential(adminCredential,company.getCredential(),now,message);
         return notification;
     }
 
-    public Notification createNotificationForUser(User user, Company company,Credential adminCredential,Contract contract, LocalDateTime now){
+    public Notification createNotificationPaymentOverduedForUser(User user, Company company, Credential adminCredential, Contract contract, LocalDateTime now){
         String message="You have overdued payment to "+company.getName()+" for "+contract.getService().getTitle()+" .Contract Nr "+contract.getId();
         Notification notification=createNotificationForCredential(adminCredential,user.getCredential(),now,message);
+        return notification;
+    }
+
+    public Notification createNotificationPayedForCompany(String userFullName,Long invoiceId,String serviceTitle,Credential adminCredential,Credential companyCredential,LocalDateTime now){
+        String message="User "+userFullName+
+                " has payed for invoice : "+invoiceId+
+                " ,for service : "+serviceTitle+".";
+        Notification notification=createNotificationForCredential(adminCredential,companyCredential,now,message);
+        return notification;
+    }
+
+    public Notification createNotificationPayedForUser(Long invoiceId,String serviceTitle,Credential adminCredential,Credential userCredential,LocalDateTime now){
+        String message="Succesful payment of invoice : "+invoiceId+" , service "+serviceTitle+".";
+        Notification notification=createNotificationForCredential(adminCredential,userCredential,now,message);
         return notification;
     }
 
