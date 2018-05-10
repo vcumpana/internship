@@ -8,6 +8,7 @@ var errorMessageRepeatedPassword = "<strong>Warning!</strong> Password must be t
 
 $(document).ready(function () {
     isUnreadMessages();
+    downloadBalance();
 });
 
 $("a[scopeInThisDoc='update']").click(function () {
@@ -43,6 +44,26 @@ $("a[scopeInThisDoc='confirm']").click(function () {
     });
     $(this).css('display', 'none');
     updateUser();
+});
+
+$("#addMoney").click(function () {
+    $("#modalForMoney").modal("show");
+});
+
+$("#addAction").click(function () {
+    data = {
+        "sum": parseInt($("#money").val())
+    };
+    $.ajax({
+        type: "POST",
+        contentType: "application/json",
+        url: "/bank/addmoney/",
+        data: JSON.stringify(data),
+        success: function () {
+            downloadBalance();
+            $("#modalForMoney").modal("hide");
+        }
+    });
 });
 
 function hideCurrentButton(value) {
@@ -139,13 +160,13 @@ function updateUser() {
 
 $("#updatePassword").click(function () {
     var errors = 0;
-    if(validatePassword("#newPassword") == false){
+    if (validatePassword("#newPassword") == false) {
         errors++;
     }
-    if(checkPasswords() == false){
+    if (checkPasswords() == false) {
         errors++;
     }
-    if(errors > 0){
+    if (errors > 0) {
         return;
     }
     var data = {
@@ -190,7 +211,7 @@ $("#showPasswordForm").click(function () {
     $("#showPasswordForm").css("display", "none");
 });
 
-function hideForm(){
+function hideForm() {
     $("#oldPassword").val("");
     $("#newPassword").val("");
     $("#repeatedNewPassword").val("");
@@ -206,32 +227,32 @@ $("#repeatedNewPassword").keyup(function () {
     checkPasswords();
 });
 
-function validatePassword(input){
+function validatePassword(input) {
     var feedback = "#feedbackNewPassword";
     var value = $(input).val();
     checkPasswords();
-    if(value.match(patternForPassword) !== null){
+    if (value.match(patternForPassword) !== null) {
         toSuccess(feedback, input, successMessage);
         return true;
-    }else{
+    } else {
         toFail(feedback, input, errorMessagePassword);
         return false;
     }
 }
 
-function checkPasswords(){
+function checkPasswords() {
     var feedback = "#feedbackRepeatedNewPassword";
     var value = $("#repeatedNewPassword").val();
-    if(value === $("#newPassword").val()){
+    if (value === $("#newPassword").val()) {
         toSuccess(feedback, "#repeatedNewPassword", successMessage);
         return true;
-    }else{
+    } else {
         toFail(feedback, "#repeatedNewPassword", errorMessageRepeatedPassword);
         return false;
     }
 }
 
-function toSuccess(feedback, input, message){
+function toSuccess(feedback, input, message) {
     $(feedback).removeClass("invalid-feedback");
     $(feedback).addClass("valid-feedback");
     $(feedback).html(message);
@@ -239,7 +260,7 @@ function toSuccess(feedback, input, message){
     $(input).addClass("is-valid");
 }
 
-function toFail(feedback, input, message){
+function toFail(feedback, input, message) {
     $(feedback).removeClass("valid-feedback");
     $(feedback).addClass("invalid-feedback");
     $(feedback).html(message);
@@ -247,7 +268,7 @@ function toFail(feedback, input, message){
     $(input).addClass("is-invalid");
 }
 
-function toNeutral(feedback, input){
+function toNeutral(feedback, input) {
     $(feedback).removeClass("invalid-feedback");
     $(feedback).removeClass("valid-feedback");
     $(feedback).text("");
@@ -263,6 +284,17 @@ function isUnreadMessages() {
             if (result > 0) {
                 $("#unreadMessages").css('display', 'inline');
             }
+        }
+    });
+}
+
+function downloadBalance() {
+    $.ajax({
+        type: "POST",
+        url: "/bank/balance",
+        success: function (result) {
+            $("#balance").text(result.balance + " MDL");
+            $("#balanceInCabinet").text(result.balance + " MDL");
         }
     });
 }
