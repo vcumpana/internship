@@ -59,7 +59,7 @@ function updateCompany(name,company){
     request = $.ajax({
         type: "PUT",
         contentType: "application/json; charset=utf-8",
-        url: HOST.concat("/admin/companies/").concat(encodeURIComponent(name)),
+        url: "/admin/companies/".concat(encodeURIComponent(name)),
         data: JSON.stringify(company),
         dataType: "json"
     });
