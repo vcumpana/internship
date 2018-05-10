@@ -18,7 +18,7 @@ public class UserDtoToUserConverter implements Converter<UserDto, User> {
     public User convert(UserDto userDto) {
         Credential credential = new Credential();
         credential.setUsername(userDto.getLogin());
-        credential.setPassword(new BCryptPasswordEncoder().encode(userDto.getPassword()));
+        credential.setPassword(userDto.getPassword());
         credential.setStatus(ACCEPTED);
         credential.setRole(Role.ROLE_USER);
         credential.setEmail(userDto.getEmail());

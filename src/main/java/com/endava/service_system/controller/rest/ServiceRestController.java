@@ -5,13 +5,19 @@ import com.endava.service_system.model.Company;
 import com.endava.service_system.model.Service;
 import com.endava.service_system.model.ServiceDtoFilter;
 import com.endava.service_system.service.ServiceService;
+import com.itextpdf.text.Document;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,6 +99,29 @@ public class ServiceRestController {
         return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/services/getPDF")
+    public ResponseEntity<InputStreamResource> getPDFOfServices(){
+        String fileName = serviceService.getPdfOfServices();
+        ClassPathResource pdfFile = new ClassPathResource(fileName);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+
+        try {
+            return ResponseEntity
+                    .ok()
+                    .headers(headers)
+                    .contentLength(pdfFile.contentLength())
+                    .contentType(MediaType.parseMediaType("applicatton.octet-stream"))
+                    .body(new InputStreamResource(pdfFile.getInputStream()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity
+                    .status(500)
+                    .body(null);
+        }
+    }
 
     private Sort.Direction getDirection(String order) {
         Sort.Direction direction;

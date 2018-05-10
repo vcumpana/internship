@@ -16,8 +16,11 @@ import static com.itextpdf.text.Element.ALIGN_LEFT;
 import static com.itextpdf.text.Font.FontFamily.TIMES_ROMAN;
 
 public class PDFMaking {
-    public static void makePDFOfServices(List<ServiceToUserDto> services) {
-        System.out.println("Creating PDF");
+    static int file = 1;
+
+    public static String  makePDFOfServices(List<ServiceToUserDto> services) {
+        String fileName = "resources/static/pdf" + file + ".pdf";
+        PdfWriter docWriter = null;
         Document document = new Document();
         PdfPTable table = new PdfPTable(new float[]{2, 2, 2, 3, 1});
         table.setWidthPercentage(90f);
@@ -36,12 +39,15 @@ public class PDFMaking {
         }
 
         try {
+            docWriter = PdfWriter.getInstance(document, new FileOutputStream(fileName));
+            file++;
             document.open();
             document.add(table);
             document.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return fileName;
     }
 
     private static void insertCell(PdfPTable table, String text) {

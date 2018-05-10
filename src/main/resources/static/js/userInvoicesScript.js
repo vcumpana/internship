@@ -6,6 +6,7 @@ var size = 10;
 $(document).ready(function () {
     getDataForTable();
     isUnreadMessages();
+    downloadBalance();
 });
 
 $("#activateFilter").click(function () {
@@ -111,6 +112,16 @@ function isUnreadMessages() {
             if (result > 0) {
                 $("#unreadMessages").css('display', 'inline');
             }
+        }
+    });
+}
+
+function downloadBalance(){
+    $.ajax({
+        type: "POST",
+        url: "/bank/balance",
+        success: function (result) {
+            $("#balance").text(result.balance + " MDL");
         }
     });
 }

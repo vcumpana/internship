@@ -8,6 +8,7 @@ var maxPageSize;
 $(document).ready(function () {
     getDataForTable();
     isUnreadMessages();
+    downloadBalance();
 });
 
 $("#signContract").click(function () {
@@ -240,4 +241,14 @@ function toNeutral(feedback, input) {
     $(feedback).html("");
     $(input).removeClass("is-invalid");
     $(input).removeClass("is-valid");
+}
+
+function downloadBalance(){
+    $.ajax({
+        type: "POST",
+        url: "/bank/balance",
+        success: function (result) {
+            $("#balance").text(result.balance + " MDL");
+        }
+    });
 }

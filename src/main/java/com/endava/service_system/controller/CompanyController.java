@@ -99,12 +99,6 @@ public class CompanyController {
         return  "companyInvoices";
     }
 
-    @GetMapping(value = "/company/notifications")
-    public String getNotificationsPage(Model model){
-        addCompanyNameToModel(model);
-        return  "companyNotifications";
-    }
-
     @GetMapping("/company/addservice")
     public String getCompanyAddServiceForm(Model model) {
         model.addAttribute("service", new NewServiceDTO());
