@@ -8,6 +8,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import static com.endava.service_system.enums.UserStatus.ACCEPTED;
 import static com.endava.service_system.enums.UserStatus.WAITING;
 
 @Component
@@ -18,7 +19,7 @@ public class UserDtoToUserConverter implements Converter<UserDto, User> {
         Credential credential = new Credential();
         credential.setUsername(userDto.getLogin());
         credential.setPassword(new BCryptPasswordEncoder().encode(userDto.getPassword()));
-        credential.setStatus(WAITING);
+        credential.setStatus(ACCEPTED);
         credential.setRole(Role.ROLE_USER);
         credential.setEmail(userDto.getEmail());
         User user = new User();

@@ -6,6 +6,8 @@ import com.endava.service_system.dto.CredentialDTO;
 import com.endava.service_system.dto.UserAdminDTO;
 import com.endava.service_system.enums.UserStatus;
 import com.endava.service_system.model.Company;
+import com.endava.service_system.model.Credential;
+import com.endava.service_system.service.BankService;
 import com.endava.service_system.service.CompanyService;
 import com.endava.service_system.service.CredentialService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,7 @@ public class CompanyRestController {
     private CompanyService companyService;
     private ConversionService conversionService;
     private CredentialService credentialService;
+    private BankService bankService;
 
     @GetMapping("/admin/companies")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -69,6 +72,14 @@ public class CompanyRestController {
             return new ResponseEntity(bindingResult.getAllErrors(), HttpStatus.BAD_REQUEST);
         }
         try {
+            if(credentialDTO.getStatus()==UserStatus.ACCEPTED){
+                Optional<Credential> companyCredentials=credentialService.getByUsername(username);
+                if(!companyCredentials.isPresent()){
+                    String json = "{\"message\":\"Bank Problem\"}";
+                    return new ResponseEntity(json, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+                bankService.addBankAccount(companyCredentials.get());
+            }
             int entitiesUpdated = credentialService.updateStatusAndPassword(username, credentialDTO);
             String json = "{\"count\":\"1\"}";
             return new ResponseEntity(json, HttpStatus.OK);
@@ -90,13 +101,19 @@ public class CompanyRestController {
     public void setCompanyService(CompanyService companyService) {
         this.companyService = companyService;
     }
+
     @Autowired
     public void setConversionService(ConversionService conversionService) {
         this.conversionService = conversionService;
     }
+
     @Autowired
     public void setCredentialService(CredentialService credentialService) {
         this.credentialService = credentialService;
     }
 
+    @Autowired
+    public void setBankService(BankService bankService) {
+        this.bankService = bankService;
+    }
 }
