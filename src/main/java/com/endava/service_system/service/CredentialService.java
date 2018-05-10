@@ -23,12 +23,20 @@ public class CredentialService {
     }
 
     public Credential save(Credential credential) {
-        encodePassword(credential);
-        return credentialDao.save(credential);
-    }
+        System.out.println("Credential before save "+credential);
+        Credential credential1= credentialDao.save(credential);
+        System.out.println("Credential after save "+credential1);
+        return credential1;
+    };
 
-    private void encodePassword(Credential credential){
-        credential.setPassword(passwordEncoder.encode(credential.getPassword()));
+    public void encodePassword(Credential credential){
+        System.out.println("Credential before password encoder "+credential);
+        String password=credential.getPassword();
+        System.out.println("Credential before password  "+password);
+        String encoded=passwordEncoder.encode(password);
+        System.out.println("Credential before encoded  "+encoded);
+        credential.setPassword(encoded);
+        System.out.println("Credential after password encoder "+credential);
     }
 
     public Credential getDefaultAdminCredential(){
@@ -63,6 +71,7 @@ public class CredentialService {
     }
 
     private int updatePasswordAndStatus(String username,String password,UserStatus status){
+
         return credentialDao.updateStatusAndPassword(username,password,status);
     }
 

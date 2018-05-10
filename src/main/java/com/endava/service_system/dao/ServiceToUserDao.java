@@ -2,7 +2,6 @@ package com.endava.service_system.dao;
 
 import com.endava.service_system.dto.ServiceToUserDto;
 import com.endava.service_system.model.ServiceDtoFilter;
-import com.sun.xml.internal.ws.util.ServiceFinder;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
