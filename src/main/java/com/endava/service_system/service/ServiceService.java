@@ -4,7 +4,9 @@ import com.endava.service_system.dao.ServiceDao;
 import com.endava.service_system.dao.ServiceToUserDao;
 import com.endava.service_system.dto.ServiceToUserDto;
 import com.endava.service_system.model.Service;
+import com.endava.service_system.utils.PDFMaking;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.itextpdf.text.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.endava.service_system.model.ServiceDtoFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +76,10 @@ public class ServiceService {
 
     public Service save(Service service) {
         return serviceDao.save(service);
+    }
+
+    public String getPdfOfServices(){
+        return PDFMaking.makePDFOfServices(getAllServices());
     }
 
     @Autowired

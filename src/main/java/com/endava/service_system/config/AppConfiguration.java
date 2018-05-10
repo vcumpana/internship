@@ -40,7 +40,7 @@ public class AppConfiguration{
 	@Bean
 	@Qualifier("bankApi")
 	public String getBankApiUrl(){
-		return "http://localhost:64509/api/";
+		return "http://172.17.100.255:82/api/";
 	}
 
 	@Bean

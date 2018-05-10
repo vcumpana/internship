@@ -5,13 +5,19 @@ import com.endava.service_system.model.Company;
 import com.endava.service_system.model.Service;
 import com.endava.service_system.model.ServiceDtoFilter;
 import com.endava.service_system.service.ServiceService;
+import com.itextpdf.text.Document;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,11 +48,11 @@ public class ServiceRestController {
     }
 
     @GetMapping("/services/{id}")
-    public ResponseEntity getAllServices(@PathVariable("id") int id){
+    public ResponseEntity getAllServices(@PathVariable("id") int id) {
         ServiceToUserDto service = serviceService.getServiceToUserDtoById(id);
         if (service == null)
             return new ResponseEntity(HttpStatus.NOT_FOUND);
-        return new ResponseEntity( service, HttpStatus.OK);
+        return new ResponseEntity(service, HttpStatus.OK);
     }
 
 //    @PutMapping("service")
@@ -58,16 +64,16 @@ public class ServiceRestController {
 
     @GetMapping("/services")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public Map<String,Object> getServices(@RequestParam(value = "categoryId", required = false) Long categoryId,
-                                              @RequestParam(value = "size", required = false) Integer size,
-                                              @RequestParam(value = "page", required = false) Integer page,
-                                              @RequestParam(required = false, value = "min") Integer min,
-                                              @RequestParam(required = false, value = "companyId") Long companyId,
-                                              @RequestParam(required = false, value = "company") String companyName,
-                                              @RequestParam(required = false, value = "category") String categoryName,
-                                              @RequestParam(required = false, value = "max") Integer max,
-                                              @RequestParam(required = false, value = "orderByPrice") String order) {
-        Map<String,Object> map=new HashMap<>();
+    public Map<String, Object> getServices(@RequestParam(value = "categoryId", required = false) Long categoryId,
+                                           @RequestParam(value = "size", required = false) Integer size,
+                                           @RequestParam(value = "page", required = false) Integer page,
+                                           @RequestParam(required = false, value = "min") Integer min,
+                                           @RequestParam(required = false, value = "companyId") Long companyId,
+                                           @RequestParam(required = false, value = "company") String companyName,
+                                           @RequestParam(required = false, value = "category") String categoryName,
+                                           @RequestParam(required = false, value = "max") Integer max,
+                                           @RequestParam(required = false, value = "orderByPrice") String order) {
+        Map<String, Object> map = new HashMap<>();
         Sort.Direction direction = getDirection(order);
         ServiceDtoFilter filter = ServiceDtoFilter.builder()
                 .size(size)
@@ -80,8 +86,8 @@ public class ServiceRestController {
                 .max(max)
                 .page(page)
                 .build();
-        map.put("services",serviceService.getServicesWithFilter(filter));
-        map.put("pages",serviceService.getPagesSize(filter));
+        map.put("services", serviceService.getServicesWithFilter(filter));
+        map.put("pages", serviceService.getPagesSize(filter));
         return map;
     }
 
@@ -93,7 +99,29 @@ public class ServiceRestController {
         return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/services/getPDF")
+    public ResponseEntity<InputStreamResource> getPDFOfServices(){
+        String fileName = serviceService.getPdfOfServices();
+        ClassPathResource pdfFile = new ClassPathResource(fileName);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
 
+        try {
+            return ResponseEntity
+                    .ok()
+                    .headers(headers)
+                    .contentLength(pdfFile.contentLength())
+                    .contentType(MediaType.parseMediaType("applicatton.octet-stream"))
+                    .body(new InputStreamResource(pdfFile.getInputStream()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity
+                    .status(500)
+                    .body(null);
+        }
+    }
 
     private Sort.Direction getDirection(String order) {
         Sort.Direction direction;

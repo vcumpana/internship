@@ -34,7 +34,7 @@
         <ul class="navbar-nav my-2 my-lg-0">
             <li class="nav-item">
                 <span style="display:block;padding:.5rem 1rem; color: white">Hi, <span
-                        th:text="${username}"></span>!</span>
+                        th:text="${username}"></span>!  <span id="balance"></span></span>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/user/cabinet">Personal cabinet <i class="fa fa-user"
@@ -58,6 +58,9 @@
     <div class="alert alert-success" id="successContract" style="display:none">
         <strong>Success!</strong> You signed contract with company. Now wait aproove from company. You can see it and
         its status on main page.
+    </div>
+    <div class="alert alert-danger" id="failContract" style="display:none">
+        <strong>Fail!</strong> You already have contract with this company in this period.
     </div>
     <div class="row">
         <div class="col-sm-9 table-responsive">
@@ -142,13 +145,14 @@
                 Service category: <span id="categoryInModal"></span><br/>
                 Service title: <span id="titleInModal"></span><br/>
                 Service price per month: <span id="priceInModal"></span><br/>
-                Description:<span id="descriptionInModal"></span>
+                Description: <span id="descriptionInModal"></span>
                 <br/>
                 <h5>Sign contract</h5>
                 <div class="form-group row">
                     <label class="col-form-label col-3">Start date:</label>
                     <div class="col-6">
                         <input type="date" id="startDate" class="form-control"/>
+                        <div id="feedbackStartDate"></div>
                     </div>
                     <div id="feedbackPassword"></div>
                 </div>
@@ -156,6 +160,7 @@
                     <label class="col-form-label col-3">End date:</label>
                     <div class="col-6">
                         <input type="date" id="endDate" class="form-control"/>
+                        <div id="feedbackEndDate"></div>
                     </div>
                 </div>
             </div>

@@ -39,7 +39,11 @@ public class ContractService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         LOGGER.log(Level.DEBUG,"username:"+username);
         contract.setUser(userService.getByUsername(username).get());
-        return contractDao.save(contract);
+        if(contractDao.checkIfSuchContractExists(contract.getCompany(), contract.getUser(), contract.getService(), contract.getStartDate()) == 0) {
+            return contractDao.save(contract);
+        } else {
+            return null;
+        }
     }
 
     public Contract getContractById(long id){
