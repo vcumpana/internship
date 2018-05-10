@@ -59,8 +59,10 @@ $("#addAction").click(function () {
         contentType: "application/json",
         url: "/bank/addmoney/",
         data: JSON.stringify(data),
-        success: function () {
-            downloadBalance();
+        success: function (rs) {
+            var balance=JSON.parse(rs).balance;
+            $("#balance").text(balance+" MDL")
+            $("#balanceInCabinet").text(balance+" MDL")
             $("#modalForMoney").modal("hide");
         }
     });
