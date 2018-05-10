@@ -1,5 +1,6 @@
 package com.endava.service_system.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +30,7 @@ public class AppConfiguration{
 
 	@Bean
 	@Qualifier("userDaoAuthProvider")
-	public DaoAuthenticationProvider authenticationProviderForUser(PasswordEncoder passwordEncoder, @Qualifier("userDetailsService") UserDetailsService userDetailsService) {
+	public DaoAuthenticationProvider authenticationProviderForUser(@Autowired PasswordEncoder passwordEncoder, @Qualifier("userDetailsService") UserDetailsService userDetailsService) {
 		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 		authenticationProvider.setUserDetailsService(userDetailsService);
 		authenticationProvider.setHideUserNotFoundExceptions(false) ;

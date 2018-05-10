@@ -26,35 +26,38 @@ public class UserService {
     private UserDao userDao;
     private CredentialService credentialService;
     private BankService bankService;
-
-    public void saveUser(User user) {
-        Credential credential = credentialService.save(user.getCredential());
-        bankService.addBankAccount(credential);
-        userDao.save(user);
+    public void saveUser(User user){
+        System.out.println("user save in saveUser UserService :"+user);
+        //credentialService.save(user.getCredential());
+        bankService.addBankAccount(user.getCredential());
+        credentialService.encodePassword(user.getCredential());
+        User saveUser=userDao.save(user);
+        System.out.println("user saved in saveUser UserService :"+saveUser);
     }
 
-    public Optional<User> getByUsername(String username) {
+    public Optional<User> getByUsername(String username){
         return userDao.getByUsername(username);
     }
 
-    public Optional<User> getByEmail(String email) {
+    public Optional<User> getByEmail(String email){
         return userDao.getByEmail(email);
     }
 
-    public void updateUserNameAndSurname(String username, UserDtoToShow userDtoToShow) {
+    public void updateUserNameAndSurname(String username, UserDtoToShow userDtoToShow){
         User user = userDao.getByUsername(username).get();
         user.setName(userDtoToShow.getName());
         user.setSurname(userDtoToShow.getSurname());
         userDao.save(user);
     }
 
-    public void updateUserPassword(String username, String newPassword) {
+    public void updateUserPassword(String username, String newPassword){
         Credential credential = credentialService.getByUsername(username).get();
         credential.setPassword(newPassword);
+        credentialService.encodePassword(credential);
         credentialService.save(credential);
     }
 
-    public List<User> getAllWithCredentials() {
+    public List<User> getAllWithCredentials(){
         return userDao.getAllWithCredentials();
     }
 

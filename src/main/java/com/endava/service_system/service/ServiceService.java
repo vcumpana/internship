@@ -6,7 +6,6 @@ import com.endava.service_system.dto.ServiceToUserDto;
 import com.endava.service_system.model.Service;
 import com.endava.service_system.utils.PDFMaking;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.itextpdf.text.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.endava.service_system.model.ServiceDtoFilter;
 import org.springframework.beans.factory.annotation.Autowired;
