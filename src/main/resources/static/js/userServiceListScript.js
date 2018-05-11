@@ -68,6 +68,16 @@ $("#previousPage").click(function () {
     verifyIfNextExists();
 });
 
+// $("#downloadPDF").click(function(){
+//     $.ajax({
+//         type: "GET",
+//         url: "/services/getPDF",
+//         success: function (result) {
+//
+//         }
+//     });
+// });
+
 function getDataForTable() {
     var url = makeURL(currentPage);
     $.ajax({
