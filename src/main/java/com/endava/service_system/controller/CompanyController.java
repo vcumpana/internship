@@ -1,11 +1,9 @@
 package com.endava.service_system.controller;
 
-import com.endava.service_system.dto.CompanyRegistrationDTO;
-import com.endava.service_system.dto.NewInvoiceDTO;
-import com.endava.service_system.dto.NewServiceDTO;
-import com.endava.service_system.dto.UserDtoToShow;
+import com.endava.service_system.dto.*;
 import com.endava.service_system.model.*;
 import com.endava.service_system.service.*;
+import com.endava.service_system.utils.AuthUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +36,7 @@ public class CompanyController {
     private ServiceService serviceService;
     private ContractService contractService;
     private InvoiceService invoiceService;
+    private AuthUtils authUtils;
 
     @GetMapping("/company/registration")
     public String getCompanyRegistrationForm(Model model) {
@@ -63,14 +63,13 @@ public class CompanyController {
     }
 
     @GetMapping(value = "/company/cabinet")
-    public String userCabinet(Model model){
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String username = authentication.getName();
-//        UserDtoToShow user = conversionService.convert(userService.getByUsername(username).get(), UserDtoToShow.class);
-//        model.addAttribute("username", username);
-//        model.addAttribute("user", user);
+    public String companyCabinet(Model model){
+        String username = authUtils.getAuthenticatedUsername();
+        CompanyDtoToShow company = conversionService.convert(companyService.getCompanyByUsername(username).get(), CompanyDtoToShow.class);
+        model.addAttribute("username", username);
+        model.addAttribute("user", company);
         addCompanyToModel(model);
-        return "userCabinet";
+        return "companyCabinet";
     }
 
     @GetMapping(value = "/company/serviceList")
@@ -130,7 +129,7 @@ public class CompanyController {
     }
 
     @PostMapping("/company/createInvoice")
-    public String registerNewService(Model model, @ModelAttribute("invoice") @Valid NewInvoiceDTO newInvoiceDTO, BindingResult bindingResult) {
+    public String registerNewService(Model model, @ModelAttribute("invoice") @Validated NewInvoiceDTO newInvoiceDTO, BindingResult bindingResult) {
         LOGGER.log(Level.DEBUG,newInvoiceDTO);
         LOGGER.log(Level.DEBUG,bindingResult.getAllErrors());
         if (bindingResult.hasErrors()) {
@@ -141,8 +140,24 @@ public class CompanyController {
         Invoice invoice = conversionService.convert(newInvoiceDTO, Invoice.class);
         invoice.setContract(contract);
         invoiceService.save(invoice);
-      //  companyService.addNewInvoice(invoice);
-        return "redirect:/company/serviceList";
+        //  companyService.addNewInvoice(invoice);
+        return "redirect:/company/myinvoices";
+    }
+
+    @PostMapping("/company/editInvoice")
+    public String editInvoice(Model model, @ModelAttribute("invoice") @Validated NewInvoiceDTO newInvoiceDTO, BindingResult bindingResult) {
+        LOGGER.log(Level.DEBUG,newInvoiceDTO);
+        LOGGER.log(Level.DEBUG,bindingResult.getAllErrors());
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("invoice", newInvoiceDTO);
+            return "companyEditInvoice";
+        }
+        Contract contract = contractService.getContractById(newInvoiceDTO.getContractId());
+        Invoice invoice = conversionService.convert(newInvoiceDTO, Invoice.class);
+        invoice.setContract(contract);
+        invoiceService.save(invoice);
+        //  companyService.addNewInvoice(invoice);
+        return "redirect:/company/myinvoices";
     }
 
     private void addCompanyNameToModel(Model model){
@@ -188,5 +203,11 @@ public class CompanyController {
     public void setInvoiceService(InvoiceService invoiceService) {
         this.invoiceService = invoiceService;
     }
+
+    @Autowired
+    public void setAuthUtils(AuthUtils authUtils) {
+        this.authUtils = authUtils;
+    }
+
 
 }

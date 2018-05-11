@@ -32,7 +32,7 @@
                     <!-- form card login -->
                     <div class="card rounded-0">
                         <div class="card-header">
-                            <h3 class="mb-0">Register your company to our service</h3>
+                            <h3 class="mb-0">Company registration</h3>
                         </div>
                         <div class="card-body">
                             <form class="form" role="form" th:object="${company}" autocomplete="off"
@@ -56,30 +56,43 @@
                                 <p class="error-message"
                                    th:each="error : ${#fields.errors('username')}"
                                    th:text="${error}">Validation error</p>
-                                <div class="form-group">
-                                    <label>Password</label>
-                                    <input type="text" class="form-control form-control-lg rounded-0"
+                                <label>Password</label>
+                                <br>
+                                <div class="input-group input-group-lg">
+                                    <input type="password" class="form-control rounded-0"
                                            name="password" id="password" required="true">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" id="showPassword">Show
+                                        </button>
+                                    </div>
                                     <div id="feedbackPassword"></div>
+
                                 </div>
+                                <br>
                                 <p class="error-message"
                                    th:each="error : ${#fields.errors('password')}"
                                    th:text="${error}">Validation error</p>
-                                <div class="form-group">
-                                    <label>Confirm password</label>
-                                    <input type="text" class="form-control form-control-lg rounded-0"
+                                <label>Confirm password</label>
+                                <br>
+                                <div class="input-group input-group-lg">
+                                    <input type="password" class="form-control rounded-0"
                                            name="confirmPassword" id="confirmPassword" required>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button"
+                                                id="showRepeatedPassword">Show
+                                        </button>
+                                    </div>
                                     <div id="feedbackConfirmPassword"></div>
-                                    <p class="error-message"
-                                       th:each="error : ${#fields.errors('confirmPassword')}"
-                                       th:text="${error}">Validation error</p>
                                 </div>
+                                <br>
+                                <p class="error-message"
+                                   th:each="error : ${#fields.errors('confirmPassword')}"
+                                   th:text="${error}">Validation error</p>
                                 <div class="form-group">
                                     <label for="address">Address</label>
                                     <input type="text" class="form-control form-control-lg rounded-0" name="address"
                                            id="address" required="">
                                     <div class="invalid-feedback"></div>
-
                                 </div>
                                 <div class="form-group">
                                     <label for="email">Email address</label>

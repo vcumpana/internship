@@ -105,6 +105,8 @@ public class InvoicesRestController {
     @PostMapping("/company/newinvoices")
     @PreAuthorize("hasAnyRole('ROLE_COMPANY')")
     public ResponseEntity createMultipleInvoices(@RequestParam(value = "info[]", required=false) List<String> ids){
+        if (ids == null || ids.size() == 0)
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
        invoiceService.createInvoicesFromBulk(ids);
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -112,6 +114,8 @@ public class InvoicesRestController {
     @PostMapping("/company/sendinvoices")
     @PreAuthorize("hasAnyRole('ROLE_COMPANY')")
     public ResponseEntity sendMultipleInvoices(@RequestParam(value = "info[]", required=false) List<String> ids){
+        if (ids == null || ids.size() == 0)
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         invoiceService.sendInvoicesFromBulk(ids);
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -119,6 +123,8 @@ public class InvoicesRestController {
     @PostMapping("/company/cancelinvoices")
     @PreAuthorize("hasAnyRole('ROLE_COMPANY')")
     public ResponseEntity cancelMultipleInvoices(@RequestParam(value = "info[]", required=false) List<String> ids){
+        if (ids == null || ids.size() == 0)
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         invoiceService.cancelInvoicesFromBulk(ids);
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -131,7 +137,7 @@ public class InvoicesRestController {
             if (invoice.getContract().getCompany().getCredential().getUsername().equals((authUtils.getAuthenticatedUsername()))) {
                 if (action.toLowerCase().equals("send")) {
                     invoice.setInvoiceStatus(InvoiceStatus.SENT);
-                    invoiceService.update(invoice);
+                    invoiceService.sendInvoice(invoice);
                     return new ResponseEntity("Invoice has been sent succsesfully", HttpStatus.OK);
                 } else if (action.toLowerCase().equals("cancel")) {
                     invoiceService.deleteInvoice(invoice);
@@ -155,7 +161,8 @@ public class InvoicesRestController {
                 newInvoiceDTO.setPrice(invoice.getPrice());
                 newInvoiceDTO.setFromDate(invoice.getFromDate());
                 newInvoiceDTO.setTillDate(invoice.getTillDate());
-                modelAndView.setViewName("companyCreateInvoice");
+                newInvoiceDTO.setInvoiceId(invoice.getId());
+                modelAndView.setViewName("companyEditInvoice");
                 modelAndView.addObject("invoice", newInvoiceDTO);
                 return modelAndView;
             }

@@ -5,10 +5,11 @@ var noMoreNotifications = false;
 $(document).ready(function () {
     loadNotifications();
     isUnreadMessages();
+    downloadBalance();
 });
 
 $(window).scroll(function () {
-    if ($(window).scrollTop() + $(window).height() == $(document).height() && !noMoreNotifications) {
+    if (Math.abs($(window).scrollTop() + $(window).height() - $(document).height()) < 100 && !noMoreNotifications) {
         loadNotifications();
     }
 });
@@ -128,3 +129,13 @@ jQuery.fn.removeHighlight = function() {
         }
     }).end();
 };
+
+function downloadBalance(){
+    $.ajax({
+        type: "POST",
+        url: "/bank/balance",
+        success: function (result) {
+            $("#balance").text(result.balance + " MDL");
+        }
+    });
+}
