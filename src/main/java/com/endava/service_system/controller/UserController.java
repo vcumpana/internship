@@ -86,6 +86,12 @@ public class UserController {
         return "userNotifications";
     }
 
+    @GetMapping(value = "/user/statements")
+    public String userStatements(Model model){
+        addUsernameToModel(model);
+        return "userStatement";
+    }
+
     private void addCompaniesToModel(Model model) {
         model.addAttribute("companies",companyService.getAll());
     }

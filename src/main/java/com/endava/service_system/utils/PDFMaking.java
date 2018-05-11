@@ -2,12 +2,13 @@ package com.endava.service_system.utils;
 
 import com.endava.service_system.dto.ServiceToUserDto;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
 
 import java.io.FileOutputStream;
 import java.util.List;
@@ -15,12 +16,12 @@ import java.util.List;
 import static com.itextpdf.text.Element.ALIGN_LEFT;
 import static com.itextpdf.text.Font.FontFamily.TIMES_ROMAN;
 
+@Component
 public class PDFMaking {
-    static int file = 1;
-
+    private static int fileNumber = 1;
     public static String  makePDFOfServices(List<ServiceToUserDto> services) {
-        String fileName = "resources/static/pdf" + file + ".pdf";
-        PdfWriter docWriter = null;
+        String fileName = "mypdf" + fileNumber + ".pdf";
+        fileNumber++;
         Document document = new Document();
         PdfPTable table = new PdfPTable(new float[]{2, 2, 2, 3, 1});
         table.setWidthPercentage(90f);
@@ -39,8 +40,9 @@ public class PDFMaking {
         }
 
         try {
-            docWriter = PdfWriter.getInstance(document, new FileOutputStream(fileName));
-            file++;
+            ClassPathResource path = new ClassPathResource("/downloads/");
+            System.out.println(path.getURL().getPath() + fileName);
+            PdfWriter.getInstance(document, new FileOutputStream(path.getURL().getPath() + fileName));
             document.open();
             document.add(table);
             document.close();

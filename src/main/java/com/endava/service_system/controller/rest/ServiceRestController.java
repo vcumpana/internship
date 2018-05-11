@@ -99,10 +99,10 @@ public class ServiceRestController {
         return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/services/getPDF")
-    public ResponseEntity<InputStreamResource> getPDFOfServices(){
+    @GetMapping(value = "/services/getPDF", produces = "application/pdf")
+    public ResponseEntity<InputStreamResource> getPDFOfServices() {
         String fileName = serviceService.getPdfOfServices();
-        ClassPathResource pdfFile = new ClassPathResource(fileName);
+        ClassPathResource pdfFile = new ClassPathResource("/downloads/" + fileName);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
         headers.add("Pragma", "no-cache");
@@ -113,7 +113,7 @@ public class ServiceRestController {
                     .ok()
                     .headers(headers)
                     .contentLength(pdfFile.contentLength())
-                    .contentType(MediaType.parseMediaType("applicatton.octet-stream"))
+                    .contentType(MediaType.parseMediaType("application/pdf"))
                     .body(new InputStreamResource(pdfFile.getInputStream()));
         } catch (Exception e) {
             e.printStackTrace();
