@@ -8,6 +8,7 @@ STATUS.INTERNATAL_ISSUE=500;
 var currentTimeOut;
 var futureShowing;
 function displayMessage(message) {
+    console.log("displayMessage:"+message)
     var x = document.getElementById("snackbar");
     if(currentTimeOut!=null){
         clearTimeout(currentTimeOut);
@@ -28,6 +29,6 @@ function displayMessage(message) {
 }
 //INCLUDE snackbar css if you want to use utils;
 $(document).ready(function () {
-    var snackbar=`<div id="snackbar">Default Message</div>`;
+    var snackbar=`<div id="snackbar" class="hiden"></div>`;
     $("body").append(snackbar);
 });

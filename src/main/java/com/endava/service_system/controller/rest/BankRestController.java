@@ -118,11 +118,11 @@ public class BankRestController {
     ;
 
     @PostMapping("/bank/statements")
-    public ResponseEntity<List> getStatements(@RequestBody StatementRangeDto rangeDto) throws JsonProcessingException {
+    public ResponseEntity<List> getStatements(@RequestBody Map<String,Object> data) throws JsonProcessingException {
 
         String username=authUtils.getAuthenticatedUsername();
         LOGGER.debug("user : "+username+" tries to see his statements");
-        LOGGER.debug("range : "+rangeDto);
+        LOGGER.debug("range : "+data);
         Optional<BankAccount> bankAccountOptional=bankService.getBankAccountByUsername(username);
         if(!bankAccountOptional.isPresent()){
             String json="{\"message\":\"You don't have a bank account please contact admin\"}";
@@ -134,9 +134,11 @@ public class BankRestController {
         headers.add("AccessKey",String.valueOf(bankAccount.getAccessKey()));
         headers.add("CountNumber",String.valueOf(bankAccount.getCountNumber()));
         //map.add("email", "first.last@example.com");
-        String json=objectMapper.writeValueAsString(rangeDto);
-        HttpEntity request = new HttpEntity<>(json,headers);
-        ResponseEntity rs=restTemplate.postForEntity(bankApi + "bankaccount/balance", request, List.class);
+        //String json=objectMapper.writeValueAsString(rangeDto);
+        HttpEntity request = new HttpEntity<>(data,headers);
+        ResponseEntity rs=restTemplate.postForEntity(bankApi + "statement/statement", request, List.class);
+        System.out.println(rs.getBody());
+        System.out.println(rs);
         return new ResponseEntity(rs.getBody(),rs.getStatusCode());
     };
 
@@ -206,6 +208,7 @@ public class BankRestController {
             return new ResponseEntity(json,HttpStatus.BAD_REQUEST);
         }
         InvoiceForPaymentDto invoice=invoiceOptional.get();
+        LOGGER.debug(invoice);
         if(!invoice.getUserUsername().equals(authUtils.getAuthenticatedUsername())){
             String json="{\"message\":\"This isn't your invoice,if you want to pay someones invoice , please contact admins.\"}";
             return new ResponseEntity(json,HttpStatus.BAD_REQUEST);
@@ -249,7 +252,7 @@ public class BankRestController {
         Notification userNotification=notificationService.createNotificationPayedForUser(
                 invoiceForPaymentDto.getInvoiceId(),
                 invoiceForPaymentDto.getServiceTitle(),
-                adminCredential,invoiceForPaymentDto.getCompanyCredential(),
+                adminCredential,invoiceForPaymentDto.getUserCredential(),
                 LocalDateTime.now());
         List notifications=Arrays.asList(companyNotification,userNotification);
         notificationService.saveNotifications(notifications);

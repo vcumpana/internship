@@ -26,10 +26,10 @@ public interface InvoiceDao extends JpaRepository<Invoice,Long> {
 
     @Query("SELECT new com.endava.service_system.dto.InvoiceForPaymentDto(inv.id,inv.price,companyBankAccount.countNumber," +
             "inv.invoiceStatus,concat(user.name,' ',user.surname),userCredentials,companyCredentials,serv.title) " +
-            "FROM Invoice inv INNER JOIN inv.contract contr " +
-            "INNER JOIN contr.user user INNER JOIN contr.company company " +
-            "INNER JOIN contr.service serv " +
-            "INNER JOIN user.credential userCredentials INNER JOIN company.credential companyCredentials " +
-            "INNER JOIN userCredentials.bankAccount userBankAccount INNER JOIN companyCredentials.bankAccount companyBankAccount WHERE inv.id=:id")
+            "FROM Invoice inv JOIN inv.contract contr " +
+            " JOIN contr.user user JOIN contr.company company " +
+            " JOIN contr.service serv " +
+            " JOIN user.credential userCredentials  JOIN company.credential companyCredentials " +
+            " JOIN userCredentials.bankAccount userBankAccount  JOIN companyCredentials.bankAccount companyBankAccount WHERE inv.id=:id")
     Optional<InvoiceForPaymentDto> getFullInvoiceById(@Param("id") long id);
 }
