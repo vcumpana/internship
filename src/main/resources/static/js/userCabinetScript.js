@@ -61,8 +61,8 @@ $("#addAction").click(function () {
         data: JSON.stringify(data),
         success: function (rs) {
             var balance = JSON.parse(rs).balance;
-            $("#balance").text(balance + " MDL")
-            $("#balanceInCabinet").text(balance + " MDL")
+            $("#balance").text(balance + " MDL");
+            $("#balanceInCabinet").text(balance + " MDL");
             $("#modalForMoney").modal("hide");
         }
     });
