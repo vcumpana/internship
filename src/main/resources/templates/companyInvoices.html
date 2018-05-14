@@ -34,6 +34,9 @@
             <li class="nav-item active">
                 <a class="nav-link" href="/company/myinvoices">My invoices</a>
             </li>
+            <li class="nav-item ">
+                <a class="nav-link" href="/company/statements">Statements</a>
+            </li>
         </ul>
         <ul class="navbar-nav my-2 my-lg-0">
             <li class="nav-item">
@@ -65,32 +68,69 @@
     <div class="alert alert-success" id="successCanceling" style="display:none">
         <strong>Success!</strong> You have cancel an invoice.
     </div>
-    <div class="row">
-        <table id="tableWithInvoices" class="table table-striped table-hover">
+</div>
+<div class="col-3">
+    <form>
+        <div class="form-group">
+            <label for="orderByDueDate">Sort by due date:</label>
+            <select id="orderByDueDate" class="form-control">
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="categoryName">Category</label>
+            <select id="categoryName" class="form-control">
+                <option value=""></option>
+                <th:block th:each="category : ${categories}">
+                    <option th:value="${category.getId()}" th:text="${category.getName()}"></option>
+                </th:block>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="companyName">Company</label>
+            <select id="companyName" class="form-control">
+                <option value=""></option>
+                <th:block th:each="company : ${companies}">
+                    <option th:value="${company.getId()}" th:text="${company.getName()}"></option>
+                </th:block>
+            </select>
+        </div>
+    </form>
+    <button id="activateFilter" class="btn btn-primary btn-lg">Find</button>
+    <button class="btn btn-danger btn-lg" onclick="resetInvoiceFilter()">Reset</button>
+</div>
+    <div class="table-responsive">
+        <table id="tableWithInvoices" class="table table-striped table-bordered table-hover">
             <thead class="thead-dark">
             <tr>
-                <th><input type="checkbox" id="select_all"></th>
-                <th>Id</th>
-                <th>Contract Id</th>
-                <th>Client</th>
-                <th class="filter" scopeForSort="sort" field="category" typeOfSort="asc">Sum
-                    <span scopeForSort="icon" field="category" style="float:right"><i class="fa fa-arrow-down"></i></span>
+                <th rowspan="2" class="align-middle"><input type="checkbox" id="select_all"></th>
+                <th rowspan="2" class="align-middle">Id</th>
+                <th rowspan="2" class="align-middle">Contract Id</th>
+                <th rowspan="2" class="align-middle">Client</th>
+                <th rowspan="2" class="align-middle">Service</th>
+                <th rowspan="2" class="align-middle">Start date</th>
+                <th rowspan="2" class="align-middle">End date</th>
+                <th rowspan="2" class="align-middle">Due date</th>
+                <th colspan="3" class="filter text-center" scopeForSort="sort" field="category" typeOfSort="asc">Sum
                 </th>
-                <th>Service</th>
-                <th>Start date</th>
-                <th>End date</th>
-                <th>Due date</th>
-                <th>Status</th>
-                <th>Send invoice</th>
-                <th>Edit invoice</th>
+                <th rowspan="2" class="align-middle">Status</th>
+                <th rowspan="2" class="align-middle">Send invoice</th>
+                <th rowspan="2" class="align-middle">Edit invoice</th>
+            </tr>
+            <tr>
+                <th>Paid</th>
+                <th>Unpaid</th>
+                <th>Overdue</th>
             </tr>
             </thead>
             <tbody></tbody>
         </table>
     </div>
+<div class="container">
     <br/>
-    <button onclick="sendInvoices()">Send invoices</button>
-    <button onclick="cancelInvoices()">Cancel invoices</button>
+    <button onclick="sendInvoices()" class="btn btn-info">Send invoices</button>
+    <button onclick="cancelInvoices()" class="btn btn-danger">Cancel invoices</button>
 </div>
 <script type="text/javascript" th:src="@{/js/companyInvoicesListScript.js}"></script>
 </body>

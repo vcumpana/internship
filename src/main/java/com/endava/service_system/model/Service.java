@@ -22,6 +22,7 @@ public class Service {
     @ManyToOne
     private Category category;
 
+    @Column(length = 1000)
     private String description;
 
     private BigDecimal price;

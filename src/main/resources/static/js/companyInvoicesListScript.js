@@ -5,6 +5,7 @@ var arr = new Array();
 
 $(document).ready(function () {
     downloadInvoices();
+    isUnreadMessages();
     downloadBalance();
 });
 
@@ -27,6 +28,20 @@ function downloadInvoices() {
             listOfInvoices = result.invoices;
             //  listOfContracts.sort(comparatorForCategory);
             fillTableWithInvoices();
+        }
+    });
+}
+
+function checkInvoice(){
+    $.ajax({
+        type: "GET",
+        url: "/checkInvoice/" + id,
+        success: function (result) {
+            $("#successSending").show();
+            setTimeout(function () {
+                $("#successSending").hide();
+            }, 5000);
+            downloadInvoices();
         }
     });
 }
@@ -123,6 +138,9 @@ $("th[scopeForSort='sort']").click(function () {
 
 function fillTableWithInvoices() {
     $("#tableWithInvoices tbody").html("");
+    var paid = 0;
+    var unpaid = 0;
+    var overdue = 0;
     var dateText;
     for (var i = 0; i < listOfInvoices.length; i++) {
         var row = "<tr>";
@@ -133,7 +151,6 @@ function fillTableWithInvoices() {
         row += "<td>" + listOfInvoices[i].invoiceId + "</td>";
         row += "<td>" + listOfInvoices[i].contractId + "</td>";
         row += "<td>" + listOfInvoices[i].userTitle + "</td>";
-        row += "<td>" + listOfInvoices[i].price + " MDL</td>";
         row += "<td>" + listOfInvoices[i].serviceTitle + "</td>";
         dateText=moment(listOfInvoices[i].fromDate).format("DD/MM/YYYY");
         row += "<td>" + dateText + "</td>";
@@ -143,22 +160,38 @@ function fillTableWithInvoices() {
         row += "<td>" + dateText + "</td>";
         switch (listOfInvoices[i].invoiceStatus){
             case "CREATED":
+                row +="<td>-</td>";
+                row += "<td>" + listOfInvoices[i].price + " MDL</td>";
+                unpaid += listOfInvoices[i].price;
+                row +="<td>-</td>";
                 row += "<td class='text-secondary'><strong>Created</strong></td>";
                 break;
             case "PAID":
+                row += "<td>" + listOfInvoices[i].price + " MDL</td>";
+                row +="<td>-</td>";
+                row +="<td>-</td>";
+                paid += listOfInvoices[i].price;
                 row += "<td class='text-success'><strong>Paid</strong></td>";
                 break;
             case "OVERDUE":
+                row +="<td>-</td>";
+                row +="<td>-</td>";
+                row += "<td>" + listOfInvoices[i].price + " MDL</td>";
+                overdue += listOfInvoices[i].price;
                 row += "<td class='text-danger'><strong>Overdue</strong></td>";
                 break;
             case "SENT":
+                row +="<td>-</td>";
+                row += "<td>" + listOfInvoices[i].price + " MDL</td>";
+                unpaid += listOfInvoices[i].price;
+                row +="<td>-</td>";
                 row += "<td class='text-warning'><strong>Sent</strong></td>";
                 break;
             default:
         }
         if (listOfInvoices[i].invoiceStatus === "CREATED") {
-            row += "<td><button onclick=\"sendInvoice("+listOfInvoices[i].invoiceId+")\">Send</button><button onclick=\"cancelInvoice("+listOfInvoices[i].invoiceId+")\">Cancel</button></td>";
-            row += "<td><a href=" + "/invoice/"+ listOfInvoices[i].invoiceId +"/edit" + ">Edit</a></td>";
+            row += "<td><button class=\"btn btn-info btn-sm\" onclick=\"sendInvoice("+listOfInvoices[i].invoiceId+")\">Send</button><button class=\"btn btn-danger btn-sm\" onclick=\"cancelInvoice("+listOfInvoices[i].invoiceId+")\">Cancel</button></td>";
+            row += "<td><a class=\"btn btn-secondary btn-sm\" href=" + "/invoice/"+ listOfInvoices[i].invoiceId +"/edit" + ">Edit</a></td>";
         } else {
             row +="<td></td>";
             row +="<td></td>";
@@ -166,6 +199,9 @@ function fillTableWithInvoices() {
         row += "</tr>";
         $("#tableWithInvoices tbody").append(row);
     }
+    var row = "<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td>" +
+        "<td>Total</td><td>"+paid+" MDL</td><td>"+unpaid+" MDL</td><td>"+overdue+" MDL</td><td></td><td></td><td></td></tr>";
+    $("#tableWithInvoices tbody").append(row);
 }
 
 function comparatorForCategory(a, b) {
@@ -212,6 +248,18 @@ function setArrowForSort(value, type) {
             }
         } else {
             $(this).html("");
+        }
+    });
+}
+
+function isUnreadMessages() {
+    $.ajax({
+        type: "GET",
+        url: "/notification/getNumberOfUnread",
+        success: function (result) {
+            if (result > 0) {
+                $("#unreadMessages").css('display', 'inline');
+            }
         }
     });
 }

@@ -5,6 +5,7 @@ import com.endava.service_system.dao.InvoiceEntityManagerDao;
 import com.endava.service_system.dao.InvoiceUpdateDao;
 import com.endava.service_system.dto.InvoiceDisplayDto;
 import com.endava.service_system.dto.InvoiceForPaymentDto;
+import com.endava.service_system.dto.NewInvoiceDTO;
 import com.endava.service_system.model.*;
 import com.endava.service_system.enums.ContractStatus;
 import com.endava.service_system.enums.InvoiceStatus;
@@ -38,12 +39,18 @@ public class InvoiceService {
     private ContractService contractService;
     private CurrentDateDao currentDateDao;
     private NotificationService notificationService;
+    private CurrentDateService currentDateService;
+    private InvoiceUpdateDao invoiceUpdateDao;
+
+    @Autowired
+    public void setCurrentDateService(CurrentDateService currentDateService) {
+        this.currentDateService = currentDateService;
+    }
 
     @Autowired
     public void setNotificationService(NotificationService notificationService) {
         this.notificationService = notificationService;
     }
-    private InvoiceUpdateDao invoiceUpdateDao;
 
     @Autowired
     public void setInvoiceUpdateDao(InvoiceUpdateDao invoiceUpdateDao) {
@@ -185,4 +192,29 @@ public class InvoiceService {
         return invoiceDao.getFullInvoiceById(id);
     }
 
+    public NewInvoiceDTO getInvoiceDtoByContractId(Long contractId) {
+        NewInvoiceDTO newInvoiceDTO = new NewInvoiceDTO();
+        Contract contract = contractService.getContractById(contractId);
+        List<Invoice> invoices = contract.getInvoices();
+        newInvoiceDTO.setContractId(contractId);
+        newInvoiceDTO.setClientName(contract.getUser().getName() + " " + contract.getUser().getSurname());
+        newInvoiceDTO.setService(contract.getService().getTitle());
+        newInvoiceDTO.setFromDate(invoices == null || invoices.size()==0
+                ? contract.getStartDate() : invoices.get(invoices.size() - 1).getTillDate().plusDays(1));
+        newInvoiceDTO.setTillDate(currentDateService.getCurrentDate().getLocalDate().with(TemporalAdjusters.lastDayOfMonth()));
+        newInvoiceDTO.setDueDate(newInvoiceDTO.getTillDate().plusDays(10));
+        newInvoiceDTO.setPrice(contract.getService().getPrice());
+        return newInvoiceDTO;
+    }
+
+    public boolean invoicePeriodExists(NewInvoiceDTO newInvoiceDTO) {
+        List<Invoice> invoices = contractService.getContractById(newInvoiceDTO.getContractId()).getInvoices();
+        if (invoices != null && invoices.size() > 0) {
+            for (Invoice invoice : invoices) {
+                if (invoice.getTillDate().equals(newInvoiceDTO.getTillDate()))
+                    return true;
+            }
+        }
+        return false;
+    }
 }

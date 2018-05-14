@@ -164,6 +164,8 @@ public class InvoicesRestController {
                 newInvoiceDTO.setFromDate(invoice.getFromDate());
                 newInvoiceDTO.setTillDate(invoice.getTillDate());
                 newInvoiceDTO.setInvoiceId(invoice.getId());
+                newInvoiceDTO.setService(invoice.getContract().getService().getTitle());
+                newInvoiceDTO.setClientName(invoice.getContract().getUser().getName() + " " + invoice.getContract().getUser().getSurname());
                 modelAndView.setViewName("companyEditInvoice");
                 modelAndView.addObject("invoice", newInvoiceDTO);
                 return modelAndView;

@@ -4,22 +4,25 @@ import com.endava.service_system.dto.*;
 import com.endava.service_system.model.*;
 import com.endava.service_system.service.*;
 import com.endava.service_system.utils.AuthUtils;
+import org.apache.http.HttpResponse;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Calendar;
 import java.util.List;
@@ -98,6 +101,12 @@ public class CompanyController {
         return  "companyInvoices";
     }
 
+    @GetMapping(value = "/company/statements")
+    public String userStatements(Model model){
+        addCompanyNameToModel(model);
+        return "companyStatement";
+    }
+
     @GetMapping("/company/addservice")
     public String getCompanyAddServiceForm(Model model) {
         model.addAttribute("service", new NewServiceDTO());
@@ -119,28 +128,56 @@ public class CompanyController {
 
     @GetMapping("/contract/{id}/createInvoice")
     public String getCompanyCreateInvoiceForm(Model model, @PathVariable("id") Long contractId) {
-        NewInvoiceDTO newInvoiceDTO = new NewInvoiceDTO();
-        newInvoiceDTO.setContractId(contractId);
+        NewInvoiceDTO newInvoiceDTO = invoiceService.getInvoiceDtoByContractId(contractId);
         model.addAttribute("invoice", newInvoiceDTO);
-
-        //List<Contract> contracts = contractService.getAllContractsByCompanyUsername(getAuthenticatedUsername());
-        //model.addAttribute("contracts", contracts);
         return "companyCreateInvoice";
     }
 
     @PostMapping("/company/createInvoice")
-    public String registerNewService(Model model, @ModelAttribute("invoice") @Validated NewInvoiceDTO newInvoiceDTO, BindingResult bindingResult) {
+    public String registerNewService( HttpServletResponse response,HttpServletRequest request,  Model model, @ModelAttribute("invoice") @Validated NewInvoiceDTO newInvoiceDTO, BindingResult bindingResult) {
         LOGGER.log(Level.DEBUG,newInvoiceDTO);
         LOGGER.log(Level.DEBUG,bindingResult.getAllErrors());
         if (bindingResult.hasErrors()) {
             model.addAttribute("invoice", newInvoiceDTO);
+            for(Cookie one:request.getCookies()) {
+                if (one.getName().equalsIgnoreCase("conflict")) {
+                    one.setValue("");
+                    one.setPath("/");
+                    one.setMaxAge(0);
+                    response.addCookie(one);
+                }
+            }
             return "companyCreateInvoice";
         }
+        String cookie=null;
+        for(Cookie one:request.getCookies()){
+            if(one.getName().equalsIgnoreCase("conflict")) {
+                cookie=one.getValue();
+            }
+        }
+                //i
+        if(invoiceService.invoicePeriodExists(newInvoiceDTO)) {
+            if (cookie== null || cookie.equalsIgnoreCase("true")) {
+                Cookie conflictCookie = new Cookie("conflict", "true");
+                response.addCookie(conflictCookie);
+                return "companyCreateInvoice";
+            }else{
+                for(Cookie one:request.getCookies()){
+                    if(one.getName().equalsIgnoreCase("conflict")) {
+                        one.setValue("");
+                        one.setPath("/");
+                        one.setMaxAge(0);
+                        response.addCookie(one);
+                    }
+                }
+            }
+        }
+
         Contract contract = contractService.getContractById(newInvoiceDTO.getContractId());
         Invoice invoice = conversionService.convert(newInvoiceDTO, Invoice.class);
         invoice.setContract(contract);
         invoiceService.save(invoice);
-        //  companyService.addNewInvoice(invoice);
+        //companyService.addNewInvoice(invoice);
         return "redirect:/company/myinvoices";
     }
 
