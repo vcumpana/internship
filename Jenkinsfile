@@ -22,7 +22,7 @@ pipeline {
 
         stage('Jacoco Code Coverage') {
             steps {
-                jacoco execPattern: '**/build/**.exec'
+                jacoco execPattern: '**/target/**.exec'
             }
         }
         stage('Sonar scan') {
@@ -42,7 +42,7 @@ pipeline {
                nexusVersion: 'nexus3', 
                protocol: 'https', 
                repository: 'Intens_2018_second', 
-               version: version2.trim() + ${env.BUILD_NUMBER}
+               version: version2.trim()
            }
         }
         
