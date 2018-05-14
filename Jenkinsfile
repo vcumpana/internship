@@ -20,6 +20,19 @@ pipeline {
             }
         }
 
+        stage('Jacoco Code Coverage') {
+            steps {
+                jacoco execPattern: '**/build/**.exec'
+            }
+        }
+        stage('Sonar scan') {
+            steps {
+                withSonarQubeEnv('New Sonar Endava') {
+                    sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar'
+                }
+            }
+        }
+
         stage('Upload artifact') {
            steps {
                nexusArtifactUploader artifacts: [[artifactId: 'service_system', classifier: '', file: 'target/service_system-' + version.trim() + '.jar', type: 'jar']], 
@@ -29,17 +42,9 @@ pipeline {
                nexusVersion: 'nexus3', 
                protocol: 'https', 
                repository: 'Intens_2018_second', 
-               version: version2.trim()
+               version: version2.trim() + ${env.BUILD_NUMBER}
            }
         }
-
-        stage('Sonar scan') {
-            steps {
-                withSonarQubeEnv('New Sonar Endava') {
-                    sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.2:sonar'
-                }
-            }
-        }    
-            
-    } 
+        
+        }     
 }
