@@ -45,6 +45,12 @@ public class AppConfiguration{
 	}
 
 	@Bean
+	@Qualifier("siteUrl")
+	public String getSiteUrl(){
+		return "http://localhost:8080";
+	}
+
+	@Bean
 	public RestTemplate getRestTemplate(){
 		return new RestTemplate();
 	}

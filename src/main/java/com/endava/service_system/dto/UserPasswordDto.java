@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Pattern;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,8 +15,9 @@ import lombok.NoArgsConstructor;
                 fieldMatch = "repeatedNewPassword",
                 message = "Passwords do not match!")})
 public class UserPasswordDto {
-    private String oldPassword;
 
+    private String oldPassword;
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[._?!])[A-Za-z\\d._?!]{8,}$", message = "Password must contain at least 8 chars, that includes upper letters, numbers and special sign ")
     private String newPassword;
 
     private String repeatedNewPassword;
