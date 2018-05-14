@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit invoice</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+          integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+            integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+            integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+            crossorigin="anonymous"></script>
+    <style>
+        .error-message {
+            /*display: none;*/
+            width: 100%;
+            margin-top: .25rem;
+            font-size: 80%;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-6 mx-auto">
+                    <!-- form card login -->
+                    <div class="card rounded-0">
+                        <div class="card-header">
+                            <h3 class="mb-0">Edit invoice</h3>
+                        </div>
+                        <div class="card-body">
+                            <form class="form" role="form" th:object="${invoice}" autocomplete="off"
+                                  id="registrationForm" action="/company/editInvoice" novalidate=""
+                                  method="POST">
+                                <!--<div class="alert alert-danger" th:unless="${param.error == null}">Wrong username or-->
+                                <!--password-->
+                                <!--</div>-->
+                                <div class="form-group">
+                                    <label for="contractId">Contract Id</label>
+                                    <input type="text" class="form-control form-control-lg rounded-0" th:field = "*{contractId}"
+                                           id="contractId" required="" th:readonly="readonly">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="invoiceId">Invoice Id</label>
+                                    <input type="text" class="form-control form-control-lg rounded-0" th:field = "*{invoiceId}"
+                                           id="invoiceId" required="" th:readonly="readonly">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="fromDate">From date</label>
+                                    <input type="date" class="form-control form-control-lg rounded-0" th:field = "*{fromDate}"
+                                           id="fromDate" required>
+                                    <p class="error-message"
+                                       th:each="error : ${#fields.errors('fromDate')}"
+                                       th:text="${error}">Validation error</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="tillDate">To date</label>
+                                    <input type="date" class="form-control form-control-lg rounded-0" th:field = "*{tillDate}"
+                                           id="tillDate" required>
+                                    <p class="error-message"
+                                       th:each="error : ${#fields.errors('tillDate')}"
+                                       th:text="${error}">Validation error</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="dueDate">Due date</label>
+                                    <input type="date" class="form-control form-control-lg rounded-0" th:field = "*{dueDate}"
+                                           id="dueDate" required>
+                                    <p class="error-message"
+                                       th:each="error : ${#fields.errors('dueDate')}"
+                                       th:text="${error}">Validation error</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="price">Price</label>
+                                    <input type="text" class="form-control form-control-lg rounded-0" th:field = "*{price}"
+                                           id="price" required>
+                                    <div id="feedbackPrice"></div>
+                                    <p class="error-message"
+                                       th:each="error : ${#fields.errors('price')}"
+                                       th:text="${error}">Validation error</p>
+                                </div>
+                                <p class="error-message"
+                                   th:each="error : ${#fields.errors('global')}"
+                                   th:text="${error}">Validation error</p>
+                                <button type="submit" class="btn btn-success btn-lg btn-block" id="btnRegister">
+                                    Update
+                                </button>
+                                <button type="submit" class="btn btn-success btn-lg btn-block" id="btnCancel">
+                                    Cancel
+                                </button>
+                                <span> <a href="/" th:href="@{/company/serviceList}">Back to service list</a></span>
+                            </form>
+                        </div>
+                        <!--/card-block-->
+                    </div>
+                    <!-- /form card login -->
+
+                </div>
+
+
+            </div>
+            <!--/row-->
+        </div>
+        <!--/col-->
+    </div>
+    <!--/row-->
+</div>
+<!--/container-->
+<script type="text/javascript" th:src="@{/js/companyRegistrationScript.js}"></script>
+
+</body>
+</html>

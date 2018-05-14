@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+          integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+            integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+            integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+            crossorigin="anonymous"></script>
+    <style>
+        #left {
+            width: 35%;
+            display: inline-block;
+            height: 100%;
+        }
+        #right {
+            width: 65%;
+            display: inline-block;
+            height: 100%;
+        }
+
+    </style>
+    <script th:src="@{/js/utils}"></script>
+
+</head>
+<body>
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-6 mx-auto">
+                    <!-- form card username -->
+                    <h2  class="alert alert-success" th:if="${messageText!=null}" th:text="${messageText}">Message</h2>
+                    <div class="card rounded-0">
+                        <div class="card-header">
+                            <h3 class="mb-0">Have a question or a issue?</h3>
+                        </div>
+                        <div class="card-body">
+                            <form class="form" role="form" autocomplete="off" id="form" novalidate th:object="${message}"
+                                  method="POST">
+                                <div class="form-group">
+                                    <label for="email">Email for Contacting you</label>
+                                    <input type="email" class="form-control form-control-lg rounded-0" th:field="*{fromEmail}"
+                                           id="email" required="">
+                                    <div class="invalid-feedback">Oops, you missed this one.</div>
+                                    <p class="alert alert-danger"
+                                       th:if="${#fields.hasErrors('fromEmail')}"
+                                       th:each="error : ${#fields.errors('fromEmail')}"
+                                       th:text="${error}">Validation error</p>
+                                </div>
+                                <div class="form-group">
+                                    <label>Message</label>
+                                    <textarea th:field="*{text}" class="form-control form-control-lg rounded-0"></textarea>
+                                    <div class="invalid-feedback">Please enter the message</div>
+                                    <p class="alert alert-danger"
+                                       th:if="${#fields.hasErrors('text')}"
+                                       th:each="error : ${#fields.errors('text')}"
+                                       th:text="${error}">Validation error</p>
+                                </div>
+                                <button type="submit" class="btn btn-success btn-lg btn-block" id="btnLogin">Send Message</button>
+                            </form>
+                            <div style="display:flex">
+                                <div id="right">
+                                    <span><br> <a href="/" th:href="@{/login}">Go back to Login Page</a></span><br>
+                                </div>
+                            </div>
+                        </div>
+                        <!--/card-block-->
+                    </div>
+                    <!-- /form card username -->
+
+                </div>
+
+
+            </div>
+            <!--/row-->
+        </div>
+        <!--/col-->
+    </div>
+    <!--/row-->
+</div>
+<!--/container-->
+
+</body>
+</html>

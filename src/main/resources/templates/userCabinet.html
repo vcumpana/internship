@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Cabinet</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+          integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+            integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/userCabinetStyle.css}"/>
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark bg-primary">
+    <span class="navbar-brand">Name of our service</span>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/user/profile">My contracts</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/user/serviceList">Service list</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/user/invoicesPage">Invoices</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/user/statements">Statements</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav my-2 my-lg-0">
+            <li class="nav-item">
+                <span style="display:block;padding:.5rem 1rem; color: white">Hi, <span th:text="${username}"></span>!  <span id="balance"></span></span>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Personal cabinet  <i class="fa fa-user" style="font-size:16px; color:white"></i></a>
+            </li>
+            <li class="nav-item fa-stack">
+                <a class="nav-link" href="/user/notifications">
+                    <i class="fa fa-envelope fa-stack-2x" style="font-size: 20px; color:white">
+                        <i class="fa fa-circle fa-stack-1x" id="unreadMessages" style="color:red; font-size: 12px; top:-2px; left: 8px; display:none;"></i>
+                    </i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout  <i class="fa fa-sign-out" style="font-size:16px; color:white"></i></a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container" style="margin-top: 50px; padding-bottom: 30px">
+    <div class="row justify-content-center">
+        <div class="col-md-6 border border-primary" style="border-radius:.33rem; padding: 30px">
+            <div class="alert alert-success" style="display: none;" id="successUpdate">
+                <strong>Success!</strong> Your information was updated.
+            </div>
+            <div class="alert alert-success" style="display: none;" id="successUpdatePassword">
+                <strong>Success!</strong> Password was updated.
+            </div>
+            <div class="alert alert-danger" style="display: none;" id="failUpdatePassword">
+                <strong>Error!</strong> Old password is incorrect.
+            </div>
+            <h1>Personal information</h1>
+            <div style="margin-top: 5px; margin-bottom: 5px">
+                <span class="h4">Username: </span><span class="h4" th:text="${username}"></span> <br />
+            </div>
+
+            <div style="margin-top: 5px; margin-bottom: 5px">
+                <span class="h4">Surname: </span><span class="h4" th:text="${user.surname}" scopeInThisDoc="text" value="surname" id="surname"></span>
+                <span class="h4" id="editSurnameBlock">
+                    <a id="editSurname" scopeInThisDoc="update" value="surname"><i class="fa fa-pencil"></i></a>
+                </span>
+                <span class="h4" id="checkSurnameBlock">
+                    <a id="checkSurname" scopeInThisDoc="confirm" value="surname" style="display: none;"><i class="fa fa-check"></i></a>
+                </span>
+                <span class="h4" id="declineSurnameBlock">
+                    <a id="declineSurname" scopeInThisDoc="decline" value="surname" style="display: none;"><i class="fa fa-times"></i></a>
+                </span> <br />
+            </div>
+
+            <div style="margin-top: 5px; margin-bottom: 5px">
+                <span class="h4">Name: </span><span class="h4" th:text="${user.name}" scopeInThisDoc="text" value="name" id="name"></span>
+                <span class="h4" id="editNameBlock">
+                    <a id="editName" scopeInThisDoc="update" value="name"><i class="fa fa-pencil"></i></a>
+                </span>
+                <span class="h4" id="checkNameBlock">
+                    <a id="checkName" scopeInThisDoc="confirm" value="name" style="display: none;"><i class="fa fa-check"></i></a>
+                </span>
+                <span class="h4" id="declineNameBlock">
+                    <a id="declineName" scopeInThisDoc="decline" value="name" style="display: none;"><i class="fa fa-times"></i></a>
+                </span> <br />
+            </div>
+
+            <div style="margin-top: 5px; margin-bottom: 5px">
+                <span class="h4">Email: </span><span class="h4" th:text="${user.email}" id="email"></span><br />
+            </div>
+            <div style="margin-top: 5px; margin-bottom: 5px">
+                <span class="h4">Balance: </span><span class="h4" id="balanceInCabinet"></span> <br />
+            </div>
+            <button class="btn btn-primary btn-lg" id="showPasswordForm">Update password</button> <button class="btn btn-lg btn-primary" id="addMoney">Add money </button>
+            <div class="form-horizontal" id="passwordForm" style="display: none">
+
+                <div class="form-group">
+                    <label for="oldPassword">Enter old password:</label>
+                    <input type="password" id="oldPassword" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="newPassword">Enter new password:</label>
+                    <input type="password" id="newPassword" class="form-control">
+                    <div id="feedbackNewPassword"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="repeatedNewPassword">Repeat new password:</label>
+                    <input type="password" id="repeatedNewPassword" class="form-control">
+                    <div id="feedbackRepeatedNewPassword"></div>
+                </div>
+                <button class="btn btn-primary btn-lg" id="updatePassword">Update password</button>
+                <button class="btn btn-danger btn-lg" id="cancelPassword">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" id="modalForMoney">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="money">Insert amount of money to add</label>
+                    <input type="number" id="money" name="login" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="addAction">Add money</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" th:src="@{/js/userCabinetScript.js}"></script>
+</body>
+</html>

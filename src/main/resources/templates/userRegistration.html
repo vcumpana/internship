@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+          integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <h2>Registration</h2>
+            <form class="form-horizontal" action="/user/registration" method="POST" th:object="${user}">
+
+                <div class="form-group">
+                    <label for="login">Login</label>
+                    <input type="text" id="login" name="login" class="form-control" th:value="${user.login}">
+                    <div id="feedbackLogin"></div>
+                </div>
+                <div class="text-danger" id="feedbackLoginFromServer">
+                    <p th:each="error : ${#fields.errors('login')}" th:text="${error}"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="text" id="email" name="email" class="form-control" th:value="${user.email}">
+                    <div id="feedbackEmail"></div>
+                </div>
+                <div class="text-danger" id="feedbackEmailFromServer">
+                    <p th:each="error : ${#fields.errors('email')}" th:text="${error}"></p>
+                </div>
+
+                <label for="password">Password</label><br />
+                <div class="input-group">
+                    <input type="password" id="password" name="password" class="form-control">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="showPassword">Show</button>
+                    </div>
+                    <div id="feedbackPassword"></div>
+                </div>
+                <br />
+                <div class="text-danger" id="feedbackPasswordFromServer">
+                    <p th:each="error : ${#fields.errors('password')}" th:text="${error}"></p>
+                </div>
+
+                <label for="repeatedPassword">Repeat password</label><br />
+                <div class="input-group">
+                    <input type="password" id="repeatedPassword" name="repeatedPassword" class="form-control">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="showRepeatedPassword">Show</button>
+                    </div>
+                    <div id="feedbackRepeatedPassword"></div>
+                </div>
+                <br />
+                <div class="text-danger" id="feedbackRepeatedPasswordFromServer">
+                    <p th:each="error : ${#fields.errors('repeatedPassword')}" th:text="${error}"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="surname">Surname</label>
+                    <input type="text" id="surname" name="surname" class="form-control" th:value="${user.surname}">
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" class="form-control"  th:value="${user.name}">
+                </div>
+
+                <button class="btn btn-primary btn-lg" id="registerUser">Register</button>
+                <button class="btn btn-danger btn-lg" type="reset" id="resetButton">Reset</button><br/>
+                <span>Already registered? <a href="/" th:href="@{/login}">Login here</a></span>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" th:src="@{/js/userRegistrationScript.js}"></script>
+</body>
+</html>
