@@ -52,7 +52,7 @@ public class BankRestController {
     }
 
     @Autowired
-    public void setBankApi(String bankApi) {
+    public void setBankApi(@Qualifier("bankApi")String bankApi) {
         this.bankApi = bankApi;
     }
 
