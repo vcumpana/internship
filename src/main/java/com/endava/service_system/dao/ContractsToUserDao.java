@@ -78,8 +78,6 @@ public class ContractsToUserDao {
 
         builder.append(" WHERE credent.username=:username ");
 
-
-
         if(filter.getContractStatus()!=null){
             builder.append(" AND cont.status=:contractStatus ");
         }
