@@ -105,6 +105,8 @@ function fillTableWithServices() {
     $("#tableWithServices tbody").html("");
     for (var i = 0; i < listOfServices.length; i++) {
         var row = "<tr>";
+        row += "<td><a href=\"http://" + listOfServices[i].companyUrl +"\"><img border=\"0\" alt=\"W3Schools\" src=\"/images/" +
+            listOfServices[i].imageName +".png\" width=\"200\" height=\"100\"></a></td>";
         row += "<td>" + listOfServices[i].category + "</td>";
         row += "<td>" + listOfServices[i].companyName + "</td>";
         row += "<td>" + listOfServices[i].title + "</td>";

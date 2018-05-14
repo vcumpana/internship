@@ -86,7 +86,7 @@ public class ServiceToUserDao {
     }
     
     private String createQueryForSearch(ServiceDtoFilter filter) {
-        StringBuilder builder = new StringBuilder("SELECT c.name as name,s.id,s.title,cat.name,s.description,s.price ");
+        StringBuilder builder = new StringBuilder("SELECT c.name as name, s.id,s.title,cat.name,s.description,s.price, c.url ");
         builder.append(getCommonSql(filter));
         if (filter.getDirection() != null) {
             builder.append(" ORDER BY s.price ");

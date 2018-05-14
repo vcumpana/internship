@@ -21,4 +21,8 @@ public class ServiceToUserDto {
     private String description;
 
     private BigDecimal price;
+
+    private String imageName;
+
+    private String companyUrl;
 }

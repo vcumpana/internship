@@ -6,8 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -25,6 +24,8 @@ import java.time.LocalDate;
 public class NewInvoiceDTO {
 
     @NotNull
+    @DecimalMax("999999999999.00")
+    @DecimalMin("0.00")
     private BigDecimal price;
 
     @NotNull
@@ -42,6 +43,9 @@ public class NewInvoiceDTO {
     @NotNull
     private Long contractId;
 
-
     private Long invoiceId;
+
+    private String clientName;
+
+    private String service;
 }
