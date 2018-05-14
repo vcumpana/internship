@@ -11,6 +11,14 @@ $(document).ready(function () {
     downloadBalance();
 });
 
+$( document ).ajaxStart(function() {
+    $( "#pleaseWaitDialog" ).modal('show');
+});
+
+$( document ).ajaxComplete(function() {
+    $( "#pleaseWaitDialog" ).modal('hide');
+});
+
 $("#signContract").click(function () {
     var flag = true;
     var data = {

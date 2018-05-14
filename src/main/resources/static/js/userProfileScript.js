@@ -8,6 +8,14 @@ $(document).ready(function () {
     downloadBalance();
 });
 
+$( document ).ajaxStart(function() {
+    $( "#pleaseWaitDialog" ).modal('show');
+});
+
+$( document ).ajaxComplete(function() {
+    $( "#pleaseWaitDialog" ).modal('hide');
+});
+
 $("#activateFilter").click(function () {
     currentPage = 1;
     getDataForTable();
@@ -76,7 +84,6 @@ function fillTableWithContracts() {
         } else {
             row += "<td class='text-danger'><strong>Inactive</strong></td>";
         }
-        row += "<td><i class=\"fa fa-paw filter\" onclick='showServiceInfo(" + listOfContracts[i].id + ")'></i></td>";
         row += "</tr>";
         $("#tableWithContracts tbody").append(row);
     }

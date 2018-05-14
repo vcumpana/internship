@@ -33,7 +33,7 @@ import static com.endava.service_system.enums.UserStatus.DENIED;
 @RestController
 public class InvoicesRestController {
 
-    private static final Logger LOGGER= LogManager.getLogger(InvoicesRestController.class);
+    private static final Logger LOGGER = LogManager.getLogger(InvoicesRestController.class);
     private InvoiceService invoiceService;
     private AuthUtils authUtils;
 
@@ -41,26 +41,28 @@ public class InvoicesRestController {
     public void setAuthUtils(AuthUtils authUtils) {
         this.authUtils = authUtils;
     }
+
     @Autowired
     public void setInvoiceService(InvoiceService invoiceService) {
         this.invoiceService = invoiceService;
     }
+
     @GetMapping("/invoices")
-    public Map<String,Object> getInvoices(Authentication authentication,
-                                          @RequestParam(value = "categoryId",required = false) Long categoryId,
-                                          @RequestParam(value = "size",required = false) Integer size,
-                                          @RequestParam(value = "page",required = false) Integer page,
-                                          @RequestParam(value = "status",required = false) InvoiceStatus status,
-                                          @RequestParam(required = false,value = "companyId") Long companyId,
-                                          @RequestParam(required = false,value = "company") String companyName,
-                                          @RequestParam(required = false,value = "category") String categoryName,
-                                          @RequestParam(required = false,value = "orderByDueDate")String order
-                            ){
-        LOGGER.log(Level.DEBUG,authentication);
-        Map<String,Object> result=new HashMap<>();
-        UserType userType=getUserType(authentication);
-        String username=authentication.getName();
-        InvoiceFilter filter=InvoiceFilter.builder()
+    public Map<String, Object> getInvoices(Authentication authentication,
+                                           @RequestParam(value = "categoryId", required = false) Long categoryId,
+                                           @RequestParam(value = "size", required = false) Integer size,
+                                           @RequestParam(value = "page", required = false) Integer page,
+                                           @RequestParam(value = "status", required = false) InvoiceStatus status,
+                                           @RequestParam(required = false, value = "companyId") Long companyId,
+                                           @RequestParam(required = false, value = "company") String companyName,
+                                           @RequestParam(required = false, value = "category") String categoryName,
+                                           @RequestParam(required = false, value = "orderByDueDate") String order
+    ) {
+        LOGGER.log(Level.DEBUG, authentication);
+        Map<String, Object> result = new HashMap<>();
+        UserType userType = getUserType(authentication);
+        String username = authentication.getName();
+        InvoiceFilter filter = InvoiceFilter.builder()
                 .userType(userType)
                 .currentUserUsername(username)
                 .size(size)
@@ -72,18 +74,18 @@ public class InvoicesRestController {
                 .invoiceStatus(status)
                 .page(page)
                 .build();
-        result.put("invoices",invoiceService.getAllInvoices(filter));
-        result.put("pages",invoiceService.getInvoicePagesNr(filter));
+        result.put("invoices", invoiceService.getAllInvoices(filter));
+        result.put("pages", invoiceService.getInvoicePagesNr(filter));
         return result;
     }
 
-    private UserType getUserType(Authentication authentication){
+    private UserType getUserType(Authentication authentication) {
         UserType userType;
-        String authority=authentication.getAuthorities().stream().findAny().get().getAuthority();
-        if(authority.equalsIgnoreCase("ROLE_COMPANY")){
-            userType=UserType.COMPANY;
-        }else{
-            userType=UserType.USER;
+        String authority = authentication.getAuthorities().stream().findAny().get().getAuthority();
+        if (authority.equalsIgnoreCase("ROLE_COMPANY")) {
+            userType = UserType.COMPANY;
+        } else {
+            userType = UserType.USER;
         }
         return userType;
     }
@@ -104,16 +106,16 @@ public class InvoicesRestController {
 
     @PostMapping("/company/newinvoices")
     @PreAuthorize("hasAnyRole('ROLE_COMPANY')")
-    public ResponseEntity createMultipleInvoices(@RequestParam(value = "info[]", required=false) List<String> ids){
+    public ResponseEntity createMultipleInvoices(@RequestParam(value = "info[]", required = false) List<String> ids) {
         if (ids == null || ids.size() == 0)
             return new ResponseEntity(HttpStatus.NOT_FOUND);
-       invoiceService.createInvoicesFromBulk(ids);
+        invoiceService.createInvoicesFromBulk(ids);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @PostMapping("/company/sendinvoices")
     @PreAuthorize("hasAnyRole('ROLE_COMPANY')")
-    public ResponseEntity sendMultipleInvoices(@RequestParam(value = "info[]", required=false) List<String> ids){
+    public ResponseEntity sendMultipleInvoices(@RequestParam(value = "info[]", required = false) List<String> ids) {
         if (ids == null || ids.size() == 0)
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         invoiceService.sendInvoicesFromBulk(ids);
@@ -122,7 +124,7 @@ public class InvoicesRestController {
 
     @PostMapping("/company/cancelinvoices")
     @PreAuthorize("hasAnyRole('ROLE_COMPANY')")
-    public ResponseEntity cancelMultipleInvoices(@RequestParam(value = "info[]", required=false) List<String> ids){
+    public ResponseEntity cancelMultipleInvoices(@RequestParam(value = "info[]", required = false) List<String> ids) {
         if (ids == null || ids.size() == 0)
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         invoiceService.cancelInvoicesFromBulk(ids);
@@ -131,7 +133,7 @@ public class InvoicesRestController {
 
     @GetMapping("/invoice/{id}/{action}")
     public ResponseEntity sendOrCancelInvoice(@PathVariable("id") Long invoiceId, @PathVariable("action") String action,
-                                             HttpServletRequest request, Model model) {
+                                              HttpServletRequest request, Model model) {
         Invoice invoice = invoiceService.getInvoiceById(invoiceId);
         if (invoice != null) {
             if (invoice.getContract().getCompany().getCredential().getUsername().equals((authUtils.getAuthenticatedUsername()))) {
