@@ -9,6 +9,14 @@ $(document).ready(function () {
     downloadBalance();
 });
 
+$( document ).ajaxStart(function() {
+    $( "#pleaseWaitDialog" ).modal('show');
+});
+
+$( document ).ajaxComplete(function() {
+    $( "#pleaseWaitDialog" ).modal('hide');
+});
+
 $("#activateFilter").click(function () {
     currentPage = 1;
     getDataForTable();

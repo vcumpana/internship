@@ -60,9 +60,9 @@ $("#addAction").click(function () {
         url: "/bank/addmoney/",
         data: JSON.stringify(data),
         success: function (rs) {
-            var balance=JSON.parse(rs).balance;
-            $("#balance").text(balance+" MDL")
-            $("#balanceInCabinet").text(balance+" MDL")
+            var balance = JSON.parse(rs).balance;
+            $("#balance").text(balance + " MDL")
+            $("#balanceInCabinet").text(balance + " MDL")
             $("#modalForMoney").modal("hide");
         }
     });
@@ -211,6 +211,9 @@ $("#cancelPassword").click(function () {
 $("#showPasswordForm").click(function () {
     $("#passwordForm").css("display", "block");
     $("#showPasswordForm").css("display", "none");
+    $('html, body').animate({
+        scrollTop: $("#passwordForm").offset().top + $("#passwordForm").height()
+    }, 2000);
 });
 
 function hideForm() {
@@ -218,7 +221,7 @@ function hideForm() {
     $("#newPassword").val("");
     $("#repeatedNewPassword").val("");
     $("#passwordForm").css("display", "none");
-    $("#showPasswordForm").css("display", "block");
+    $("#showPasswordForm").css("display", "inline");
 }
 
 $("#newPassword").keyup(function () {
