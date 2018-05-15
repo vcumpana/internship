@@ -57,6 +57,9 @@ public class InvoiceEntityManagerDao {
             if ( filter.getInvoiceStatus() != null) {
                 query.setParameter("invoiceStatus", filter.getInvoiceStatus());
             }
+            if(filter.getServiceId()!=null&&filter.getServiceId()>0){
+                query.setParameter("serviceId", filter.getServiceId());
+            }
         } else {
             if ( filter.getInvoiceStatus() != null && filter.getInvoiceStatus() != InvoiceStatus.CREATED) {
                 query.setParameter("invoiceStatus", filter.getInvoiceStatus());
@@ -130,9 +133,6 @@ public class InvoiceEntityManagerDao {
     private String getOrderSqlExtension(InvoiceFilter filter) {
         StringBuilder builder = new StringBuilder();
         if (filter.getOrderByDueDateDirection() != null) {
-            if(filter.getInvoiceStatus() == null) {
-                builder.append(" AND invoice.invoiceStatus='SENT' ");
-            }
             builder.append(" ORDER BY invoice.dueDate");
             if (filter.getOrderByDueDateDirection() == Sort.Direction.ASC) {
                 builder.append(" ASC ");
@@ -165,6 +165,9 @@ public class InvoiceEntityManagerDao {
         if (filter.getUserType() == UserType.COMPANY) {
             if (filter.getInvoiceStatus() != null) {
                 builder.append(" AND invoice.invoiceStatus=:invoiceStatus ");
+            }
+            if(filter.getServiceId()!=null&&filter.getServiceId()>0){
+                builder.append(" AND service.id=:serviceId ");
             }
         } else {
             if (filter.getInvoiceStatus() != null && filter.getInvoiceStatus() != InvoiceStatus.CREATED) {

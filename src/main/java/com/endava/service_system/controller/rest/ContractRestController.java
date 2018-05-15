@@ -69,6 +69,7 @@ public class ContractRestController {
                                                            LocalDate fromEndDate,
                                                @RequestParam(required = false,value = "tillEndDate") @DateTimeFormat(pattern = "yyyy-MM-dd")
                                                            LocalDate tillEndDate,
+                                               @RequestParam(required = false,value = "serviceId") Long serviceId,
                                                Authentication authentication){
         Map<String,Object> map=new HashMap<>();
         String username=authentication.getName();
@@ -91,6 +92,7 @@ public class ContractRestController {
                 .fromStartDate(fromStartDate)
                 .tillStartDate(tillStartDate)
                 .page(page)
+                .serviceId(serviceId)
                 .build();
         map.put("contracts",contractService.getContracts(filter));
         map.put("pages",contractService.getPagesSizeForFilter(filter));

@@ -34,5 +34,6 @@ public class ContractForUserDtoFilter {
     //Just For Companies
     private String usersFirstName;
     private String usersLastName;
+    private Long serviceId;
 
 }
