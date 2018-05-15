@@ -16,7 +16,6 @@
             crossorigin="anonymous"></script>
     <style>
         .error-message {
-            display: none;
             width: 100%;
             margin-top: .25rem;
             font-size: 80%;
@@ -25,7 +24,7 @@
     </style>
 </head>
 <body>
-<div class="container py-5">
+<div class="container py-5 ">
     <div class="row">
         <div class="col-md-12">
             <div class="row">
@@ -33,47 +32,65 @@
                     <!-- form card login -->
                     <div class="card rounded-0">
                         <div class="card-header">
-                            <h3 class="mb-0">Add new service</h3>
+                            <h3 class="mb-0">New service</h3>
                         </div>
                         <div class="card-body">
-                            <form class="form" role="form" th:object="${service}" autocomplete="off"
-                                  id="registrationForm" action="/company/addservice" novalidate=""
+                            <form class="needs-validation" role="form" th:object="${service}" autocomplete="off"
+                                  id="registrationForm" action="/company/addservice" novalidate="novalidate"
                                   method="POST">
                                 <!--<div class="alert alert-danger" th:unless="${param.error == null}">Wrong username or-->
                                 <!--password-->
                                 <!--</div>-->
                                 <div class="form-group blu-margin">
-                                    <select class="form-control" th:field="${service.category}"  id="dropOperator">
+                                    <select class="form-control" th:field="${service.category}"  id="dropOperator" required>
                                         <option value="">Select Category</option>
                                         <option th:each="category : ${categories}" th:value="${category.name}" th:text="${category.name}"></option>
                                     </select>
+                                    <div class="invalid-feedback">
+                                        Please select a category.
+                                    </div>
                                 </div>
+                                <p class="error-message"
+                                   th:each="error : ${#fields.errors('category')}"
+                                   th:text="${error}">Validation error</p>
                                 <div class="form-group">
                                     <label for="title">Service title</label>
-                                    <input type="text" class="form-control form-control-lg rounded-0" name="title"
-                                           id="title" required="">
-
+                                    <input type="text" class="form-control form-control-lg rounded-0" th:field="${service.title}"
+                                           id="title" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a title for your service.
+                                    </div>
+                                    <p class="error-message"
+                                       th:each="error : ${#fields.errors('title')}"
+                                       th:text="${error}">Validation error</p>
                                 </div>
                                 <div class="form-group">
                                     <label>Description</label>
-                                    <input type="text" class="form-control form-control-lg rounded-0"
-                                           name="description" id="description" required="">
-                                    <div id="feedbackUsername"></div>
+                                    <textarea type="text" class="form-control form-control-lg rounded-0"
+                                              th:field="${service.description}" id="description" required></textarea>
+                                    <div class="invalid-feedback">
+                                        Please provide a description for your service.
+                                    </div>
+                                    <p class="error-message"
+                                       th:each="error : ${#fields.errors('description')}"
+                                       th:text="${error}">Validation error</p>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="price">Price</label>
-                                    <input type="text" class="form-control form-control-lg rounded-0" name="price"
-                                           id="price" required="">
-                                    <div id="feedbackPrice"></div>
+                                    <input type="number" class="form-control form-control-lg rounded-0" name="price"
+                                           id="price" required>
+                                    <div class="invalid-feedback">Please provide a price.</div>
                                     <p class="error-message"
                                        th:each="error : ${#fields.errors('price')}"
                                        th:text="${error}">Validation error</p>
                                 </div>
-                                <button type="submit" class="btn btn-success btn-lg btn-block" id="btnRegister">
+                                <button type="submit" class="btn btn-success" id="btnRegister">
                                     Add service
                                 </button>
-                                <span> <a href="/" th:href="@{/company/serviceList}">Back to service list</a></span>
+                                <a onclick="cancelCreateService()"  role="button" class="btn btn-danger" id="btnCancel">
+                                    Cancel
+                                </a>
                             </form>
                         </div>
                         <!--/card-block-->
@@ -91,7 +108,32 @@
     <!--/row-->
 </div>
 <!--/container-->
-<script type="text/javascript" th:src="@{/js/companyRegistrationScript.js}"></script>
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+
+    function cancelCreateService() {
+        if (confirm("Your entry data will be lost, are you sure you want to cancel?")) {
+            window.location = "/company/serviceList";
+        }
+    }
+</script>
 
 </body>
 </html>

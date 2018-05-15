@@ -104,4 +104,8 @@ public class ServiceService {
     public Long getPagesSize(ServiceDtoFilter filter) {
         return serviceToUserDao.getPagesSize(filter);
     }
+
+    public Optional<Service> getServicesByTitle(String title) {
+        return serviceDao.getByTitle(title);
+    }
 }

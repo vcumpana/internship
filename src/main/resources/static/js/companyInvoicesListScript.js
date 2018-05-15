@@ -2,11 +2,41 @@ var listOfInvoices = [];
 var ascArrow = "<i class=\"fa fa-arrow-down\"></i>";
 var descArrow = "<i class=\"fa fa-arrow-up\"></i>";
 var arr = new Array();
+var maxPage;
+var currentPage = 1;
+var size = 10;
 
 $(document).ready(function () {
     downloadInvoices();
     isUnreadMessages();
     downloadBalance();
+});
+
+$(document).ajaxStart(function () {
+    $("#pleaseWaitDialog").modal('show');
+});
+
+$(document).ajaxComplete(function () {
+    $("#pleaseWaitDialog").modal('hide');
+});
+
+$("#activateFilter").click(function () {
+    currentPage = 1;
+    downloadInvoices();
+});
+
+$("#nextPage").click(function () {
+    currentPage++;
+    downloadInvoices();
+    verifyIfPreviousExists();
+    verifyIfNextExists();
+});
+
+$("#previousPage").click(function () {
+    currentPage--;
+    downloadInvoices();
+    verifyIfPreviousExists();
+    verifyIfNextExists();
 });
 
 $('#select_all').change(function() {
@@ -21,13 +51,18 @@ function fillArray() {
 }
 
 function downloadInvoices() {
+    var url = makeURL(currentPage);
+    console.log(url);
     $.ajax({
         type: "GET",
-        url: "/invoices/",
+        url: url,
         success: function (result) {
+            maxPage = result.pages
             listOfInvoices = result.invoices;
             //  listOfContracts.sort(comparatorForCategory);
             fillTableWithInvoices();
+            verifyIfPreviousExists();
+            verifyIfNextExists();
         }
     });
 }
@@ -136,6 +171,31 @@ $("th[scopeForSort='sort']").click(function () {
     fillTableWithInvoices();
 });
 
+function makeURL(page) {
+    var url = "/invoices?page=" + page + "&size=" + size + "&";
+    var data = {
+        "companyId": $("#serviceName").val(),
+        "categoryId": $("#categoryName").val(),
+        "orderByDueDate": $("#orderByDueDate").val(),
+        "status": $("#invoiceStatus").val(),
+        "fromStartDate" : $("#fromStartDate").val(),
+        "tillStartDate" : $("#tillStartDate").val(),
+        "fromTillDate" : $("#fromTillDate").val(),
+        "tillTillDate" : $("#tillTillDate").val(),
+        "fromDueDate" : $("#fromDueDate").val(),
+        "tillDueDate" : $("#tillDueDate").val(),
+        "usersFirstName" : $("#usersFirstName").val(),
+        "usersLastName" : $("#usersLastName").val()
+    };
+    for (key in data) {
+        if (data[key] !== "") {
+            url += key + "=" + data[key] + "&";
+        }
+    }
+    url = url.substring(0, url.length - 1);
+    return url;
+}
+
 function fillTableWithInvoices() {
     $("#tableWithInvoices tbody").html("");
     var paid = 0;
@@ -200,7 +260,7 @@ function fillTableWithInvoices() {
         $("#tableWithInvoices tbody").append(row);
     }
     var row = "<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td>" +
-        "<td>Total</td><td>"+paid+" MDL</td><td>"+unpaid+" MDL</td><td>"+overdue+" MDL</td><td></td><td></td><td></td></tr>";
+        "<td>Total</td><td>"+paid.toFixed(2)+" MDL</td><td>"+unpaid.toFixed(2)+" MDL</td><td>"+overdue.toFixed(2)+" MDL</td><td></td><td></td><td></td></tr>";
     $("#tableWithInvoices tbody").append(row);
 }
 
@@ -250,6 +310,43 @@ function setArrowForSort(value, type) {
             $(this).html("");
         }
     });
+}
+
+function resetInvoiceFilter() {
+    $("#orderByDueDate").val("asc");
+    $("#companyName").val("");
+    $("#categoryName").val("");
+    $("#fromStartDate").val("");
+    $("#tillStartDate").val("");
+    $("#fromTillDate").val("");
+    $("#tillTillDate").val("");
+    $("#fromDueDate").val("");
+    $("#tillDueDate").val("");
+    $("#usersFirstName").val("");
+    $("#usersLastName").val("");
+    currentPage = 1;
+    downloadInvoices();
+}
+
+function verifyIfPreviousExists() {
+    if (currentPage === 1) {
+        $("#previousPage").addClass("disabled");
+        $("#previousPage").attr("disabled", true);
+    } else {
+        $("#previousPage").removeClass("disabled");
+        $("#previousPage").attr("disabled", false);
+    }
+}
+
+function verifyIfNextExists() {
+    if (currentPage === maxPage || maxPage === 0) {
+        $("#nextPage").addClass("disabled");
+        $("#nextPage").attr("disabled", true);
+    } else {
+        $("#nextPage").removeClass("disabled");
+        $("#nextPage").attr("disabled", false);
+    }
+
 }
 
 function isUnreadMessages() {
