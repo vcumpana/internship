@@ -87,6 +87,29 @@ public class ContractsToUserDao {
             } else if (filter.getCompanyId() != null) {
                 builder.append(" AND comp.id=:companyId ");
             }
+        }else{
+            if(filter.getUsersFirstName()!=null&&!filter.getUsersFirstName().isEmpty()){
+                builder.append(" AND lower(u.name) LIKE lower(CONCAT(:firstName,'%')) ");
+            }
+            if(filter.getUsersLastName()!=null&&!filter.getUsersLastName().isEmpty()){
+                builder.append(" AND lower(u.surname) LIKE lower(CONCAT(:lastName,'%')) ");
+            }
+        }
+
+        if(filter.getFromStartDate()!=null){
+            builder.append(" AND cont.startDate>=:fromStartDate ");
+        }
+
+        if(filter.getTillStartDate()!=null){
+            builder.append(" AND cont.startDate<=:tillStartDate ");
+        }
+
+        if(filter.getFromEndDate()!=null){
+            builder.append(" AND cont.endDate>=:fromEndDate ");
+        }
+
+        if(filter.getTillEndDate()!=null){
+            builder.append(" AND cont.endDate<=:tillEndDate ");
         }
 
         if (filter.getCategoryName() != null) {
@@ -134,6 +157,29 @@ public class ContractsToUserDao {
             } else if (filter.getCompanyId() != null) {
                 query.setParameter("companyId", filter.getCompanyId());
             }
+        }else{
+            if(filter.getUsersFirstName()!=null&&!filter.getUsersFirstName().isEmpty()){
+                query.setParameter("firstName", filter.getUsersFirstName());
+            }
+            if(filter.getUsersLastName()!=null&&!filter.getUsersLastName().isEmpty()){
+                query.setParameter("lastName", filter.getUsersLastName());
+            }
+        }
+
+        if(filter.getFromStartDate()!=null){
+            query.setParameter("fromStartDate", filter.getFromStartDate());
+        }
+
+        if(filter.getTillStartDate()!=null){
+            query.setParameter("tillStartDate", filter.getTillStartDate());
+        }
+
+        if(filter.getFromEndDate()!=null){
+            query.setParameter("fromEndDate", filter.getFromEndDate());
+        }
+
+        if(filter.getTillEndDate()!=null){
+            query.setParameter("tillEndDate", filter.getTillEndDate());
         }
 
         if (filter.getContractStatus() != null)

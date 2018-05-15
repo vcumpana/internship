@@ -71,6 +71,37 @@ public class InvoiceEntityManagerDao {
             } else if (filter.getCompanyId() != null) {
                 query.setParameter("companyId", filter.getCompanyId());
             }
+        }else{
+            if(filter.getUsersFirstName()!=null&&!filter.getUsersFirstName().isEmpty()){
+                query.setParameter("firstName", filter.getUsersFirstName());
+            }
+            if(filter.getUsersLastName()!=null&&!filter.getUsersLastName().isEmpty()){
+                query.setParameter("lastName", filter.getUsersLastName());
+            }
+        }
+
+        if(filter.getFromStartDate()!=null){
+            query.setParameter("fromStartDate", filter.getFromStartDate());
+        }
+
+        if(filter.getTillStartDate()!=null){
+            query.setParameter("tillStartDate", filter.getTillStartDate());
+        }
+
+        if(filter.getFromTillDate()!=null){
+            query.setParameter("fromTillDate", filter.getFromTillDate());
+        }
+
+        if(filter.getTillTillDate()!=null){
+            query.setParameter("tillTillDate", filter.getTillTillDate());
+        }
+
+        if(filter.getFromDueDate()!=null){
+            query.setParameter("fromDueDate", filter.getFromDueDate());
+        }
+
+        if(filter.getTillDueDate()!=null){
+            query.setParameter("tillDueDate", filter.getTillDueDate());
         }
 //
         if (filter.getCategoryName() != null) {
@@ -149,7 +180,37 @@ public class InvoiceEntityManagerDao {
             } else if (filter.getCompanyId() != null) {
                 builder.append(" AND company.id=:companyId ");
             }
+        }else{
+            if(filter.getUsersFirstName()!=null&&!filter.getUsersFirstName().isEmpty()){
+                builder.append(" AND lower(user.name) LIKE lower(CONCAT(:firstName,'%')) ");
+            }
+            if(filter.getUsersLastName()!=null&&!filter.getUsersLastName().isEmpty()){
+                builder.append(" AND lower(user.surname) LIKE lower(CONCAT(:lastName,'%')) ");
+            }
+        }
 
+        if(filter.getFromStartDate()!=null){
+            builder.append(" AND invoice.fromDate>=:fromStartDate ");
+        }
+
+        if(filter.getTillStartDate()!=null){
+            builder.append(" AND invoice.fromDate<=:tillStartDate ");
+        }
+
+        if(filter.getFromTillDate()!=null){
+            builder.append(" AND invoice.tillDate>=:fromTillDate ");
+        }
+
+        if(filter.getTillTillDate()!=null){
+            builder.append(" AND invoice.tillDate<=:tillTillDate ");
+        }
+
+        if(filter.getFromDueDate()!=null){
+            builder.append(" AND invoice.dueDate>=:fromDueDate ");
+        }
+
+        if(filter.getTillDueDate()!=null){
+            builder.append(" AND invoice.dueDate<=:tillDueDate ");
         }
 //
         if (filter.getCategoryName() != null) {

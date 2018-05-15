@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -28,5 +29,15 @@ public class InvoiceFilter {
     private Sort.Direction orderByDueDateDirection;
     @NotNull
     private UserType userType;
+    private LocalDate fromStartDate;
+    private LocalDate tillStartDate;
+    private LocalDate fromTillDate;
+    private LocalDate tillTillDate;
+    private LocalDate fromDueDate;
+    private LocalDate tillDueDate;
+
+    private String usersFirstName;
+    private String usersLastName;
+
 
 }

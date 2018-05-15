@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +58,15 @@ public class InvoicesRestController {
                                            @RequestParam(required = false, value = "companyId") Long companyId,
                                            @RequestParam(required = false, value = "company") String companyName,
                                            @RequestParam(required = false, value = "category") String categoryName,
-                                           @RequestParam(required = false, value = "orderByDueDate") String order
+                                           @RequestParam(required = false, value = "orderByDueDate") String order,
+                                           @RequestParam(required = false, value = "fromStartDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fromStartDate,
+                                           @RequestParam(required = false, value = "tillStartDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate tillStartDate,
+                                           @RequestParam(required = false, value = "fromTillDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fromTillDate,
+                                           @RequestParam(required = false, value = "tillTillDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate tillTillDate,
+                                           @RequestParam(required = false, value = "fromDueDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fromDueDate,
+                                           @RequestParam(required = false, value = "tillDueDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate tillDueDate,
+                                           @RequestParam(required = false, value = "usersFirstName") String usersFirstName,
+                                           @RequestParam(required = false, value = "usersLastName") String usersLastName
     ) {
         LOGGER.log(Level.DEBUG, authentication);
         Map<String, Object> result = new HashMap<>();
@@ -73,6 +83,14 @@ public class InvoicesRestController {
                 .companyTitle(companyName)
                 .invoiceStatus(status)
                 .page(page)
+                .usersLastName(usersLastName)
+                .usersFirstName(usersFirstName)
+                .fromStartDate(fromStartDate)
+                .tillStartDate(tillStartDate)
+                .fromTillDate(fromTillDate)
+                .tillTillDate(tillTillDate)
+                .fromDueDate(fromDueDate)
+                .tillDueDate(tillDueDate)
                 .build();
         result.put("invoices", invoiceService.getAllInvoices(filter));
         result.put("pages", invoiceService.getInvoicePagesNr(filter));

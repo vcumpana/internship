@@ -14,6 +14,7 @@ import com.endava.service_system.utils.AuthUtils;
 import com.endava.service_system.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +59,16 @@ public class ContractRestController {
                                                @RequestParam(required = false,value = "company") String companyName,
                                                @RequestParam(required = false,value = "category") String categoryName,
                                                @RequestParam(required = false,value = "orderByEndDate")String order,
+                                               @RequestParam(required = false,value = "usersFirstName") String usersFirstName,
+                                               @RequestParam(required = false,value = "usersLastName") String usersLastName,
+                                               @RequestParam(required = false,value = "fromStartDate") @DateTimeFormat(pattern = "yyyy-MM-dd")
+                                                           LocalDate fromStartDate,
+                                               @RequestParam(required = false,value = "tillStartDate") @DateTimeFormat(pattern = "yyyy-MM-dd")
+                                                           LocalDate tillStartDate,
+                                               @RequestParam(required = false,value = "fromEndDate") @DateTimeFormat(pattern = "yyyy-MM-dd")
+                                                           LocalDate fromEndDate,
+                                               @RequestParam(required = false,value = "tillEndDate") @DateTimeFormat(pattern = "yyyy-MM-dd")
+                                                           LocalDate tillEndDate,
                                                Authentication authentication){
         Map<String,Object> map=new HashMap<>();
         String username=authentication.getName();
@@ -72,6 +84,12 @@ public class ContractRestController {
                 .userType(userType)
                 .categoryName(categoryName)
                 .companyName(companyName)
+                .usersFirstName(usersFirstName)
+                .usersLastName(usersLastName)
+                .fromEndDate(fromEndDate)
+                .tillEndDate(tillEndDate)
+                .fromStartDate(fromStartDate)
+                .tillStartDate(tillStartDate)
                 .page(page)
                 .build();
         map.put("contracts",contractService.getContracts(filter));
