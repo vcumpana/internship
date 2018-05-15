@@ -38,6 +38,7 @@ public class InvoiceFilter {
 
     private String usersFirstName;
     private String usersLastName;
+    private Long serviceId;
 
 
 }

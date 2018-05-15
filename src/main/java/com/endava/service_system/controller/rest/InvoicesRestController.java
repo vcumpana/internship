@@ -66,7 +66,8 @@ public class InvoicesRestController {
                                            @RequestParam(required = false, value = "fromDueDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fromDueDate,
                                            @RequestParam(required = false, value = "tillDueDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate tillDueDate,
                                            @RequestParam(required = false, value = "usersFirstName") String usersFirstName,
-                                           @RequestParam(required = false, value = "usersLastName") String usersLastName
+                                           @RequestParam(required = false, value = "usersLastName") String usersLastName,
+                                           @RequestParam(required = false,value = "serviceId") Long serviceId
     ) {
         LOGGER.log(Level.DEBUG, authentication);
         Map<String, Object> result = new HashMap<>();
@@ -91,6 +92,7 @@ public class InvoicesRestController {
                 .tillTillDate(tillTillDate)
                 .fromDueDate(fromDueDate)
                 .tillDueDate(tillDueDate)
+                .serviceId(serviceId)
                 .build();
         result.put("invoices", invoiceService.getAllInvoices(filter));
         result.put("pages", invoiceService.getInvoicePagesNr(filter));

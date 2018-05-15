@@ -188,7 +188,7 @@ public class InvoiceService {
         makeInvoicesPayed(ids);
     }
 
-    public Optional<InvoiceForPaymentDto> getFullInvoiceById(int id) {
+    public Optional<InvoiceForPaymentDto> getFullInvoiceById(Long id) {
         return invoiceDao.getFullInvoiceById(id);
     }
 

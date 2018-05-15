@@ -94,6 +94,9 @@ public class ContractsToUserDao {
             if(filter.getUsersLastName()!=null&&!filter.getUsersLastName().isEmpty()){
                 builder.append(" AND lower(u.surname) LIKE lower(CONCAT(:lastName,'%')) ");
             }
+            if(filter.getServiceId()!=null && filter.getServiceId()>0){
+                builder.append(" AND s.id=:serviceId ");
+            }
         }
 
         if(filter.getFromStartDate()!=null){
@@ -163,6 +166,9 @@ public class ContractsToUserDao {
             }
             if(filter.getUsersLastName()!=null&&!filter.getUsersLastName().isEmpty()){
                 query.setParameter("lastName", filter.getUsersLastName());
+            }
+            if(filter.getServiceId()!=null && filter.getServiceId()>0){
+                query.setParameter("serviceId", filter.getServiceId());
             }
         }
 
