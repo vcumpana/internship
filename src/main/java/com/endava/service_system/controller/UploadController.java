@@ -52,7 +52,7 @@ public class UploadController {
     }
 
     @PreAuthorize("hasRole('ROLE_COMPANY')")
-    @PostMapping("/company/uploadimages")
+    @PostMapping(value = "/company/uploadimages")
     public ResponseEntity uploadDefaultImage(Authentication authentication,@RequestParam("file") MultipartFile file) throws IOException {
 
         if(!isImage(file)){
@@ -71,9 +71,9 @@ public class UploadController {
         Company company=companyService.getCompanyByUsername(authentication.getName()).get();
         String imageName=uploadFile(file);
         company.setImageName(imageName);
-        companyService.save(company);
+        companyService.updateWithoutCredentials(company);
         String json="{\"imageUrl\":\""+imageName+"\"}";
-        return new ResponseEntity(json,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(json,HttpStatus.OK);
     }
 
     private boolean isImage(MultipartFile file){

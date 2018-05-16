@@ -141,7 +141,7 @@ public class CompanyController {
     }
 
     @PostMapping("/company/createInvoice")
-    public String registerNewService( HttpServletResponse response,HttpServletRequest request,  Model model, @ModelAttribute("invoice") @Validated NewInvoiceDTO newInvoiceDTO, BindingResult bindingResult) {
+    public String registerNewService(RedirectAttributes redirectAttributes, HttpServletResponse response,HttpServletRequest request,  Model model, @ModelAttribute("invoice") @Validated NewInvoiceDTO newInvoiceDTO, BindingResult bindingResult) {
         LOGGER.log(Level.DEBUG,newInvoiceDTO);
         LOGGER.log(Level.DEBUG,bindingResult.getAllErrors());
         if (bindingResult.hasErrors()) {
@@ -156,19 +156,23 @@ public class CompanyController {
             }
             return "companyCreateInvoice";
         }
-        String cookie=null;
-        for(Cookie one:request.getCookies()){
-            if(one.getName().equalsIgnoreCase("conflict")) {
-                cookie=one.getValue();
-            }
-        }
+
                 //i
         if(invoiceService.invoicePeriodExists(newInvoiceDTO)) {
-            if (cookie== null || cookie.equalsIgnoreCase("true")) {
+            String cookieValue=null;
+            for(Cookie one:request.getCookies()){
+                if(one.getName().equalsIgnoreCase("conflict")) {
+                    cookieValue=one.getValue();
+                }
+            }
+            System.out.println("cookieValue: "+cookieValue);
+            if (cookieValue== null || cookieValue.equalsIgnoreCase("true")) {
+                System.out.println("adding cookie : ");
                 Cookie conflictCookie = new Cookie("conflict", "true");
                 response.addCookie(conflictCookie);
                 return "companyCreateInvoice";
             }else{
+
                 for(Cookie one:request.getCookies()){
                     if(one.getName().equalsIgnoreCase("conflict")) {
                         one.setValue("");
@@ -179,11 +183,15 @@ public class CompanyController {
                 }
             }
         }
-
+        System.out.println("there are no conflicts : ");
         Contract contract = contractService.getContractById(newInvoiceDTO.getContractId());
         Invoice invoice = conversionService.convert(newInvoiceDTO, Invoice.class);
         invoice.setContract(contract);
         invoiceService.save(invoice);
+        User user=contract.getUser();
+        String fullName=user.getName()+" "+user.getSurname();
+        String serviceTitle =contract.getService().getTitle();
+        redirectAttributes.addFlashAttribute("message","You have created an invoice for client: " +fullName +", on service : " +serviceTitle +" with sum " + invoice.getPrice() + " USD");
         //companyService.addNewInvoice(invoice);
         return "redirect:/company/myinvoices";
     }

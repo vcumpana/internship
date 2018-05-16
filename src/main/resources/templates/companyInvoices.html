@@ -23,6 +23,7 @@
             aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
@@ -74,6 +75,10 @@
         <strong>Success!</strong> You have cancel an invoice.
     </div>
 </div>
+<div class="container" style="margin-top: 15px;">
+<div class="alert alert-success" th:if="${message!=null}" th:text="${'Succes!' + message}" id="successCreating" style="display:none"></div>
+</div>
+
 <div style="margin:15px">
     <div class="strike"><span id="showFilters" class="filter h4">Filters</span></div>
     <div style="display:none;" id="filters">
@@ -173,8 +178,10 @@
                 </div>
             </div>
         </form>
-        <button id="activateFilter" class="btn btn-primary btn-lg">Find</button>
-        <button class="btn btn-danger btn-lg" onclick="resetInvoiceFilter()">Reset</button>
+        <div align="middle">
+            <button id="activateFilter" class="btn btn-primary btn-lg">Find</button>
+            <button class="btn btn-danger btn-lg" onclick="resetInvoiceFilter()">Reset</button>
+        </div>
     </div>
 </div>
 <div class="table-responsive">
