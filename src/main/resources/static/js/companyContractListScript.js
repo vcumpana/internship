@@ -2,12 +2,43 @@ var listOfContracts = [];
 var ascArrow = "<i class=\"fa fa-arrow-down\"></i>";
 var descArrow = "<i class=\"fa fa-arrow-up\"></i>";
 var arr = new Array();
+var currentPage = 1;
+var size = 10;
+var maxPageSize;
 
 $(document).ready(function () {
     downloadContracts();
     isUnreadMessages();
     downloadBalance();
 });
+
+$( document ).ajaxStart(function() {
+    $( "#pleaseWaitDialog" ).modal('show');
+});
+
+$( document ).ajaxComplete(function() {
+    $( "#pleaseWaitDialog" ).modal('hide');
+});
+
+$("#activateFilter").click(function (event) {
+    event.preventDefault();
+    currentPage = 1;
+    downloadContracts();
+});
+
+$("#nextPage").click(function () {
+    currentPage++;
+    downloadContracts();
+    verifyIfPreviousExists();
+    verifyIfNextExists();
+    $('#select_all').prop("checked", false);});
+
+$("#previousPage").click(function () {
+    currentPage--;
+    downloadContracts();
+    verifyIfPreviousExists();
+    verifyIfNextExists();
+    $('#select_all').prop("checked", false);});
 
 $('#select_all').change(function() {
     var checkboxes = $(this).closest('form').find(':checkbox');
@@ -20,14 +51,40 @@ function fillArray() {
     });
 }
 
+function makeURL(page) {
+    var url = "/company/contracts?page=" + page + "&size=" + size + "&";
+    var data = {
+        "categoryId": $("#categoryName").val(),
+        "orderByEndDate": $("#orderByEndDate").val(),
+        "status": $("#contractStatus").val(),
+        "fromStartDate": $("#fromStartDate").val(),
+        "tillStartDate": $("#tillStartDate").val(),
+        "fromEndDate": $("#fromTillDate").val(),
+        "tillEndDate": $("#tillTillDate").val(),
+        "usersFirstName": $("#usersFirstName").val(),
+        "usersLastName": $("#usersLastName").val(),
+        "serviceId" : $("#serviceName").val()
+    };
+    for (key in data) {
+        if (data[key] !== "") {
+            url += key + "=" + data[key] + "&";
+        }
+    }
+    url = url.substring(0, url.length - 1);
+    return url;
+}
 function downloadContracts() {
+    var url = makeURL(currentPage);
     $.ajax({
         type: "GET",
-        url: "/company/contracts/",
+        url: url,
         success: function (result) {
             listOfContracts = result.contracts;
+            maxPageSize=result.pages;
             //  listOfContracts.sort(comparatorForCategory);
             fillTableWithContracts();
+            verifyIfPreviousExists();
+            verifyIfNextExists();
         }
     });
 }
@@ -172,6 +229,41 @@ function setArrowForSort(value, type) {
     });
 }
 
+function resetContractFilter() {
+    $("#contractStatus").val(""),
+    $("#orderByStartDate").val("asc");
+    $("#categoryName").val("");
+    $("#serviceName").val("")
+    $("#fromStartDate").val("");
+    $("#tillStartDate").val("");
+    $("#fromTillDate").val("");
+    $("#tillTillDate").val("");
+    $("#usersFirstName").val("");
+    $("#usersLastName").val("");
+    currentPage = 1;
+    downloadContracts();
+}
+
+function verifyIfPreviousExists() {
+    if (currentPage === 1) {
+        $("#previousPage").addClass("disabled");
+        $("#previousPage").attr("disabled", true);
+    } else {
+        $("#previousPage").removeClass("disabled");
+        $("#previousPage").attr("disabled", false);
+    }
+}
+
+function verifyIfNextExists() {
+    if (currentPage === maxPageSize||maxPageSize===0) {
+        $("#nextPage").addClass("disabled");
+        $("#nextPage").attr("disabled", true);
+    } else {
+        $("#nextPage").removeClass("disabled");
+        $("#nextPage").attr("disabled", false);
+    }
+}
+
 function isUnreadMessages() {
     $.ajax({
         type: "GET",
@@ -193,3 +285,16 @@ function downloadBalance(){
         }
     });
 }
+
+
+$("#showFilters").click(function () {
+    $("#filters").slideToggle();
+});
+
+$("#showSimpleFilters").click(function () {
+    $("#simpleFilters").slideToggle();
+});
+
+$("#showDatesFilters").click(function () {
+    $("#dateFilters").slideToggle();
+});

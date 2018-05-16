@@ -50,7 +50,7 @@ public class ContractRestController {
     }
 
     @GetMapping(value = {"user/contracts", "company/contracts"})
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_COMPANY')")
     public Map<String,Object> getUserContracts(@RequestParam(value = "categoryId",required = false) Long categoryId,
                                                @RequestParam(value = "size",required = false) Integer size,
                                                @RequestParam(value = "page",required = false) Integer page,

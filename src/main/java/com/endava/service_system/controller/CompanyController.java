@@ -86,6 +86,8 @@ public class CompanyController {
     @GetMapping(value = "/company/mycontracts")
     public String getMyContractsPage(Model model){
         addCompanyNameToModel(model);
+        addCategoriesToModel(model);
+        addServicesToModel(model);
         return  "companyContractList";
     }
 
@@ -98,7 +100,6 @@ public class CompanyController {
     @GetMapping(value = "/company/myinvoices")
     public String getMyInvoicesPage(Model model){
         addCompanyNameToModel(model);
-        addUsernameToModel(model);
         addCategoriesToModel(model);
         addServicesToModel(model);
         return  "companyInvoices";
