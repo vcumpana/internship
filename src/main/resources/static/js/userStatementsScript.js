@@ -1,4 +1,5 @@
 var listOfStatements = [];
+var sumOnTheStart = 0;
 
 $(document).ready(function () {
     downloadBalance();
@@ -29,13 +30,16 @@ function downloadStatements(ev) {
         url: "/bank/statements",
         data: JSON.stringify(data),
         success: function(result){
-            listOfStatements = result;
+            sumOnTheStart = result.balanceBefore;
+            listOfStatements = result.listOfTransactions;
             fillTableWithStatements();
         }
     });
 }
 
 function fillTableWithStatements() {
+    var currentSum = sumOnTheStart;
+    $("#balanceBefore").text("Balance on the beginning of period: " + sumOnTheStart + " MDL");
     $("#tableWithStatements tbody").html("");
     if(listOfStatements.length !== 0) {
         for (var i = 0; i < listOfStatements.length; i++) {
@@ -48,7 +52,8 @@ function fillTableWithStatements() {
                 row += "<td class='text-danger'>- " + Math.abs(listOfStatements[i].sum) + " MDL</td>";
             }
             row += "<td>" + listOfStatements[i].description + "</td>";
-            row += "<td></td>";
+            currentSum += listOfStatements[i].sum;
+            row += "<td>" + currentSum + " MDL</td>";
             row += "</tr>";
             $("#tableWithStatements tbody").append(row);
         }
@@ -71,6 +76,7 @@ function downloadBalance() {
 function fillDate(){
     var currentDay = new Date();
     var firstDay = new Date(currentDay.getFullYear(), currentDay.getMonth(), 1);
+    currentDay.setDate(currentDay.getDate() + 1);
     $("#startDate").val(moment(firstDay).format("YYYY-MM-DD"));
     $("#endDate").val(moment(currentDay).format("YYYY-MM-DD"));
 }
