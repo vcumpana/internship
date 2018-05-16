@@ -57,7 +57,8 @@ $("#signContract").click(function () {
     }
 });
 
-$("#activateFilter").click(function () {
+$("#activateFilter").click(function (event) {
+    event.preventDefault();
     currentPage = 1;
     getDataForTable();
 });
@@ -157,7 +158,10 @@ function makeURL(page) {
     return url;
 }
 
-function resetServiceFilter() {
+function resetServiceFilter(event) {
+    if(event !== null){
+        event.preventDefault();
+    }
     $("#minPrice").val("");
     $("#maxPrice").val("");
     $("#orderByPrice").val("asc");

@@ -16,7 +16,8 @@ $( document ).ajaxComplete(function() {
     $( "#pleaseWaitDialog" ).modal('hide');
 });
 
-$("#activateFilter").click(function () {
+$("#activateFilter").click(function (event) {
+    event.preventDefault();
     currentPage = 1;
     getDataForTable();
 });
@@ -55,7 +56,9 @@ function makeURL(page) {
     var data = {
         "status": $("#status").val(),
         "companyId": $("#companyName").val(),
-        "categoryId": $("#categoryName").val()
+        "categoryId": $("#categoryName").val(),
+        "fromStartDate": $("#fromStartDate").val(),
+        "tillStartDate": $("#tillStartDate").val()
     };
     for (key in data) {
         if (data[key] !== "") {
@@ -89,10 +92,15 @@ function fillTableWithContracts() {
     }
 }
 
-function resetContractFilter() {
+function resetContractFilter(event) {
+    if(event !== null){
+        event.preventDefault();
+    }
     $("#status").val("");
     $("#companyName").val("");
     $("#categoryName").val("");
+    $("#fromStartDate").val("");
+    $("#tillStartDate").val("");
     currentPage = 1;
     getDataForTable();
 }

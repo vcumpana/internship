@@ -2,6 +2,7 @@ package com.endava.service_system.controller.rest;
 
 import com.endava.service_system.dto.*;
 import com.endava.service_system.enums.InvoiceStatus;
+import com.endava.service_system.enums.UserStatus;
 import com.endava.service_system.exception.BankProblemException;
 import com.endava.service_system.model.*;
 import com.endava.service_system.service.BankService;
@@ -22,9 +23,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -39,7 +40,8 @@ public class BankRestController {
     private static final Logger LOGGER = LogManager.getLogger(BankRestController.class);
     private RestTemplate restTemplate;
     private BankService bankService;
-    private @Qualifier("bankApi") String bankApi;
+    private @Qualifier("bankApi")
+    String bankApi;
     private CredentialService credentialService;
     private AuthUtils authUtils;
     private ObjectMapper objectMapper;
@@ -52,7 +54,7 @@ public class BankRestController {
     }
 
     @Autowired
-    public void setBankApi(@Qualifier("bankApi")String bankApi) {
+    public void setBankApi(@Qualifier("bankApi") String bankApi) {
         this.bankApi = bankApi;
     }
 
@@ -116,6 +118,18 @@ public class BankRestController {
         return new ResponseEntity(rs.getBody(), rs.getStatusCode());
     }
 
+    @PostMapping("/bank/addbankaccount")
+    public ResponseEntity addBankAccount(Authentication authentication) {
+
+        Optional<Credential> credentialOptional = credentialService.getByUsername(authentication.getName());
+        if (!credentialOptional.isPresent()) {
+            String json = "{\"message\":\"Bank Problem\"}";
+            return new ResponseEntity(json, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        bankService.addBankAccount(credentialOptional.get());
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
     ;
 
     @PostMapping("/bank/statements")
@@ -177,9 +191,9 @@ public class BankRestController {
         List ids = (List) map.get("ids");
         Object id = map.get("id");
         if (id instanceof String) {
-            resultResponseEntity = payInvoice(Long.valueOf( (String) id));
+            resultResponseEntity = payInvoice(Long.valueOf((String) id));
         } else if (ids instanceof List) {
-            ids= (List<Long>) ids.stream().map(s->Long.valueOf((String)s)).collect(Collectors.toList());
+            ids = (List<Long>) ids.stream().map(s -> Long.valueOf((String) s)).collect(Collectors.toList());
             resultResponseEntity = payInvoices(ids);
         } else {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -187,7 +201,7 @@ public class BankRestController {
         if (resultResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
             return new ResponseEntity(HttpStatus.OK);
         } else {
-            return new ResponseEntity(resultResponseEntity.getBody(),resultResponseEntity.getStatusCode());
+            return new ResponseEntity(resultResponseEntity.getBody(), resultResponseEntity.getStatusCode());
         }
     }
 
@@ -264,9 +278,9 @@ public class BankRestController {
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
         headers.add("AccessKey", String.valueOf(bankAccount.getAccessKey()));
         headers.add("CountNumber", String.valueOf(bankAccount.getCountNumber()));
-        List<PaymentDto> listOfPayments=new ArrayList<>();
-        List<InvoiceForPaymentDto> invoiceForPaymentDtos=new ArrayList<>();
-        for(Long id:ids) {
+        List<PaymentDto> listOfPayments = new ArrayList<>();
+        List<InvoiceForPaymentDto> invoiceForPaymentDtos = new ArrayList<>();
+        for (Long id : ids) {
             Optional<InvoiceForPaymentDto> invoiceOptional = invoiceService.getFullInvoiceById(id);
             if (!invoiceOptional.isPresent()) {
                 String json = "{\"message\":\"This invoice doesn't exist , please report to admins\"}";
@@ -312,8 +326,8 @@ public class BankRestController {
 
     private void sendNotifications(List<InvoiceForPaymentDto> invoiceForPaymentDtos) {
         Credential adminCredential = credentialService.getDefaultAdminCredential();
-        List notifications=new ArrayList<>();
-        for(InvoiceForPaymentDto invoiceForPaymentDto : invoiceForPaymentDtos) {
+        List notifications = new ArrayList<>();
+        for (InvoiceForPaymentDto invoiceForPaymentDto : invoiceForPaymentDtos) {
             Notification companyNotification = notificationService.createNotificationPayedForCompany(invoiceForPaymentDto.getFullName(),
                     invoiceForPaymentDto.getInvoiceId(),
                     invoiceForPaymentDto.getServiceTitle(),

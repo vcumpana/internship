@@ -17,7 +17,8 @@ $(document).ajaxComplete(function () {
     $("#pleaseWaitDialog").modal('hide');
 });
 
-$("#activateFilter").click(function () {
+$("#activateFilter").click(function (event) {
+    event.preventDefault();
     currentPage = 1;
     getDataForTable();
 });
@@ -93,7 +94,8 @@ function fillTableWithInvoices() {
     }
 }
 
-function resetInvoiceFilter() {
+function resetInvoiceFilter(event) {
+    event.preventDefault();
     $("#orderByDueDate").val("asc");
     $("#companyName").val("");
     $("#categoryName").val("");
