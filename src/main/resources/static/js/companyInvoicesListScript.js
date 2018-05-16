@@ -370,3 +370,15 @@ function downloadBalance(){
         }
     });
 }
+
+$("#showFilters").click(function(){
+    $("#filters").slideToggle();
+});
+
+$("#showSimpleFilters").click(function(){
+    $("#simpleFilters").slideToggle();
+});
+
+$("#showDatesFilters").click(function(){
+    $("#dateFilters").slideToggle();
+})
