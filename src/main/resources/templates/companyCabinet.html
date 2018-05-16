@@ -98,7 +98,10 @@
                     <a id="declineSurname" scopeInThisDoc="decline" value="surname" style="display: none;"><i class="fa fa-times"></i></a>
                 </span> <br />
             </div>
-
+            <form action="/action_page.php">
+                <input type="file" name="pic" accept="image/*">
+                <input type="submit">
+            </form>
             <div style="margin-top: 5px; margin-bottom: 5px">
                 <span class="h4">Email: </span><span class="h4" th:text="${user.email}" id="email"></span><br />
             </div>

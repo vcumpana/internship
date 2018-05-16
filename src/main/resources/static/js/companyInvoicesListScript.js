@@ -30,6 +30,7 @@ $("#nextPage").click(function () {
     downloadInvoices();
     verifyIfPreviousExists();
     verifyIfNextExists();
+    $('#select_all').prop("checked", false);
 });
 
 $("#previousPage").click(function () {
@@ -37,15 +38,16 @@ $("#previousPage").click(function () {
     downloadInvoices();
     verifyIfPreviousExists();
     verifyIfNextExists();
+    $('#select_all').prop("checked", false);
 });
 
-$('#select_all').change(function() {
+$('#select_all').change(function () {
     var checkboxes = $(this).closest('table').find(':checkbox');
     checkboxes.prop('checked', $(this).is(':checked'));
 });
 
 function fillArray() {
-    $("input[type='checkbox'][name='idInvoice']:checked").each(function(i, v) {
+    $("input[type='checkbox'][name='idInvoice']:checked").each(function (i, v) {
         arr.push($(v).attr("id"));
     });
 }
@@ -67,7 +69,7 @@ function downloadInvoices() {
     });
 }
 
-function checkInvoice(){
+function checkInvoice() {
     $.ajax({
         type: "GET",
         url: "/checkInvoice/" + id,
@@ -83,14 +85,14 @@ function checkInvoice(){
 
 function sendInvoices() {
     fillArray();
-    data={
-         info :arr
+    data = {
+        info: arr
     };
     console.log(data);
     $.ajax({
         type: "POST",
         url: "/company/sendinvoices/",
-        data: {info :arr},
+        data: {info: arr},
         success: function (result) {
             $("#successSending").show();
             window.setTimeout(function () {
@@ -105,7 +107,7 @@ function sendInvoices() {
 function sendInvoice(id) {
     $.ajax({
         type: "GET",
-        url: "/invoice/" + id +"/send",
+        url: "/invoice/" + id + "/send",
         success: function (result) {
             $("#successSending").show();
             setTimeout(function () {
@@ -119,7 +121,7 @@ function sendInvoice(id) {
 function cancelInvoice(id) {
     $.ajax({
         type: "GET",
-        url: "/invoice/" + id +"/cancel",
+        url: "/invoice/" + id + "/cancel",
         success: function (result) {
             $("#successCanceling").show();
             setTimeout(function () {
@@ -132,14 +134,14 @@ function cancelInvoice(id) {
 
 function cancelInvoices() {
     fillArray();
-    data={
-        info :arr
+    data = {
+        info: arr
     };
     console.log(data);
     $.ajax({
         type: "POST",
         url: "/company/cancelinvoices/",
-        data: {info :arr},
+        data: {info: arr},
         success: function (result) {
             $("#successCancel").show();
             window.setTimeout(function () {
@@ -154,13 +156,13 @@ function cancelInvoices() {
 $("th[scopeForSort='sort']").click(function () {
     var field = $(this).attr("field");
     removeTypeOfSort(field);
-    if(field === "category"){
+    if (field === "category") {
         listOfServices.sort(comparatorForCategory);
     }
-    if(field === "price"){
+    if (field === "price") {
         listOfServices.sort(comparatorForPrice);
     }
-    if($(this).attr("typeOfSort") === "asc"){
+    if ($(this).attr("typeOfSort") === "asc") {
         listOfServices.reverse();
         setArrowForSort(field, "desc");
         $(this).attr("typeOfSort", "desc");
@@ -174,18 +176,18 @@ $("th[scopeForSort='sort']").click(function () {
 function makeURL(page) {
     var url = "/invoices?page=" + page + "&size=" + size + "&";
     var data = {
-        "companyId": $("#serviceName").val(),
         "categoryId": $("#categoryName").val(),
         "orderByDueDate": $("#orderByDueDate").val(),
         "status": $("#invoiceStatus").val(),
-        "fromStartDate" : $("#fromStartDate").val(),
-        "tillStartDate" : $("#tillStartDate").val(),
-        "fromTillDate" : $("#fromTillDate").val(),
-        "tillTillDate" : $("#tillTillDate").val(),
-        "fromDueDate" : $("#fromDueDate").val(),
-        "tillDueDate" : $("#tillDueDate").val(),
-        "usersFirstName" : $("#usersFirstName").val(),
-        "usersLastName" : $("#usersLastName").val()
+        "fromStartDate": $("#fromStartDate").val(),
+        "tillStartDate": $("#tillStartDate").val(),
+        "fromTillDate": $("#fromTillDate").val(),
+        "tillTillDate": $("#tillTillDate").val(),
+        "fromDueDate": $("#fromDueDate").val(),
+        "tillDueDate": $("#tillDueDate").val(),
+        "usersFirstName": $("#usersFirstName").val(),
+        "usersLastName": $("#usersLastName").val(),
+        "serviceId" : $("#serviceName").val()
     };
     for (key in data) {
         if (data[key] !== "") {
@@ -204,63 +206,63 @@ function fillTableWithInvoices() {
     var dateText;
     for (var i = 0; i < listOfInvoices.length; i++) {
         var row = "<tr>";
-        if (listOfInvoices[i].invoiceStatus === "CREATED"){
-            row +="<td><input type=\"checkbox\" name='idInvoice' id=\"" + listOfInvoices[i].invoiceId + "\"></td>";
+        if (listOfInvoices[i].invoiceStatus === "CREATED") {
+            row += "<td><input type=\"checkbox\" name='idInvoice' id=\"" + listOfInvoices[i].invoiceId + "\"></td>";
         } else
-            row +="<td></td>";
+            row += "<td></td>";
         row += "<td>" + listOfInvoices[i].invoiceId + "</td>";
         row += "<td>" + listOfInvoices[i].contractId + "</td>";
         row += "<td>" + listOfInvoices[i].userTitle + "</td>";
         row += "<td>" + listOfInvoices[i].serviceTitle + "</td>";
-        dateText=moment(listOfInvoices[i].fromDate).format("DD/MM/YYYY");
+        dateText = moment(listOfInvoices[i].fromDate).format("DD/MM/YYYY");
         row += "<td>" + dateText + "</td>";
-        dateText=moment(listOfInvoices[i].tillDate).format("DD/MM/YYYY");
+        dateText = moment(listOfInvoices[i].tillDate).format("DD/MM/YYYY");
         row += "<td>" + dateText + "</td>";
-        dateText=moment(listOfInvoices[i].paymentDate).format("DD/MM/YYYY");
+        dateText = moment(listOfInvoices[i].paymentDate).format("DD/MM/YYYY");
         row += "<td>" + dateText + "</td>";
-        switch (listOfInvoices[i].invoiceStatus){
+        switch (listOfInvoices[i].invoiceStatus) {
             case "CREATED":
-                row +="<td>-</td>";
+                row += "<td>-</td>";
                 row += "<td>" + listOfInvoices[i].price + " MDL</td>";
                 unpaid += listOfInvoices[i].price;
-                row +="<td>-</td>";
+                row += "<td>-</td>";
                 row += "<td class='text-secondary'><strong>Created</strong></td>";
                 break;
             case "PAID":
                 row += "<td>" + listOfInvoices[i].price + " MDL</td>";
-                row +="<td>-</td>";
-                row +="<td>-</td>";
+                row += "<td>-</td>";
+                row += "<td>-</td>";
                 paid += listOfInvoices[i].price;
                 row += "<td class='text-success'><strong>Paid</strong></td>";
                 break;
             case "OVERDUE":
-                row +="<td>-</td>";
-                row +="<td>-</td>";
+                row += "<td>-</td>";
+                row += "<td>-</td>";
                 row += "<td>" + listOfInvoices[i].price + " MDL</td>";
                 overdue += listOfInvoices[i].price;
                 row += "<td class='text-danger'><strong>Overdue</strong></td>";
                 break;
             case "SENT":
-                row +="<td>-</td>";
+                row += "<td>-</td>";
                 row += "<td>" + listOfInvoices[i].price + " MDL</td>";
                 unpaid += listOfInvoices[i].price;
-                row +="<td>-</td>";
+                row += "<td>-</td>";
                 row += "<td class='text-warning'><strong>Sent</strong></td>";
                 break;
             default:
         }
         if (listOfInvoices[i].invoiceStatus === "CREATED") {
-            row += "<td><button class=\"btn btn-info btn-sm\" onclick=\"sendInvoice("+listOfInvoices[i].invoiceId+")\">Send</button><button class=\"btn btn-danger btn-sm\" onclick=\"cancelInvoice("+listOfInvoices[i].invoiceId+")\">Cancel</button></td>";
-            row += "<td><a class=\"btn btn-secondary btn-sm\" href=" + "/invoice/"+ listOfInvoices[i].invoiceId +"/edit" + ">Edit</a></td>";
+            row += "<td><button class=\"btn btn-info btn-sm\" onclick=\"sendInvoice(" + listOfInvoices[i].invoiceId + ")\">Send</button><button class=\"btn btn-danger btn-sm\" onclick=\"cancelInvoice(" + listOfInvoices[i].invoiceId + ")\">Cancel</button></td>";
+            row += "<td><a class=\"btn btn-secondary btn-sm\" href=" + "/invoice/" + listOfInvoices[i].invoiceId + "/edit" + ">Edit</a></td>";
         } else {
-            row +="<td></td>";
-            row +="<td></td>";
+            row += "<td></td>";
+            row += "<td></td>";
         }
         row += "</tr>";
         $("#tableWithInvoices tbody").append(row);
     }
     var row = "<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td>" +
-        "<td>Total</td><td>"+paid.toFixed(2)+" MDL</td><td>"+unpaid.toFixed(2)+" MDL</td><td>"+overdue.toFixed(2)+" MDL</td><td></td><td></td><td></td></tr>";
+        "<td>Total</td><td>" + paid.toFixed(2) + " MDL</td><td>" + unpaid.toFixed(2) + " MDL</td><td>" + overdue.toFixed(2) + " MDL</td><td></td><td></td><td></td></tr>";
     $("#tableWithInvoices tbody").append(row);
 }
 
@@ -280,7 +282,7 @@ function comparatorForCompanyName(a, b) {
     return 0;
 }
 
-function comparatorForPrice(a, b){
+function comparatorForPrice(a, b) {
     if (a.price < b.price)
         return -1;
     if (a.price > b.price)
@@ -288,10 +290,10 @@ function comparatorForPrice(a, b){
     return 0;
 }
 
-function removeTypeOfSort(value){
+function removeTypeOfSort(value) {
     $("th[scopeForSort='sort']").each(function () {
         var field = $(this).attr("field");
-        if(field !== value){
+        if (field !== value) {
             $(this).attr("typeOfSort", "null");
         }
     });
@@ -300,8 +302,8 @@ function removeTypeOfSort(value){
 function setArrowForSort(value, type) {
     $("span[scopeForSort='icon']").each(function () {
         var field = $(this).attr("field");
-        if(field === value){
-            if(type === "asc") {
+        if (field === value) {
+            if (type === "asc") {
                 $(this).html(ascArrow);
             } else {
                 $(this).html(descArrow);
@@ -361,7 +363,7 @@ function isUnreadMessages() {
     });
 }
 
-function downloadBalance(){
+function downloadBalance() {
     $.ajax({
         type: "POST",
         url: "/bank/balance",
@@ -371,14 +373,14 @@ function downloadBalance(){
     });
 }
 
-$("#showFilters").click(function(){
+$("#showFilters").click(function () {
     $("#filters").slideToggle();
 });
 
-$("#showSimpleFilters").click(function(){
+$("#showSimpleFilters").click(function () {
     $("#simpleFilters").slideToggle();
 });
 
-$("#showDatesFilters").click(function(){
+$("#showDatesFilters").click(function () {
     $("#dateFilters").slideToggle();
-})
+});
