@@ -129,8 +129,8 @@ public class InvoicesRestController {
     public ResponseEntity createMultipleInvoices(@RequestParam(value = "info[]", required = false) List<String> ids) {
         if (ids == null || ids.size() == 0)
             return new ResponseEntity(HttpStatus.NOT_FOUND);
-        invoiceService.createInvoicesFromBulk(ids);
-        return new ResponseEntity(HttpStatus.CREATED);
+        Map<String, Integer> report = invoiceService.createInvoicesFromBulk(ids);
+        return new ResponseEntity(report, HttpStatus.CREATED);
     }
 
     @PostMapping("/company/sendinvoices")

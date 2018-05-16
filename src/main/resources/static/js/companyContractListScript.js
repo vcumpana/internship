@@ -43,10 +43,10 @@ function sendContractsForInvoicesCreation() {
         url: "/company/newinvoices/",
         data: {info :arr},
         success: function (result) {
-            $("#successCreation").show();
-            window.setTimeout(function () {
-                $("#successCreation").hide();
-            }, 5000);
+            console.log(result["created"]);
+            $('.modal-body').append("<p>Created invoices: " + result.created + " invoice</p>");
+            $('.modal-body').append("<p>Skipped contracts: " + result.skipped + " contracts</p><br>");
+            $('.modal-body').append("<p>Note: contracts are skipped from creating invoices if there exist issued invoices for current month");
         }
     });
     arr.length = 0;

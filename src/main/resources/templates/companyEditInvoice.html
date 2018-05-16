@@ -36,20 +36,20 @@
                             <h3 class="mb-0">Edit invoice</h3>
                         </div>
                         <div class="card-body">
-                            <form class="form" role="form" th:object="${invoice}" autocomplete="off"
-                                  id="registrationForm" action="/company/editInvoice" novalidate=""
+                            <form class="needs-validation" role="form" th:object="${invoice}" autocomplete="off"
+                                  id="registrationForm" action="/company/editInvoice" novalidate="novalidate"
                                   method="POST">
                                 <!--<div class="alert alert-danger" th:unless="${param.error == null}">Wrong username or-->
                                 <!--password-->
                                 <!--</div>-->
                                 <div class="form-group">
-                                    <label for="contractId">Contract Id</label>
+                                    <label for="contractId">Contract No.</label>
                                     <input type="text" class="form-control form-control-lg rounded-0" th:field = "*{contractId}"
                                            id="contractId" required="" th:readonly="readonly">
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="invoiceId">Invoice Id</label>
+                                    <label for="invoiceId">Invoice No.</label>
                                     <input type="text" class="form-control form-control-lg rounded-0" th:field = "*{invoiceId}"
                                            id="invoiceId" required="" th:readonly="readonly">
                                 </div>
@@ -69,6 +69,9 @@
                                     <label for="fromDate">From date</label>
                                     <input type="date" class="form-control form-control-lg rounded-0" th:field = "*{fromDate}"
                                            id="fromDate" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a date.
+                                    </div>
                                     <p class="error-message"
                                        th:each="error : ${#fields.errors('fromDate')}"
                                        th:text="${error}">Validation error</p>
@@ -78,6 +81,9 @@
                                     <label for="tillDate">To date</label>
                                     <input type="date" class="form-control form-control-lg rounded-0" th:field = "*{tillDate}"
                                            id="tillDate" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a date.
+                                    </div>
                                     <p class="error-message"
                                        th:each="error : ${#fields.errors('tillDate')}"
                                        th:text="${error}">Validation error</p>
@@ -87,6 +93,9 @@
                                     <label for="dueDate">Due date</label>
                                     <input type="date" class="form-control form-control-lg rounded-0" th:field = "*{dueDate}"
                                            id="dueDate" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a date.
+                                    </div>
                                     <p class="error-message"
                                        th:each="error : ${#fields.errors('dueDate')}"
                                        th:text="${error}">Validation error</p>
@@ -96,7 +105,9 @@
                                     <label for="price">Price</label>
                                     <input type="text" class="form-control form-control-lg rounded-0" th:field = "*{price}"
                                            id="price" required>
-                                    <div id="feedbackPrice"></div>
+                                    <div class="invalid-feedback">
+                                        Please provide a price.
+                                    </div>
                                     <p class="error-message"
                                        th:each="error : ${#fields.errors('price')}"
                                        th:text="${error}">Validation error</p>
@@ -138,6 +149,26 @@
     //         }
     //     }
     // })
+
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+
     function cancelCreateInvoice() {
         if (confirm("Are you sure you want to cancel invoice update?")) {
             window.location = "/company/myinvoices";

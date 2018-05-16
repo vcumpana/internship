@@ -98,6 +98,9 @@ public class CompanyController {
     @GetMapping(value = "/company/myinvoices")
     public String getMyInvoicesPage(Model model){
         addCompanyNameToModel(model);
+        addUsernameToModel(model);
+        addCategoriesToModel(model);
+        addServicesToModel(model);
         return  "companyInvoices";
     }
 
@@ -117,7 +120,10 @@ public class CompanyController {
 
     @PostMapping("/company/addservice")
     public String registerNewService(Model model, @ModelAttribute("service") @Valid NewServiceDTO newServiceDTO, BindingResult bindingResult) {
+        System.out.println(newServiceDTO);
         if (bindingResult.hasErrors()) {
+            List<Category> categories = categoryService.getAll();
+            model.addAttribute("categories", categories);
             model.addAttribute("service", newServiceDTO);
             return "companyAddService";
         }
@@ -204,6 +210,20 @@ public class CompanyController {
 
     private void addCompanyToModel(Model model){
         model.addAttribute("company", companyService.getCompanyByUsername(getAuthenticatedUsername()).get());
+    }
+
+    private void addServicesToModel(Model model) {
+        model.addAttribute("services",serviceService.getServicesByCompanyName(companyService.getCompanyNameByUsername(authUtils.getAuthenticatedUsername()).get().getName()));
+    }
+
+    private void addUsernameToModel(Model model){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        model.addAttribute("username", username);
+    }
+
+    private void addCategoriesToModel(Model model){
+        model.addAttribute("categories",categoryService.getAll());
     }
 
     private String getAuthenticatedUsername(){

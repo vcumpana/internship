@@ -23,9 +23,7 @@ import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.endava.service_system.enums.ContractStatus.ACTIVE;
 import static com.endava.service_system.enums.InvoiceStatus.CREATED;
@@ -88,9 +86,11 @@ public class InvoiceService {
         return invoiceEntityManagerDao.getPagesSizeForFilter(filter);
     }
 
-    public void createInvoicesFromBulk(List<String> ids) {
+    public Map<String, Integer> createInvoicesFromBulk(List<String> ids) {
         Contract contract;
         Invoice invoice;
+        int j = 0;
+        Map<String, Integer> report = new HashMap<>();
         for (int i = 0; i < ids.size(); i++) {
             contract = contractService.getContractById(Integer.parseInt(ids.get(i)));
             if (contract.getStatus() != ACTIVE)
@@ -101,13 +101,16 @@ public class InvoiceService {
             Company company = contract.getCompany();
             List<Invoice> invoices = contract.getInvoices();
             if (invoices != null && invoices.size() > 0) {
-                if (invoices.get(invoices.size() - 1).getTillDate().getMonth().getValue() >= currentDateDao.findById(new Long(1)).get().getLocalDate().getMonth().getValue() ||
-                        invoices.get(invoices.size() - 1).getTillDate().getMonth().getValue() > contract.getEndDate().getMonth().getValue())
+                if ((invoices.get(invoices.size() - 1).getTillDate().getMonth().getValue() >= currentDateDao.findById(new Long(1)).get().getLocalDate().getMonth().getValue()
+                        && invoices.get(invoices.size() - 1).getTillDate().getYear() >= currentDateDao.findById(new Long(1)).get().getLocalDate().getYear()) ||
+                        (invoices.get(invoices.size() - 1).getTillDate().getMonth().getValue() > contract.getEndDate().getMonth().getValue()
+                    && invoices.get(invoices.size() - 1).getTillDate().getYear() >= contract.getEndDate().getYear()))
                     continue;
                 invoice.setFromDate(invoices.get(invoices.size() - 1).getTillDate().plusDays(1));
             } else
                 invoice.setFromDate(contract.getStartDate());
-            if (contract.getEndDate().getMonth().getValue() == currentDateDao.findById(new Long(1)).get().getLocalDate().getMonth().getValue())
+            if (contract.getEndDate().getYear() == currentDateDao.findById(new Long(1)).get().getLocalDate().getYear()
+                && contract.getEndDate().getMonth().getValue() == currentDateDao.findById(new Long(1)).get().getLocalDate().getMonth().getValue())
                 invoice.setTillDate(contract.getEndDate());
             else
                 invoice.setTillDate(currentDateDao.findById(new Long(1)).get().getLocalDate().with(TemporalAdjusters.lastDayOfMonth()));
@@ -115,11 +118,17 @@ public class InvoiceService {
                 continue;
             invoice.setDueDate(invoice.getTillDate().plusDays(10));
             invoice.setPrice(contract.getService().getPrice().multiply(new BigDecimal(getPeriodBetweenDates(invoice.getFromDate(),invoice.getTillDate()).getMonths()))
-                    .add(contract.getService().getPrice()
+                    .add(contract.getService().getPrice().multiply(new BigDecimal(12))
+                            .multiply(new BigDecimal(getPeriodBetweenDates(invoice.getFromDate(), invoice.getTillDate()).getYears())))
+                            .add(contract.getService().getPrice()
                             .multiply(new BigDecimal(getPeriodBetweenDates(invoice.getFromDate(), invoice.getTillDate()).getDays() + 1))
                             .divide(new BigDecimal(invoice.getFromDate().lengthOfMonth()), 2, RoundingMode.HALF_UP)));
             invoiceDao.save(invoice);
+            j++;
         }
+        report.put("created", j);
+        report.put("skipped", ids.size() - j);
+        return report;
     }
 
     public Period getPeriodBetweenDates(LocalDate firstInputDate, LocalDate secondInputDate) {

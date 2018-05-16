@@ -43,9 +43,12 @@ public class NewInvoiceDTO {
     @NotNull
     private Long contractId;
 
+    @NotNull
     private Long invoiceId;
 
+    @Pattern(regexp = "^[^<'\">]+$",message = "You can't use tags and \"")
     private String clientName;
 
+    @Pattern(regexp = "^[^<'\">]+$",message = "You can't use tags and \"")
     private String service;
 }
