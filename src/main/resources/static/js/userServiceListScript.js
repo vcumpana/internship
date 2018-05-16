@@ -105,9 +105,21 @@ function getDataForTable() {
 function fillTableWithServices() {
     $("#tableWithServices tbody").html("");
     for (var i = 0; i < listOfServices.length; i++) {
-        var row = "<tr>";
-        row += "<td><a href=\"http://" + listOfServices[i].companyUrl +"\"><img border=\"0\" alt=\"W3Schools\" src=\"/images/" +
-            listOfServices[i].imageName +".png\" width=\"200\" height=\"100\"></a></td>";
+        console.log(listOfServices[i]);
+        var row = "<tr><td>";
+        if(listOfServices[i].companyUrl!==null&&listOfServices[i].companyUrl!==''){
+            row+= "<a href=\"http://" +listOfServices[i].companyUrl + "\">";
+        }
+
+        if(listOfServices[i].imageName!==null&& listOfServices[i].imageName!==''){
+            row+="<img border=\"0\" alt=\"W3Schools\" src=\"/image/" + listOfServices[i].imageName+"\" width=\"200\" height=\"100\">"
+        }
+
+        if(listOfServices[i].companyUrl!==null&&listOfServices[i].companyUrl!==''){
+            row+= "</a>";
+        }
+
+        row+="</td>";
         row += "<td>" + listOfServices[i].category + "</td>";
         row += "<td>" + listOfServices[i].companyName + "</td>";
         row += "<td>" + listOfServices[i].title + "</td>";

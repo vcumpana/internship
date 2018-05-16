@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 @Component
 public class ObjectArrayToServiceToUserDto implements Converter<Object[],ServiceToUserDto> {
-    //expects in order c.name,s.id,s.title,cat.name,s.description,s.price
+    //expects in order c.name,s.id,s.title,cat.name,s.description,s.price,company url ,image name
     @Override
     public ServiceToUserDto convert(Object[] source) {
         ServiceToUserDto serviceToUserDto=new ServiceToUserDto();
@@ -25,7 +25,7 @@ public class ObjectArrayToServiceToUserDto implements Converter<Object[],Service
         serviceToUserDto.setCompanyUrl((String) source[6]);
 //        if (matcher.find())
 //            serviceToUserDto.setImageName(matcher.group(1));
-        serviceToUserDto.setImageName(((String) source[6]).split("\\.")[1]);
+        serviceToUserDto.setImageName(((String) source[7]));
         return serviceToUserDto;
     }
 }

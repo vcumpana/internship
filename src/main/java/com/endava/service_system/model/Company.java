@@ -26,7 +26,9 @@ public class Company {
 
     private String address;
 
-    private String url;
+    private String companyUrl;
+
+    private String imageName;
 
     @OneToMany
     private Collection<Contract> contracts;
