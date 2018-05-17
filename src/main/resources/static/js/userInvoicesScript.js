@@ -1,7 +1,8 @@
 var listOfInvoices = [];
-var maxPage;
+var maxPageSize;
 var currentPage = 1;
 var size = 10;
+var timer = null;
 
 $(document).ready(function () {
     getDataForTable();
@@ -44,11 +45,10 @@ function getDataForTable() {
         type: "GET",
         url: url,
         success: function (result) {
-            maxPage = result.pages
+            maxPageSize = result.pages
             listOfInvoices = result.invoices;
             fillTableWithInvoices();
-            verifyIfPreviousExists();
-            verifyIfNextExists();
+            setPages();
         }
     });
 }
@@ -97,6 +97,8 @@ function fillTableWithInvoices() {
         row += "</tr>";
         $("#tableWithInvoices tbody").append(row);
     }
+    verifyIfPreviousExists();
+    verifyIfNextExists();
 }
 
 function resetInvoiceFilter(event) {
@@ -119,14 +121,13 @@ function verifyIfPreviousExists() {
 }
 
 function verifyIfNextExists() {
-    if (currentPage === maxPage || maxPage === 0) {
+    if (currentPage === maxPageSize || maxPageSize === 0) {
         $("#nextPage").addClass("disabled");
         $("#nextPage").attr("disabled", true);
     } else {
         $("#nextPage").removeClass("disabled");
         $("#nextPage").attr("disabled", false);
     }
-
 }
 
 function isUnreadMessages() {
@@ -185,3 +186,31 @@ function invoicePaidUi(id) {
     displayMessage("Invoice Nr: " + id + " Paid");
     $("#" + id).parent().parent().hide();
 }
+
+function setPages() {
+    $("#currentPageButton").html("Page <input type='text' id='currentPage' style='width: 25%; text-align: center' min='1' max='" + maxPageSize + "'> from " + maxPageSize);
+    $("#currentPage").val(currentPage);
+}
+
+$(document).on("input change paste", "#currentPage", function () {
+    var page = $(this).val();
+    $(this).val(page.replace(/[^\d]/, ''));
+    if (/[^\d]/.test(page)) {
+        return;
+    }
+    clearTimeout(timer);
+    if (page < 1) {
+        page = 1;
+    }
+    if (page > maxPageSize) {
+        page = maxPageSize;
+    }
+    timer = setTimeout(function () {
+        currentPage = page;
+        getDataForTable();
+    }, 1000);
+});
+
+$("#currentPageButton").click(function(){
+    $("#currentPage").focus();
+});

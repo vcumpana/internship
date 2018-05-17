@@ -10,6 +10,7 @@ import com.endava.service_system.model.filters.ServiceDtoFilter;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +76,7 @@ public class ServiceService {
         return serviceDao.save(service);
     }
 
-    public String getPdfOfServices(){
+    public ByteArrayOutputStream getPdfOfServices(){
         return PDFMaking.makePDFOfServices(getAllServices());
     }
 

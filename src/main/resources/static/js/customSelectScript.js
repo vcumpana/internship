@@ -61,13 +61,14 @@ $(document).on("click", ".custom-select-option", function () {
 });
 
 $(document).on("keyup", ".custom-select-input", function () {
-    var value = $(this).val().toLowerCase();
-    $(".custom-select-option").each(function () {
-        var text = $(this).text().toLowerCase();
-        if (text.indexOf(value) !== -1) {
-            $(this).css('display', 'block');
-        } else {
-            $(this).css('display', 'none');
-        }
-    });
-})
+        var value = $(this).val().toLowerCase();
+        $(".custom-select-option").each(function () {
+            var text = $(this).text().toLowerCase();
+            if (text.indexOf(value) !== -1) {
+                $(this).css('display', 'block');
+            } else {
+                $(this).css('display', 'none');
+            }
+        });
+    }
+)
