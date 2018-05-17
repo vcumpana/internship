@@ -1,6 +1,6 @@
 var patternForLogin = /^[A-Za-z\d]{8,}$/;
 var patternForPassword = /^(?=.*[A-Z])(?=.*\d)(?=.*[._?!])[A-Za-z\d._?!]{8,}$/;
-var patternForMail = /^[a-z0-9._%+]+@[a-z0-9.]+\.[a-z]{2,4}$/;
+var patternForMail = /^[a-zA-Z0-9._%+]+@[a-zA-Z0-9.]+\.[a-zA-Z]{2,4}$/;
 var successMessage = "<strong>Success!</strong> Looks good!";
 var errorMessageLogin = "<strong>Warning!</strong> Login must contain at least 8 chars, that includes letters and numbers."
 var errorMessagePassword = "<strong>Warning!</strong> Password must contain at least 8 chars, that includes at least one number, upper case character and symbol.";
@@ -41,6 +41,7 @@ $("#resetButton").click(function () {
 });
 
 $("#registerUser").click(function(event){
+    console.log("submit pressed");
     var errors = 0;
     if(validatePassword("#password") == false){
         errors++;
@@ -54,6 +55,10 @@ $("#registerUser").click(function(event){
     if(errors > 0){
         event.preventDefault();
     }
+});
+
+$("#registrationForm").submit(function(){
+   $("#registerUser").attr("disabled", true);
 });
 
 function validateLogin(input){

@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Data
 public class InvoiceForPaymentDto {
     private long invoiceId;
-    private double price;
+    private BigDecimal price;
     private Long companyBankCount;
     private String userUsername;
     private InvoiceStatus status;
@@ -21,7 +21,7 @@ public class InvoiceForPaymentDto {
                                 InvoiceStatus status,String fullName, Credential userCredential,
                                 Credential companyCredential,String serviceTitle){
         setInvoiceId(invoiceId);
-        setPrice(price.doubleValue());
+        setPrice(price);
         setCompanyBankCount(companyBankCount);
         setUserUsername(userCredential.getUsername());
         setStatus(status);

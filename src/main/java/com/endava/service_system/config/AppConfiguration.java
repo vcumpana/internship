@@ -25,7 +25,7 @@ public class AppConfiguration{
 
 	@Value("${bankApi}")
 	private String bankApi;
-	@Value("${siteUrl")
+	@Value("${siteUrl}")
 	private String siteUrl;
 	@Bean 
 	public PasswordEncoder getPasswordEncoder() {

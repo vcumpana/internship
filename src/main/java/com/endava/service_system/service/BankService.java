@@ -2,21 +2,22 @@ package com.endava.service_system.service;
 
 import com.endava.service_system.controller.rest.BankRestController;
 import com.endava.service_system.dao.BankDao;
+import com.endava.service_system.dao.InvoiceDao;
 import com.endava.service_system.exception.BankProblemException;
 import com.endava.service_system.model.dto.BankAccountDto;
 import com.endava.service_system.model.entities.BankAccount;
 import com.endava.service_system.model.entities.BankKey;
 import com.endava.service_system.model.entities.Credential;
+import com.endava.service_system.model.entities.Invoice;
 import com.endava.service_system.utils.EncryptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.BadPaddingException;
@@ -30,6 +31,8 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 import java.util.Optional;
 
+import static com.endava.service_system.model.enums.Role.ROLE_USER;
+
 @Service
 public class BankService {
     private static final Logger LOGGER=LogManager.getLogger(BankRestController.class);
@@ -39,6 +42,7 @@ public class BankService {
     private @Qualifier("bankApi") String bankApi;
     private EncryptionUtils encryptionUtils;
     private BankKeyService bankKeyService;
+    private InvoiceDao invoiceDao;
 
     @Autowired
     public void setRestTemplate(RestTemplate restTemplate) {
@@ -68,6 +72,11 @@ public class BankService {
     @Autowired
     public void setBankKeyService(BankKeyService bankKeyService) {
         this.bankKeyService = bankKeyService;
+    }
+
+    @Autowired
+    public void setInvoiceDao(InvoiceDao invoiceDao) {
+        this.invoiceDao = invoiceDao;
     }
 
     @Transactional
@@ -121,5 +130,24 @@ public class BankService {
         bankAccount.setBankKeys(keys);
         //TODO save public key , private key, account NR in db
         return Optional.of(bankAccount);
+    }
+
+    public String parseMessageFromBank(String message){
+        String result = message;
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Credential currentUser = credentialService.getByUsername(username).get();
+        if(message.toLowerCase().contains("invoice") && (currentUser.getRole() == ROLE_USER)){
+            message = message.replaceAll("\\D+", "");
+            long invoiceId = new Integer(message);
+            Invoice invoice = invoiceDao.getOne(invoiceId);
+            long contractId = invoice.getContract().getId();
+            result = "You paid invoice from date " + invoice.getFromDate() + " to date " + invoice.getTillDate() + " according to " +
+                    "<a href='/user/profile?id=" + contractId + "'>contract nr." + contractId + "</a>.";
+        }
+        if(message.toLowerCase().contains("sum") && (currentUser.getRole() == ROLE_USER)){
+            message = message.replaceAll("\\D+", "");
+            result = "You added " + message + " USD to your count.";
+        }
+        return result;
     }
 }
