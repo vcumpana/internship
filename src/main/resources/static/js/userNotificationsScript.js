@@ -1,6 +1,7 @@
 var currentPage = 0;
 var notifications = [];
 var noMoreNotifications = false;
+var status = "";
 
 $(document).ready(function () {
     loadNotifications();
@@ -18,27 +19,39 @@ $("#searchNotifications").keyup(function(){
 });
 
 function loadNotifications() {
+    var url = makeURL();
     $.ajax({
         type: "GET",
-        url: "/notification/currentUser?page=" + (currentPage + 1),
+        url: url,
         success: function (result) {
             if (result.length > 0) {
                 currentPage++;
                 notifications = result;
                 printNotifications();
             } else {
+                if(currentPage === 0) {
+                    $("#notifications").html("<div> No notifications</div>");
+                }
                 noMoreNotifications = true;
             }
         }
     });
 }
 
+function makeURL(){
+    var url = "/notification/currentUser?page=" + (currentPage + 1);
+    if(status !== ""){
+        url += "&status=" + status;
+    }
+    return url;
+}
+
 function printNotifications() {
     for (var i = 0; i < notifications.length; i++) {
-        var notification = "<div class='card border-primary mb-3'>";
+        var notification = "<div class='card border-primary mb-3' id='notification" + notifications[i].id + "'>";
         notification += "<div class='card-header'>Notification";
         if(notifications[i].status === "UNREAD"){
-            notification += "<a class='float-right' href onclick='markAsRead(event, " + notifications[i].id + ")'>Mark as read</a>";
+            notification += "<a id='" + notifications[i].id + "' class='float-right' href onclick='markAsRead(event, " + notifications[i].id + ")'>Mark as read</a>";
         }
         notification += "</div>";
         notification += "<div class='card-body'>";
@@ -70,6 +83,9 @@ function markAsRead(event,  id){
         url: "/notification/markAsRead?notificationId=" + id,
         success: function(){
             event.target.remove();
+            if(status === "UNREAD"){
+                $("#notification" + event.target.id).remove();
+            }
         }
     });
 }
@@ -128,3 +144,48 @@ jQuery.fn.removeHighlight = function() {
         }
     }).end();
 };
+
+$("#allNotifications").click(function(){
+    setStatus("");
+    $(".btn").each(function(){
+        $(this).attr("disabled", false);
+    });
+    $(this).attr("disabled", true);
+});
+
+$("#readNotifications").click(function(){
+    setStatus("READ");
+    $(".btn").each(function(){
+        $(this).attr("disabled", false);
+    });
+    $(this).attr("disabled", true);
+});
+
+$("#unreadNotifications").click(function(){
+    setStatus("UNREAD");
+    $(".btn").each(function(){
+        $(this).attr("disabled", false);
+    });
+    $(this).attr("disabled", true);
+});
+
+function setStatus(newStatus){
+    status = newStatus;
+    noMoreNotifications = false;
+    currentPage = 0;
+    $("#notifications").html("");
+    loadNotifications();
+}
+
+$("#markAll").click(function(){
+    $.ajax({
+       type: "GET",
+       url: "/notification/markAllAsRead",
+       success: function(){
+           noMoreNotifications = false;
+           currentPage = 0;
+           $("#notifications").html("");
+           loadNotifications();
+       }
+    });
+});

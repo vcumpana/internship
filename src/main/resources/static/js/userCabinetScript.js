@@ -61,8 +61,8 @@ $("#addAction").click(function () {
         data: JSON.stringify(data),
         success: function (rs) {
             var balance = JSON.parse(rs).balance;
-            $("#balance").text(balance + " MDL");
-            $("#balanceInCabinet").text(balance + " MDL");
+            $("#balance").text(balance + " USD");
+            $("#balanceInCabinet").text(balance + " USD");
             $("#modalForMoney").modal("hide");
         }
     });
@@ -298,8 +298,12 @@ function downloadBalance() {
         type: "POST",
         url: "/bank/balance",
         success: function (result) {
-            $("#balance").text(result.balance + " MDL");
-            $("#balanceInCabinet").text(result.balance + " MDL");
+            $("#balance").text(result.balance + " USD");
+            $("#balanceInCabinet").text(result.balance + " USD");
         }
     });
 }
+
+$("#contact").click(function(){
+    window.open("/contact");
+});

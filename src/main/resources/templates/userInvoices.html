@@ -153,6 +153,7 @@
             <div class="form-group col-2">
                 <label for="invoiceStatus">Status</label>
                 <select id="invoiceStatus" class="form-control">
+                    <option value="">All</option>
                     <option value="SENT">To pay</option>
                     <option value="PAID">Paid</option>
                     <option value="OVERDUE">Overdue</option>
@@ -183,7 +184,6 @@
             </tr>
             </thead>
             <tbody></tbody>
-
         </table>
         <button onclick="payMultipleInvoices()" class="btn alert-danger ml-3">Pay Multiple Invoices</button>
     </div>
@@ -191,8 +191,8 @@
         <nav>
             <div class="pagination pagination-lg justify-content-center">
                 <div class="btn-group">
-                    <button class="btn btn-primary" id="previousPage">Previous page</button>
-                    <button class="btn btn-primary" id="currentPageButton"></button>
+                    <button class="btn btn-primary" id="previousPage" style="margin-right: 1%">Previous page</button>
+                    <button class="btn btn-primary" id="currentPageButton" style="margin-right: 1%"></button>
                     <button class="btn btn-primary" id="nextPage">Next page</button>
                 </div>
             </div>

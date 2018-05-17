@@ -23,9 +23,9 @@ public class ContractForShowingDto {
 
     private String fullName;
 
-    private LocalDate startDate;
+    private String startDate;
 
-    private LocalDate endDate;
+    private String endDate;
 
     private BigDecimal servicePrice;
 
