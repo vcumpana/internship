@@ -1,0 +1,23 @@
+.custom-select {
+    position: absolute;
+    height: 200px;
+    z-index: 1000;
+    overflow-y: auto;
+    background: #ffffff;
+    padding-left: 0;
+    padding-right: 0;
+}
+.custom-select-input {
+    width: 90%;
+    margin: auto;
+}
+.custom-select-option {
+    min-height: 20px;
+    padding-left: 5%;
+    width: 100%;
+    display: block;
+}
+.custom-select-option:hover {
+    cursor: pointer;
+    background: DodgerBlue;
+}

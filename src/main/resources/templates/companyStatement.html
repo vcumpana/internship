@@ -10,8 +10,23 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
             integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
             crossorigin="anonymous"></script>
+    <style>
+        html, body {
+            height: 100%;
+        }
+        .wrapper {
+            min-height: 100%;
+            height: auto !important;
+            height: 100%;
+            margin: 0 auto -110px; /* the bottom margin is the negative value of the footer's height */
+        }
+        .footer, .push {
+            height: 110px; /* .push must be the same height as .footer */
+        }
+    </style>
 </head>
 <body>
+<div class="wrapper">
 <nav class="navbar navbar-expand-md navbar-dark bg-primary">
     <span class="navbar-brand">Digital Marketplace</span>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
@@ -100,6 +115,24 @@
         </div>
     </div>
 </div>
+</div>
+<div class="push"></div>
+<footer>
+    <hr>
+    <div class="container">
+        <div class="row centered footer-row ">
+            <div class="col-md-4 tel-col">
+                <span class="phonenumber">Call us: +(373)XXXXXXXX</span>
+            </div>
+            <div class="col-md-4">
+                <span class="copyright">&copy; Digital Marketplace 2018</span>
+            </div>
+            <div class="col-md-4">
+                <img src="/images/endava.png" style="height:100%; width: 70%">
+            </div>
+        </div>
+    </div>
+</footer>
 <script type="text/javascript" th:src="@{/js/userStatementsScript.js}"></script>
 <script type="text/javascript" th:src="@{/js/moment.js}"></script>
 </body>

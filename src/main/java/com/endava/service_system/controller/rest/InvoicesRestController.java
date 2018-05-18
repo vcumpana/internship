@@ -1,11 +1,13 @@
 package com.endava.service_system.controller.rest;
 
 import com.endava.service_system.model.dto.NewInvoiceDTO;
+import com.endava.service_system.model.entities.Company;
 import com.endava.service_system.model.filters.order.InvoiceOrderBy;
 import com.endava.service_system.model.enums.InvoiceStatus;
 import com.endava.service_system.model.enums.UserType;
 import com.endava.service_system.model.entities.Invoice;
 import com.endava.service_system.model.filters.InvoiceFilter;
+import com.endava.service_system.service.CompanyService;
 import com.endava.service_system.service.InvoiceService;
 import com.endava.service_system.utils.AuthUtils;
 import org.apache.logging.log4j.Level;
@@ -18,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -27,6 +30,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 public class InvoicesRestController {
@@ -34,6 +38,12 @@ public class InvoicesRestController {
     private static final Logger LOGGER = LogManager.getLogger(InvoicesRestController.class);
     private InvoiceService invoiceService;
     private AuthUtils authUtils;
+    private CompanyService companyService;
+
+    @Autowired
+    public void setCompanyService(CompanyService companyService) {
+        this.companyService = companyService;
+    }
 
     @Autowired
     public void setAuthUtils(AuthUtils authUtils) {
@@ -187,6 +197,8 @@ public class InvoicesRestController {
                 newInvoiceDTO.setService(invoice.getContract().getService().getTitle());
                 newInvoiceDTO.setClientName(invoice.getContract().getUser().getName() + " " + invoice.getContract().getUser().getSurname());
                 modelAndView.setViewName("companyEditInvoice");
+                Optional<Company> company = companyService.getCompanyNameByUsername(authUtils.getAuthenticatedUsername());
+                modelAndView.addObject("username", company.get().getName());
                 modelAndView.addObject("invoice", newInvoiceDTO);
                 return modelAndView;
             }
