@@ -1,6 +1,6 @@
 package com.endava.service_system.dao;
 
-import com.endava.service_system.model.Category;
+import com.endava.service_system.model.entities.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

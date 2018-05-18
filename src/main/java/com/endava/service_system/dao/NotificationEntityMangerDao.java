@@ -1,6 +1,6 @@
 package com.endava.service_system.dao;
 
-import com.endava.service_system.model.Notification;
+import com.endava.service_system.model.entities.Notification;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

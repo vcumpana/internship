@@ -1,6 +1,6 @@
 package com.endava.service_system.utils;
 
-import com.endava.service_system.dto.ServiceToUserDto;
+import com.endava.service_system.model.dto.ServiceToUserDto;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Phrase;

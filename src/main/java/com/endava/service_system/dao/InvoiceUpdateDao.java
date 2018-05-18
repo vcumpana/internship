@@ -1,7 +1,7 @@
 package com.endava.service_system.dao;
 
-import com.endava.service_system.enums.InvoiceStatus;
-import com.endava.service_system.model.Invoice;
+import com.endava.service_system.model.enums.InvoiceStatus;
+import com.endava.service_system.model.entities.Invoice;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

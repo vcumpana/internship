@@ -1,9 +1,9 @@
 package com.endava.service_system.dao;
 
-import com.endava.service_system.model.Company;
-import com.endava.service_system.model.Contract;
-import com.endava.service_system.model.Service;
-import com.endava.service_system.model.User;
+import com.endava.service_system.model.entities.Company;
+import com.endava.service_system.model.entities.Contract;
+import com.endava.service_system.model.entities.Service;
+import com.endava.service_system.model.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)

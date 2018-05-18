@@ -1,19 +1,14 @@
 package com.endava.service_system.dao;
 
-import com.endava.service_system.dto.CredentialDTO;
-import com.endava.service_system.enums.UserStatus;
-import com.endava.service_system.model.Admin;
-import com.endava.service_system.model.Credential;
-import com.endava.service_system.model.Role;
+import com.endava.service_system.model.enums.UserStatus;
+import com.endava.service_system.model.entities.Credential;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
-import javax.websocket.server.PathParam;
 import java.util.Optional;
 
 @Repository

@@ -3,32 +3,29 @@ package com.endava.service_system.service;
 import com.endava.service_system.dao.CurrentDateDao;
 import com.endava.service_system.dao.InvoiceEntityManagerDao;
 import com.endava.service_system.dao.InvoiceUpdateDao;
-import com.endava.service_system.dto.InvoiceDisplayDto;
-import com.endava.service_system.dto.InvoiceForPaymentDto;
-import com.endava.service_system.dto.NewInvoiceDTO;
-import com.endava.service_system.model.*;
-import com.endava.service_system.enums.ContractStatus;
-import com.endava.service_system.enums.InvoiceStatus;
-import com.endava.service_system.model.*;
+import com.endava.service_system.model.dto.InvoiceDisplayDto;
+import com.endava.service_system.model.dto.InvoiceForPaymentDto;
+import com.endava.service_system.model.dto.NewInvoiceDTO;
+import com.endava.service_system.model.entities.Company;
+import com.endava.service_system.model.entities.Contract;
+import com.endava.service_system.model.filters.InvoiceFilter;
+import com.endava.service_system.model.enums.InvoiceStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.endava.service_system.dao.InvoiceDao;
-import com.endava.service_system.model.Invoice;
+import com.endava.service_system.model.entities.Invoice;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
-import static com.endava.service_system.enums.ContractStatus.ACTIVE;
-import static com.endava.service_system.enums.InvoiceStatus.CREATED;
-import static com.endava.service_system.enums.InvoiceStatus.PAID;
-import static com.endava.service_system.enums.InvoiceStatus.SENT;
+import static com.endava.service_system.model.enums.ContractStatus.ACTIVE;
+import static com.endava.service_system.model.enums.InvoiceStatus.CREATED;
+import static com.endava.service_system.model.enums.InvoiceStatus.SENT;
 
 @Service
 public class InvoiceService {
@@ -123,6 +120,7 @@ public class InvoiceService {
                             .add(contract.getService().getPrice()
                             .multiply(new BigDecimal(getPeriodBetweenDates(invoice.getFromDate(), invoice.getTillDate()).getDays() + 1))
                             .divide(new BigDecimal(invoice.getFromDate().lengthOfMonth()), 2, RoundingMode.HALF_UP)));
+            invoice.setCreatedDate(LocalDate.now());
             invoiceDao.save(invoice);
             j++;
         }

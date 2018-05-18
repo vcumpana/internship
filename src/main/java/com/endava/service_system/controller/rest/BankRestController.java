@@ -1,10 +1,13 @@
 package com.endava.service_system.controller.rest;
 
-import com.endava.service_system.dto.*;
-import com.endava.service_system.enums.InvoiceStatus;
-import com.endava.service_system.enums.UserStatus;
-import com.endava.service_system.exception.BankProblemException;
-import com.endava.service_system.model.*;
+import com.endava.service_system.model.dto.AddMoneyDto;
+import com.endava.service_system.model.dto.BalanceDto;
+import com.endava.service_system.model.dto.InvoiceForPaymentDto;
+import com.endava.service_system.model.dto.PaymentDto;
+import com.endava.service_system.model.entities.BankAccount;
+import com.endava.service_system.model.entities.Credential;
+import com.endava.service_system.model.entities.Notification;
+import com.endava.service_system.model.enums.InvoiceStatus;
 import com.endava.service_system.service.BankService;
 import com.endava.service_system.service.CredentialService;
 import com.endava.service_system.service.InvoiceService;
@@ -13,7 +16,6 @@ import com.endava.service_system.utils.AuthUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.mapper.Mapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +23,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -32,7 +30,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.endava.service_system.enums.InvoiceStatus.PAID;
+import static com.endava.service_system.model.enums.InvoiceStatus.PAID;
 
 @RestController
 @RequiredArgsConstructor
@@ -176,7 +174,7 @@ public class BankRestController {
         headers.add("CountNumber", String.valueOf(bankAccount.getCountNumber()));
         //map.add("email", "first.last@example.com");
         HttpEntity request = new HttpEntity<>(headers);
-        ResponseEntity rs = restTemplate.postForEntity(bankApi + "bankaccount/balance", request, BalanceDto.class);
+            ResponseEntity rs = restTemplate.postForEntity(bankApi + "bankaccount/balance", request, BalanceDto.class);
         return new ResponseEntity(rs.getBody(), rs.getStatusCode());
     }
 

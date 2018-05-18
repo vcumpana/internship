@@ -1,16 +1,13 @@
 package com.endava.service_system.service;
 
-import com.endava.service_system.constraints.FieldsValueMatch;
 import com.endava.service_system.dao.*;
-import com.endava.service_system.dto.ContractDtoFromUser;
-import com.endava.service_system.dto.NotificationForUserDto;
-import com.endava.service_system.enums.ContractStatus;
-import com.endava.service_system.model.*;
-import com.endava.service_system.enums.NotificationStatus;
-import com.endava.service_system.model.*;
+import com.endava.service_system.model.dto.ContractDtoFromUser;
+import com.endava.service_system.model.dto.NotificationForUserDto;
+import com.endava.service_system.model.entities.*;
+import com.endava.service_system.model.enums.ContractStatus;
+import com.endava.service_system.model.enums.NotificationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +15,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.endava.service_system.enums.NotificationStatus.READ;
-import static com.endava.service_system.enums.NotificationStatus.UNREAD;
+import static com.endava.service_system.model.enums.NotificationStatus.READ;
+import static com.endava.service_system.model.enums.NotificationStatus.UNREAD;
 
 @Service
 public class NotificationService {

@@ -1,7 +1,7 @@
 package com.endava.service_system.service;
 
 import com.endava.service_system.dao.TokenDao;
-import com.endava.service_system.model.Token;
+import com.endava.service_system.model.entities.Token;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

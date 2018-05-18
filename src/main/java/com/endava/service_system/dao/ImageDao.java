@@ -1,6 +1,6 @@
 package com.endava.service_system.dao;
 
-import com.endava.service_system.model.ImageEntity;
+import com.endava.service_system.model.entities.ImageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

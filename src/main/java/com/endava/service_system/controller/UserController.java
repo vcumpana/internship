@@ -1,8 +1,8 @@
 package com.endava.service_system.controller;
 
-import com.endava.service_system.dto.UserDto;
-import com.endava.service_system.dto.UserDtoToShow;
-import com.endava.service_system.model.User;
+import com.endava.service_system.model.dto.UserDto;
+import com.endava.service_system.model.dto.UserDtoToShow;
+import com.endava.service_system.model.entities.User;
 import com.endava.service_system.service.CategoryService;
 import com.endava.service_system.service.CompanyService;
 import com.endava.service_system.service.UserService;

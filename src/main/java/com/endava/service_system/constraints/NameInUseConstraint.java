@@ -1,5 +1,7 @@
 package com.endava.service_system.constraints;
 
+import com.endava.service_system.constraints.validator.NameExistsConstraintValidator;
+
 import javax.validation.Constraint;
 import java.lang.annotation.*;
 
