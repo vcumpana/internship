@@ -75,6 +75,11 @@ function fillTableWithInvoices() {
     for (var i = 0; i < listOfInvoices.length; i++) {
         console.log(listOfInvoices[i]);
         var row = "<tr>";
+        row += "<td>";
+        if(listOfInvoices[i].invoiceStatus === "SENT") {
+            row += "<input type='checkbox' id='" + listOfInvoices[i].invoiceId + "'/>"
+        }
+        row+="</td>";
         row += "<td>" + listOfInvoices[i].companyTitle + "</td>";
         row += "<td>" + listOfInvoices[i].serviceTitle + "</td>";
         row += "<td>" + listOfInvoices[i].price + "</td>";
@@ -152,7 +157,7 @@ function payInvoice(element) {
         type: "POST",
         contentType: "application/json; charset=utf-8",
         url: "/invoice/payInvoice",
-        data: JSON.stringify({id: parseFloat(id)}),
+        data: JSON.stringify({id: id}),
         success: function (data) {
             $("#balance").text(data.balance);
             invoicePaidUi(id);
@@ -178,6 +183,5 @@ function payInvoice(element) {
 
 function invoicePaidUi(id) {
     displayMessage("Invoice Nr: " + id + " Paid");
-    $("#" + id).hide();
-    $("#status" + id).text("PAID");
+    $("#" + id).parent().parent().hide();
 }
