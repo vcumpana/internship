@@ -177,8 +177,8 @@ function fillTableWithContracts() {
             default:
         }
         if (listOfContracts[i].contractStatus === "SIGNEDBYCLIENT") {
-            row += "<td><a href=" + "/contract/" + listOfContracts[i].id + "/approve"
-                + "role=\"button\" class=\"btn btn-warning btn-sm \" style = \"display:inline;width: 71px\">Approve</a>"
+            row += "<td><a href=\"" + "/contract/" + listOfContracts[i].id + "/approve\" "
+                + " role=\"button\" class=\"btn btn-warning btn-sm \" style = \"display:inline;width: 71px\">Approve</a>"
                 + "<a href=" + "/contract/" + listOfContracts[i].id + "/deny"
                 + " role=\"button\" class=\"btn btn-danger btn-sm \" style = \"display:inline;width: 71px\">Deny</a></td>";
             row +="<td></td>";

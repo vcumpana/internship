@@ -45,6 +45,7 @@ public class CompanyController {
     @GetMapping("/company/registration")
     public String getCompanyRegistrationForm(Model model) {
         model.addAttribute("company", new CompanyRegistrationDTO());
+
         return "companyRegistration";
     }
 
@@ -70,7 +71,7 @@ public class CompanyController {
     public String companyCabinet(Model model){
         String username = authUtils.getAuthenticatedUsername();
         CompanyDtoToShow company = conversionService.convert(companyService.getCompanyByUsername(username).get(), CompanyDtoToShow.class);
-        model.addAttribute("username", username);
+        addCompanyNameToModel(model);
         model.addAttribute("user", company);
         addCompanyToModel(model);
         return "companyCabinet";
@@ -117,6 +118,7 @@ public class CompanyController {
         model.addAttribute("service", new NewServiceDTO());
         List<Category> categories = categoryService.getAll();
         model.addAttribute("categories", categories);
+        addCompanyNameToModel(model);
         return "companyAddService";
     }
 
@@ -138,6 +140,7 @@ public class CompanyController {
     public String getCompanyCreateInvoiceForm(Model model, @PathVariable("id") Long contractId) {
         NewInvoiceDTO newInvoiceDTO = invoiceService.getInvoiceDtoByContractId(contractId);
         model.addAttribute("invoice", newInvoiceDTO);
+        addCompanyNameToModel(model);
         return "companyCreateInvoice";
     }
 

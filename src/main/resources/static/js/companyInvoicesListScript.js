@@ -333,6 +333,7 @@ function resetInvoiceFilter() {
     $("#usersFirstName").val("");
     $("#usersLastName").val("");
     $("#serviceName").val("");
+    $("#invoiceStatus").val("");
     currentPage = 1;
     downloadInvoices();
 }
