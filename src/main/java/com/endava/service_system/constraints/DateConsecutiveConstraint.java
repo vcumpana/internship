@@ -1,9 +1,10 @@
 package com.endava.service_system.constraints;
 
+import com.endava.service_system.constraints.validator.DateConsecutiveValidator;
+
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
-import java.time.LocalDate;
 
 @Constraint(validatedBy = DateConsecutiveValidator.class)
 @Target({ ElementType.FIELD })

@@ -1,15 +1,13 @@
 package com.endava.service_system.controller.rest;
 
-import com.endava.service_system.dto.ContractDtoFromUser;
-import com.endava.service_system.dto.ContractForShowingDto;
-import com.endava.service_system.enums.ContractStatus;
-import com.endava.service_system.enums.UserType;
-import com.endava.service_system.model.Contract;
-import com.endava.service_system.model.ContractForUserDtoFilter;
+import com.endava.service_system.model.dto.ContractDtoFromUser;
+import com.endava.service_system.model.filters.order.ContractOrderBy;
+import com.endava.service_system.model.enums.ContractStatus;
+import com.endava.service_system.model.enums.UserType;
+import com.endava.service_system.model.entities.Contract;
+import com.endava.service_system.model.filters.ContractForUserDtoFilter;
 import com.endava.service_system.service.CompanyService;
-import com.endava.service_system.model.Notification;
 import com.endava.service_system.service.ContractService;
-import com.endava.service_system.utils.AuthUtils;
 import com.endava.service_system.utils.AuthUtils;
 import com.endava.service_system.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +23,10 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static com.endava.service_system.enums.ContractStatus.ACTIVE;
-import static com.endava.service_system.enums.ContractStatus.DENIED;
+import static com.endava.service_system.model.enums.ContractStatus.ACTIVE;
+import static com.endava.service_system.model.enums.ContractStatus.DENIED;
 
 @RequiredArgsConstructor
 @RestController
@@ -58,7 +55,8 @@ public class ContractRestController {
                                                @RequestParam(required = false,value = "companyId") Long companyId,
                                                @RequestParam(required = false,value = "company") String companyName,
                                                @RequestParam(required = false,value = "category") String categoryName,
-                                               @RequestParam(required = false,value = "orderByEndDate")String order,
+                                               @RequestParam(required = false,value = "order")String order,
+                                               @RequestParam(required = false,value = "orderBy")ContractOrderBy orderBy,
                                                @RequestParam(required = false,value = "usersFirstName") String usersFirstName,
                                                @RequestParam(required = false,value = "usersLastName") String usersLastName,
                                                @RequestParam(required = false,value = "fromStartDate") @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -78,7 +76,8 @@ public class ContractRestController {
         ContractForUserDtoFilter filter=ContractForUserDtoFilter.builder()
                 .username(username)
                 .size(size)
-                .direction(direction)
+                .order(direction)
+                .orderBy(orderBy)
                 .categoryId(categoryId)
                 .companyId(companyId)
                 .contractStatus(contractStatus)

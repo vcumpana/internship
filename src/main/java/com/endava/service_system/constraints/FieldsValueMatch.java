@@ -1,5 +1,7 @@
 package com.endava.service_system.constraints;
 
+import com.endava.service_system.constraints.validator.FieldsValueMatchValidator;
+
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.ElementType;

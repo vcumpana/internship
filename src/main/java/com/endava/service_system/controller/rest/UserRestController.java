@@ -1,9 +1,11 @@
 package com.endava.service_system.controller.rest;
 
-import com.endava.service_system.dto.*;
-import com.endava.service_system.enums.UserStatus;
-import com.endava.service_system.model.Company;
-import com.endava.service_system.model.User;
+import com.endava.service_system.model.dto.CredentialDTO;
+import com.endava.service_system.model.dto.UserAdminDTO;
+import com.endava.service_system.model.dto.UserDtoToShow;
+import com.endava.service_system.model.dto.UserPasswordDto;
+import com.endava.service_system.model.enums.UserStatus;
+import com.endava.service_system.model.entities.User;
 import com.endava.service_system.service.CredentialService;
 import com.endava.service_system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

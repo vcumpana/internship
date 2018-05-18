@@ -1,13 +1,11 @@
 package com.endava.service_system.controller.rest;
 
-import com.endava.service_system.dto.NewInvoiceDTO;
-import com.endava.service_system.enums.ContractStatus;
-import com.endava.service_system.enums.InvoiceStatus;
-import com.endava.service_system.enums.UserType;
-import com.endava.service_system.model.Invoice;
-import com.endava.service_system.model.InvoiceFilter;
-import com.endava.service_system.model.Service;
-import com.endava.service_system.model.User;
+import com.endava.service_system.model.dto.NewInvoiceDTO;
+import com.endava.service_system.model.filters.order.InvoiceOrderBy;
+import com.endava.service_system.model.enums.InvoiceStatus;
+import com.endava.service_system.model.enums.UserType;
+import com.endava.service_system.model.entities.Invoice;
+import com.endava.service_system.model.filters.InvoiceFilter;
 import com.endava.service_system.service.InvoiceService;
 import com.endava.service_system.utils.AuthUtils;
 import org.apache.logging.log4j.Level;
@@ -29,8 +27,6 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.endava.service_system.enums.UserStatus.DENIED;
 
 @RestController
 public class InvoicesRestController {
@@ -58,7 +54,9 @@ public class InvoicesRestController {
                                            @RequestParam(required = false, value = "companyId") Long companyId,
                                            @RequestParam(required = false, value = "company") String companyName,
                                            @RequestParam(required = false, value = "category") String categoryName,
-                                           @RequestParam(required = false, value = "orderByDueDate") String order,
+                                           @RequestParam(required = false, value = "order") String order,
+                                           @RequestParam(required = false,value = "orderBy") InvoiceOrderBy orderBy,
+                                           @RequestParam(required = false,value = "contractNr") Long contractId,
                                            @RequestParam(required = false, value = "fromStartDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fromStartDate,
                                            @RequestParam(required = false, value = "tillStartDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate tillStartDate,
                                            @RequestParam(required = false, value = "fromTillDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate fromTillDate,
@@ -77,10 +75,11 @@ public class InvoicesRestController {
                 .userType(userType)
                 .currentUserUsername(username)
                 .size(size)
-                .orderByDueDateDirection(getDirection(order))
+                .orderDirection(getDirection(order))
                 .categoryId(categoryId)
                 .companyId(companyId)
                 .categoryName(categoryName)
+                .orderBy(orderBy)
                 .companyTitle(companyName)
                 .invoiceStatus(status)
                 .page(page)
@@ -92,6 +91,7 @@ public class InvoicesRestController {
                 .tillTillDate(tillTillDate)
                 .fromDueDate(fromDueDate)
                 .tillDueDate(tillDueDate)
+                .contractId(contractId)
                 .serviceId(serviceId)
                 .build();
         result.put("invoices", invoiceService.getAllInvoices(filter));

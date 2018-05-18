@@ -1,14 +1,13 @@
 package com.endava.service_system.dao;
 
-import com.endava.service_system.dto.ServiceToUserDto;
-import com.endava.service_system.model.Service;
+import com.endava.service_system.model.dto.ServiceToUserDto;
+import com.endava.service_system.model.entities.Service;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

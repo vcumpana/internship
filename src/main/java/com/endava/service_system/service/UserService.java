@@ -1,19 +1,11 @@
 package com.endava.service_system.service;
 
 import com.endava.service_system.dao.UserDao;
-import com.endava.service_system.dto.CredentialDTO;
-import com.endava.service_system.dto.UserDto;
-import com.endava.service_system.dto.UserDtoToShow;
-import com.endava.service_system.enums.UserStatus;
-import com.endava.service_system.model.BankAccount;
-import com.endava.service_system.model.Credential;
-import com.endava.service_system.model.Role;
-import com.endava.service_system.model.User;
+import com.endava.service_system.model.dto.UserDtoToShow;
+import com.endava.service_system.model.enums.UserStatus;
+import com.endava.service_system.model.entities.Credential;
+import com.endava.service_system.model.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

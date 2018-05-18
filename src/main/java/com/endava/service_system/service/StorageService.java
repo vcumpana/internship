@@ -1,11 +1,10 @@
 package com.endava.service_system.service;
 
-import com.endava.service_system.model.ImageEntity;
+import com.endava.service_system.model.entities.ImageEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.util.Optional;
 
 @Service

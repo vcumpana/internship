@@ -1,7 +1,9 @@
 package com.endava.service_system.controller.rest;
 
-import com.endava.service_system.dto.CredentialDTO;
-import com.endava.service_system.model.*;
+import com.endava.service_system.model.dto.CredentialDTO;
+import com.endava.service_system.model.dto.PasswordDto;
+import com.endava.service_system.model.entities.Credential;
+import com.endava.service_system.model.entities.Token;
 import com.endava.service_system.service.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.Level;
@@ -13,9 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,10 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;

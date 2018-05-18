@@ -1,7 +1,7 @@
 package com.endava.service_system.constraints;
 
 
-import org.springframework.context.annotation.Configuration;
+import com.endava.service_system.constraints.validator.EmailExistsConstraintValidator;
 
 import javax.validation.Constraint;
 import java.lang.annotation.*;

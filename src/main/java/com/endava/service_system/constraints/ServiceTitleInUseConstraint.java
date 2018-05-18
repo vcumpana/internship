@@ -1,6 +1,8 @@
 package com.endava.service_system.constraints;
 
 
+import com.endava.service_system.constraints.validator.ServiceTitleExistsConstraintValidator;
+
 import javax.validation.Constraint;
 import java.lang.annotation.*;
 

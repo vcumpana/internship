@@ -1,16 +1,17 @@
 package com.endava.service_system.controller;
 
-import com.endava.service_system.dto.*;
-import com.endava.service_system.model.*;
+import com.endava.service_system.model.dto.CompanyDtoToShow;
+import com.endava.service_system.model.dto.CompanyRegistrationDTO;
+import com.endava.service_system.model.dto.NewInvoiceDTO;
+import com.endava.service_system.model.dto.NewServiceDTO;
+import com.endava.service_system.model.entities.*;
 import com.endava.service_system.service.*;
 import com.endava.service_system.utils.AuthUtils;
-import org.apache.http.HttpResponse;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.http.HttpRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -24,7 +25,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -187,6 +188,7 @@ public class CompanyController {
         Contract contract = contractService.getContractById(newInvoiceDTO.getContractId());
         Invoice invoice = conversionService.convert(newInvoiceDTO, Invoice.class);
         invoice.setContract(contract);
+        invoice.setCreatedDate(LocalDate.now());
         invoiceService.save(invoice);
         User user=contract.getUser();
         String fullName=user.getName()+" "+user.getSurname();

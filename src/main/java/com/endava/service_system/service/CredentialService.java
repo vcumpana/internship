@@ -1,12 +1,9 @@
 package com.endava.service_system.service;
 
 import com.endava.service_system.dao.ICredentialDao;
-import com.endava.service_system.dto.CredentialDTO;
-import com.endava.service_system.enums.UserStatus;
-import com.endava.service_system.model.Company;
-import com.endava.service_system.model.Credential;
-import com.endava.service_system.model.Role;
-import com.endava.service_system.model.User;
+import com.endava.service_system.model.dto.CredentialDTO;
+import com.endava.service_system.model.enums.UserStatus;
+import com.endava.service_system.model.entities.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

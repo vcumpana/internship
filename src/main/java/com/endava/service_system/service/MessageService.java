@@ -1,16 +1,14 @@
 package com.endava.service_system.service;
 
 import com.endava.service_system.dao.MessageDao;
-import com.endava.service_system.model.Message;
+import com.endava.service_system.model.entities.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

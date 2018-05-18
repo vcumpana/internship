@@ -1,10 +1,10 @@
 package com.endava.service_system.dao;
 
-import com.endava.service_system.dto.InvoiceDisplayDto;
-import com.endava.service_system.enums.InvoiceStatus;
-import com.endava.service_system.enums.UserType;
-import com.endava.service_system.model.ContractForUserDtoFilter;
-import com.endava.service_system.model.InvoiceFilter;
+import com.endava.service_system.model.dto.InvoiceDisplayDto;
+import com.endava.service_system.model.filters.order.InvoiceOrderBy;
+import com.endava.service_system.model.enums.InvoiceStatus;
+import com.endava.service_system.model.enums.UserType;
+import com.endava.service_system.model.filters.InvoiceFilter;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -106,6 +106,11 @@ public class InvoiceEntityManagerDao {
         if(filter.getTillDueDate()!=null){
             query.setParameter("tillDueDate", filter.getTillDueDate());
         }
+
+        if(filter.getContractId()!=null){
+            query.setParameter("contractId", filter.getContractId());
+        }
+//
 //
         if (filter.getCategoryName() != null) {
             query.setParameter("categoryName", filter.getCategoryName());
@@ -122,9 +127,9 @@ public class InvoiceEntityManagerDao {
     }
 
     private String createQueryForSearch(InvoiceFilter filter) {
-        StringBuilder builder = new StringBuilder("SELECT concat(user.name, ' ', user.surname),company.name,invoice.id,");
+        StringBuilder builder = new StringBuilder("SELECT concat(user.name, ' ', user.surname) as fullName,company.name,invoice.id,");
         builder.append(" invoice.price,invoice.invoiceStatus,service.title,");
-        builder.append(" invoice.dueDate,invoice.fromDate,invoice.tillDate,contract.id");
+        builder.append(" invoice.dueDate,invoice.fromDate,invoice.tillDate,contract.id,invoice.createdDate ");
         builder.append(getSqlWithoutOrder(filter));
         builder.append(getOrderSqlExtension(filter));
         return builder.toString();
@@ -132,15 +137,37 @@ public class InvoiceEntityManagerDao {
 
     private String getOrderSqlExtension(InvoiceFilter filter) {
         StringBuilder builder = new StringBuilder();
-        if (filter.getOrderByDueDateDirection() != null) {
-            builder.append(" ORDER BY invoice.dueDate");
-            if (filter.getOrderByDueDateDirection() == Sort.Direction.ASC) {
+        //TODO verify if user or company has right for this sorting ;
+        if(filter.getUserType()==UserType.USER&& filter.getOrderBy()== InvoiceOrderBy.CREATED_DATE){
+            return "";
+        }
+        if (filter.getOrderBy()!=null) {
+            if(filter.getOrderDirection()==null){
+                filter.setOrderDirection(Sort.Direction.ASC);
+            }
+            builder.append(" ORDER BY "+getSortBy(filter.getOrderBy())+" ");
+            if (filter.getOrderDirection() == Sort.Direction.ASC) {
                 builder.append(" ASC ");
             } else {
                 builder.append(" DESC ");
             }
         }
         return builder.toString();
+    }
+
+    private String getSortBy(InvoiceOrderBy sortBy){
+        switch (sortBy){
+            case NR:return "invoice.id";
+            case CLIENT_FULL_NAME:return "fullName";
+            case PRICE:return "invoice.price";
+            case TILL_DATE:return "invoice.tillDate";
+            case FROM_DATE:return "invoice.fromDate";
+            case COMPANY_NAME:return "company.name";
+            case CREATED_DATE:return "invoice.createdDate";
+            case PAYMENT_DATE:return "invoice.dueDate";
+            case SERVICE_TITLE:return "service.title";
+        }
+        throw new RuntimeException("someone has used it wrong");
     }
 
     private String getSqlWithoutOrder(InvoiceFilter filter) {
@@ -214,6 +241,10 @@ public class InvoiceEntityManagerDao {
 
         if(filter.getTillDueDate()!=null){
             builder.append(" AND invoice.dueDate<=:tillDueDate ");
+        }
+
+        if(filter.getContractId()!=null){
+            builder.append(" AND contract.id=:contractId ");
         }
 //
         if (filter.getCategoryName() != null) {

@@ -1,12 +1,11 @@
 package com.endava.service_system.controller;
 
-import com.endava.service_system.model.Company;
-import com.endava.service_system.model.ImageEntity;
+import com.endava.service_system.model.entities.Company;
+import com.endava.service_system.model.entities.ImageEntity;
 import com.endava.service_system.service.CompanyService;
 import com.endava.service_system.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.activation.MimetypesFileTypeMap;
-import javax.annotation.Resource;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.Optional;
