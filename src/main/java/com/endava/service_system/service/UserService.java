@@ -35,6 +35,10 @@ public class UserService {
         System.out.println("user saved in saveUser UserService :"+saveUser);
     }
 
+    public User updateUserWithoutCredentials(User user){
+        return userDao.save(user);
+    }
+
     public Optional<User> getByUsername(String username){
         return userDao.getByUsername(username);
     }

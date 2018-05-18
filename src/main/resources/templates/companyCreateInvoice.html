@@ -112,7 +112,7 @@
                                 <p class="error-message"
                                    th:each="error : ${#fields.errors('global')}"
                                    th:text="${error}">Validation error</p>
-                                <button type="submit"  class="btn btn-success" id="btnRegister">
+                                <button type="button"  onclick="createInvoiceConfirmation()" class="btn btn-success" id="btnRegister">
                                     Create
                                 </button>
                                 <a onclick="cancelCreateInvoice()"  role="button" class="btn btn-danger" id="btnCancel">
@@ -135,8 +135,71 @@
     </div>
     <!--/row-->
 </div>
+<!-- Modal first confirm -->
+<div class="modal fade" id="modalFirstConfirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="clickModalYes()" class="btn btn-primary">Yes</button>
+                <button type="button" onclick="clickModalNo()" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal second confirm -->
+<div class="modal fade" id="modalSecondConfirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="secondexampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="clickSecondModalYes()" class="btn btn-primary">Yes</button>
+                <button type="button" onclick="clickSecondModalNo()" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal cancel confirm -->
+<div class="modal fade" id="modalCancelConfirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelexampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="clickCancelModalYes()" class="btn btn-primary">Yes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!--/container-->
-<script type="text/javascript" th:src="@{/js/companyCreateInvoice.js}"></script>
+<!--<script type="text/javascript" th:src="@{/js/companyCreateInvoice.js}"></script>-->
 <script>
     // Example starter JavaScript for disabling form submissions if there are invalid fields
     (function() {
@@ -159,19 +222,51 @@
 
 $(document).ready(function () {
     if (Cookies.get("conflict") === "true"){
-        if(confirm("You already have an invoice in this period,do you want to create a new one?")){
-            Cookies.remove('conflict', {path: '/company'})
-            Cookies.set("conflict","false");
-            $("#btnRegister").click();
-        }
+        $('#modalSecondConfirm .modal-body').append("You already have an invoice in this period,do you want to create a new one?");
+
+        $('#modalSecondConfirm .modal-title').text("Confirm");
+        $("#modalSecondConfirm").modal("show");
+        // if(confirm("You already have an invoice in this period,do you want to create a new one?")){
+        //     Cookies.remove('conflict', {path: '/company'})
+        //     Cookies.set("conflict","false");
+        //     $("#btnRegister").click();
+
     }
-})
+});
     function cancelCreateInvoice() {
-        if (confirm("Your entry data will be lost, are you sure you want to continue?")) {
-            window.location = "/company/myinvoices";
-        }
+        $('#modalCancelConfirm .modal-body').text("Your entry data will be lost, are you sure you want to continue?");
+        $('#modalCancelConfirm .modal-title').text("Confirm");
+        $("#modalCancelConfirm").modal("show");
     }
 
+    function createInvoiceConfirmation(){
+        $('#modalFirstConfirm .modal-body').text("Are you sure you want to create a new invoice?");
+        $('#modalFirstConfirm .modal-title').text("Confirm");
+        $("#modalFirstConfirm").modal("show");
+    }
+
+    function clickModalYes(){
+
+        $("#registrationForm").submit();
+    }
+
+    function clickModalNo(){
+        $("#modalConfirm").hide();
+    }
+
+    function clickSecondModalYes(){
+        Cookies.remove('conflict', {path: '/company'});
+        Cookies.set("conflict","false");
+        $("#registrationForm").submit();
+    }
+
+    function clickSecondModalNo(){
+        $("#modalSecondConfirm").hide();
+    }
+
+    function clickCancelModalYes() {
+        window.location = "/company/mycontracts";
+    }
 </script>
 
 </body>

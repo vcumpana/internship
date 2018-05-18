@@ -10,6 +10,7 @@ $(document).ready(function () {
     downloadContracts();
     isUnreadMessages();
     downloadBalance();
+
 });
 
 $( document ).ajaxStart(function() {
@@ -94,6 +95,12 @@ function sendContractsForInvoicesCreation() {
     data={
          info :arr
     };
+    if (arr.length == 0){
+        $('.modal-title').text("Warning");
+        $('.modal-body').text('');
+        $('.modal-body').append("<p>Please select at least 1 contract</p>");
+        return;
+    }
     console.log(data);
     $.ajax({
         type: "POST",
@@ -101,10 +108,13 @@ function sendContractsForInvoicesCreation() {
         data: {info :arr},
         success: function (result) {
             console.log(result["created"]);
+            $('.modal-body').text('');
+            $('.modal-title').text("Invoice creation report");
             $('.modal-body').append("<p>Created invoices: " + result.created + " invoice</p>");
             $('.modal-body').append("<p>Skipped contracts: " + result.skipped + " contracts</p><br>");
             $('.modal-body').append("<p>Note: contracts are skipped from creating invoices if there exist issued invoices for current month");
         }
+
     });
     arr.length = 0;
 }
@@ -167,11 +177,15 @@ function fillTableWithContracts() {
             default:
         }
         if (listOfContracts[i].contractStatus === "SIGNEDBYCLIENT") {
-            row += "<td><a href=" + "/contract/" + listOfContracts[i].id + "/approve" + ">Approve</a>" + "/" + "<a href=" + "/contract/" + listOfContracts[i].id + "/deny" + ">Deny</a></td>";
+            row += "<td><a href=" + "/contract/" + listOfContracts[i].id + "/approve"
+                + "role=\"button\" class=\"btn btn-warning btn-sm \" style = \"display:inline;width: 71px\">Approve</a>"
+                + "<a href=" + "/contract/" + listOfContracts[i].id + "/deny"
+                + " role=\"button\" class=\"btn btn-danger btn-sm \" style = \"display:inline;width: 71px\">Deny</a></td>";
             row +="<td></td>";
         } else if (listOfContracts[i].contractStatus === "ACTIVE"){
             row +="<td></td>";
-            row += "<td><a href=" + "/contract/"+ listOfContracts[i].id +"/createInvoice" + ">Create invoice</a></td>";
+            row += "<td><a href=" + "/contract/"+ listOfContracts[i].id +"/createInvoice"
+                + " role=\"button\" class=\"btn btn-success btn-sm \" >Create invoice</a></td>";
         } else {
             row +="<td></td>";
             row +="<td></td>";

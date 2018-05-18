@@ -85,7 +85,7 @@
                                        th:each="error : ${#fields.errors('price')}"
                                        th:text="${error}">Validation error</p>
                                 </div>
-                                <button type="submit" class="btn btn-success" id="btnRegister">
+                                <button type="button" onclick="createServiceConfirmation()" class="btn btn-success" id="btnRegister">
                                     Add service
                                 </button>
                                 <a onclick="cancelCreateService()"  role="button" class="btn btn-danger" id="btnCancel">
@@ -108,6 +108,47 @@
     <!--/row-->
 </div>
 <!--/container-->
+<!-- Modal first confirm -->
+<div class="modal fade" id="modalFirstConfirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="clickModalYes()" class="btn btn-primary">Yes</button>
+                <button type="button" onclick="clickModalNo()" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal cancel confirm -->
+<div class="modal fade" id="modalCancelConfirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelexampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="clickCancelModalYes()" class="btn btn-primary">Yes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     // Example starter JavaScript for disabling form submissions if there are invalid fields
     (function() {
@@ -129,9 +170,28 @@
     })();
 
     function cancelCreateService() {
-        if (confirm("Your entry data will be lost, are you sure you want to cancel?")) {
-            window.location = "/company/serviceList";
-        }
+        $('#modalCancelConfirm .modal-body').text("Your entry data will be lost, are you sure you want to continue?");
+        $('#modalCancelConfirm .modal-title').text("Confirm");
+        $("#modalCancelConfirm").modal("show");
+    }
+
+    function createServiceConfirmation(){
+        $('#modalFirstConfirm .modal-body').text("Are you sure you want to create a new service?");
+        $('#modalFirstConfirm .modal-title').text("Confirm");
+        $("#modalFirstConfirm").modal("show");
+    }
+
+    function clickModalYes(){
+
+        $("#registrationForm").submit();
+    }
+
+    function clickModalNo(){
+        $("#modalConfirm").hide();
+    }
+
+    function clickCancelModalYes() {
+        window.location = "/company/serviceList";
     }
 </script>
 

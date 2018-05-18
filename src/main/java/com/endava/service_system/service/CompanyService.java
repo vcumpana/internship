@@ -37,6 +37,10 @@ public class CompanyService {
         return companyDao.save(company);
     }
 
+    public Company updateWithoutCredentials(Company company){
+        return companyDao.save(company);
+    }
+
     public List<Company> getAll() {
         return companyDao.findAll();
     }

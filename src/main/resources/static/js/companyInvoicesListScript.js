@@ -10,6 +10,12 @@ $(document).ready(function () {
     downloadInvoices();
     isUnreadMessages();
     downloadBalance();
+    if($("#successCreating").text()!==''){
+        $("#successCreating").show();
+        window.setTimeout(function () {
+            $("#successCreating").hide();
+        }, 5000);
+}
 });
 
 $(document).ajaxStart(function () {
@@ -326,6 +332,7 @@ function resetInvoiceFilter() {
     $("#tillDueDate").val("");
     $("#usersFirstName").val("");
     $("#usersLastName").val("");
+    $("#serviceName").val("");
     currentPage = 1;
     downloadInvoices();
 }
