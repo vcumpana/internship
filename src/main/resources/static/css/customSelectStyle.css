@@ -20,4 +20,5 @@
 .custom-select-option:hover {
     cursor: pointer;
     background: DodgerBlue;
+    color: whitesmoke;
 }
