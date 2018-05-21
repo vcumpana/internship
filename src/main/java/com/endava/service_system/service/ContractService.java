@@ -92,4 +92,8 @@ public class ContractService {
     public void update(Contract contract) {
         contractDao.save(contract);
     }
+
+    public int[] getAllContractsIdsByCompanyUsername(String username) {
+        return contractDao.getAllIds(username);
+    }
 }

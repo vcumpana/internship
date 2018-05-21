@@ -5,6 +5,8 @@ var arr = new Array();
 var maxPage;
 var currentPage = 1;
 var size = 10;
+var chekedAll = false;
+var timer = null;
 
 $(document).ready(function () {
     downloadInvoices();
@@ -34,22 +36,52 @@ $("#activateFilter").click(function () {
 $("#nextPage").click(function () {
     currentPage++;
     downloadInvoices();
-    verifyIfPreviousExists();
-    verifyIfNextExists();
-    $('#select_all').prop("checked", false);
 });
 
 $("#previousPage").click(function () {
     currentPage--;
     downloadInvoices();
-    verifyIfPreviousExists();
-    verifyIfNextExists();
-    $('#select_all').prop("checked", false);
 });
 
-$('#select_all').change(function () {
-    var checkboxes = $(this).closest('table').find(':checkbox');
+$('#select_all').change(function() {
+    if (chekedAll == false){
+        chekedAll = true;
+        getAllInvoicesIds();
+    } else {
+        chekedAll = false;
+        arr.length = 0;
+    }
+    var checkboxes = $(this).closest('form').find(':checkbox');
     checkboxes.prop('checked', $(this).is(':checked'));
+});
+
+function getAllInvoicesIds() {
+    $.ajax({
+        type: "GET",
+        url: "/company/invoices/allIds",
+        success: function (result) {
+            arr = [];
+            arr = $.merge(arr, result);
+            //  listOfContracts.sort(comparatorForCategory);
+        }
+    });
+}
+
+function setCheckboxes(){
+    for(var index in arr){
+        $("input[type='checkbox'][name='idInvoice'][id='" + arr[index] + "']").each(function(){
+            $(this).attr("checked", true);
+        });
+    }
+}
+
+$(document).on("click", "input[type='checkbox'][name='idInvoice']", function(){
+    if($(this).is(":checked")){
+        arr.push(parseInt($(this).attr("id")));
+    } else {
+        $("#select_all").prop("checked", false);
+        arr.splice( $.inArray(parseInt($(this).attr("id")), arr), 1);
+    }
 });
 
 function fillArray() {
@@ -65,12 +97,13 @@ function downloadInvoices() {
         type: "GET",
         url: url,
         success: function (result) {
-            maxPage = result.pages
+            $('#checkbox').addClass('hidden');
             listOfInvoices = result.invoices;
+            maxPage = result.pages
+            setPages();
             //  listOfContracts.sort(comparatorForCategory);
             fillTableWithInvoices();
-            verifyIfPreviousExists();
-            verifyIfNextExists();
+            setCheckboxes();
         }
     });
 }
@@ -213,6 +246,7 @@ function fillTableWithInvoices() {
     for (var i = 0; i < listOfInvoices.length; i++) {
         var row = "<tr>";
         if (listOfInvoices[i].invoiceStatus === "CREATED") {
+            $('#checkbox').removeClass('hidden');
             row += "<td><input type=\"checkbox\" name='idInvoice' id=\"" + listOfInvoices[i].invoiceId + "\"></td>";
         } else
             row += "<td></td>";
@@ -270,6 +304,8 @@ function fillTableWithInvoices() {
     var row = "<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td>" +
         "<td>Total</td><td>" + paid.toFixed(2) + " MDL</td><td>" + unpaid.toFixed(2) + " MDL</td><td>" + overdue.toFixed(2) + " MDL</td><td></td><td></td><td></td></tr>";
     $("#tableWithInvoices tbody").append(row);
+    verifyIfPreviousExists();
+    verifyIfNextExists();
 }
 
 function comparatorForCategory(a, b) {
@@ -391,4 +427,32 @@ $("#showSimpleFilters").click(function () {
 
 $("#showDatesFilters").click(function () {
     $("#dateFilters").slideToggle();
+});
+
+function setPages() {
+    $("#currentPageButton").html("Page <input type='text' id='currentPage' style='width: 25%; text-align: right' min='1' max='" + maxPage + "'> from " + maxPage);
+    $("#currentPage").val(currentPage);
+}
+
+$(document).on("input change paste", "#currentPage", function () {
+    var page = $(this).val();
+    $(this).val(page.replace(/[^\d]/, ''));
+    if (/[^\d]/.test(page)) {
+        return;
+    }
+    clearTimeout(timer);
+    if (page < 1) {
+        page = 1;
+    }
+    if (page > maxPage) {
+        page = maxPage;
+    }
+    timer = setTimeout(function () {
+        currentPage = page;
+        downloadInvoices();
+    }, 1000);
+});
+
+$("#currentPageButton").click(function () {
+    $("#currentPage").focus();
 });

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,4 +29,10 @@ public interface InvoiceDao extends JpaRepository<Invoice,Long> {
             " JOIN user.credential userCredentials  JOIN company.credential companyCredentials " +
             " JOIN userCredentials.bankAccount userBankAccount  JOIN companyCredentials.bankAccount companyBankAccount WHERE inv.id=:id")
     Optional<InvoiceForPaymentDto> getFullInvoiceById(@Param("id") long id);
+
+    @Query("select i.id from Invoice i " +
+            "join i.contract c " +
+            "join c.company co " +
+            "join co.credential cr where cr.username=:username and i.invoiceStatus='CREATED'")
+    int[] getAllInvoicesIdsByCompanyUsername(@Param("username") String authenticatedUsername);
 }
