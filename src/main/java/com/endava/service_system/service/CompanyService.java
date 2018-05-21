@@ -1,6 +1,7 @@
 package com.endava.service_system.service;
 
 import com.endava.service_system.dao.CompanyDao;
+import com.endava.service_system.model.dto.ServiceToCompanyDto;
 import com.endava.service_system.model.entities.Company;
 import com.endava.service_system.utils.AuthUtils;
 import org.apache.logging.log4j.Level;
@@ -86,6 +87,40 @@ public class CompanyService {
         companyDao.save(company);
     }
 
+    public void updateService(Service service) {
+        String username = authUtils.getAuthenticatedUsername();
+        LOGGER.log(Level.DEBUG,username);
+        Company company = companyDao.getByUsername(username).get();
+        LOGGER.log(Level.DEBUG,company);
+       // List<Service> services = serviceService.getServicesByCompanyName(company.getName());
+//        for (int i = 0; i< services.size(); i++) {
+//            if (service.getId() == services.get(i).getId()) {
+//                services.get(i).setCategory(service.getCategory());
+//                services.get(i).setDescription(service.getDescription());
+//                services.get(i).setPrice(service.getPrice());
+//                services.get(i).setTitle(service.getTitle());
+//            }
+//        }
+       // company.setServices(services);
+        System.out.println("trying to update : "+service);
+        serviceService.saveService(service);
+    //    companyDao.save(company);
+    }
+
+    public void deleteServiceByIdFromCompany(long id) {
+        String username = authUtils.getAuthenticatedUsername();
+        LOGGER.log(Level.DEBUG,username);
+        Company company = companyDao.getByUsername(username).get();
+        LOGGER.log(Level.DEBUG,company);
+        List<Service> services = serviceService.getServicesByCompanyName(company.getName());
+        for (int i = 0; i< services.size(); i++){
+            if (id == services.get(i).getId())
+                services.remove(i);
+        }
+        company.setServices(services);
+        companyDao.save(company);
+    }
+
     @Autowired
     public void setCompanyDao(CompanyDao companyDao) {
         this.companyDao = companyDao;
@@ -110,5 +145,6 @@ public class CompanyService {
     public void setAuthUtils(AuthUtils authUtils) {
         this.authUtils = authUtils;
     }
+
 
 }

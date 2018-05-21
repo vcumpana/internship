@@ -139,3 +139,49 @@ function downloadBalance(){
         }
     });
 }
+
+
+$("#allNotifications").click(function(){
+    setStatus("");
+    $(".btn").each(function(){
+        $(this).attr("disabled", false);
+    });
+    $(this).attr("disabled", true);
+});
+
+$("#readNotifications").click(function(){
+    setStatus("READ");
+    $(".btn").each(function(){
+        $(this).attr("disabled", false);
+    });
+    $(this).attr("disabled", true);
+});
+
+$("#unreadNotifications").click(function(){
+    setStatus("UNREAD");
+    $(".btn").each(function(){
+        $(this).attr("disabled", false);
+    });
+    $(this).attr("disabled", true);
+});
+
+function setStatus(newStatus){
+    status = newStatus;
+    noMoreNotifications = false;
+    currentPage = 0;
+    $("#notifications").html("");
+    loadNotifications();
+}
+
+$("#markAll").click(function(){
+    $.ajax({
+        type: "GET",
+        url: "/notification/markAllAsRead",
+        success: function(){
+            noMoreNotifications = false;
+            currentPage = 0;
+            $("#notifications").html("");
+            loadNotifications();
+        }
+    });
+});

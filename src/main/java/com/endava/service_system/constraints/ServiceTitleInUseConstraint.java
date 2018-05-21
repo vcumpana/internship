@@ -17,6 +17,12 @@ import java.lang.annotation.Documented;
 public @interface ServiceTitleInUseConstraint {
     String message() default "Please choose another title for your service. This title already exists";
     String fieldName() default "";
+    String id() default "";
     Class[] groups() default {};
     Class[] payload() default {};
+    @Target({ ElementType.TYPE })
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface List {
+        ServiceTitleInUseConstraint[] value();
+    }
 }

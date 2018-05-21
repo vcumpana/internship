@@ -22,16 +22,16 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-primary">
-    <span class="navbar-brand">Digital Marketplace</span>
+    <div class="inline">
+        <img src="/images/logo.png" style="height: 35px; width: 35px;" alt="logo">
+        <span class="navbar-brand">Digital Marketplace</span>
+    </div>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
             aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/company/profile">Page 1</a>
-            </li>
             <li class="nav-item ">
                 <a class="nav-link" href="/company/serviceList">My services</a>
             </li>
@@ -68,6 +68,10 @@
         </ul>
     </div>
 </nav>
+<div><br></div>
+<div style="width: 90%; margin-left: auto; margin-right: auto">
+<h1>Contracts</h1>
+
 <div style="margin: 15px">
     <div class="strike"><span id="showFilters" class="filter h4">Filters</span></div>
     <div style="display:none;" id="filters">
@@ -121,8 +125,9 @@
             </div>
 
             <div class="strike"><span id="showDatesFilters" class="filter h5">Dates</span></div>
+            <div style="width: 100%; text-align: center;">
             <div class="form-row" style="display: none" id="dateFilters">
-                <div class="border border-primary" style="margin-bottom: 20px; width: 30%; margin-right: 5%; padding: 10px">
+                <div class="border border-secondary rounded" style="margin-bottom: 20px; width: 30%; margin-right: 5%; padding: 10px">
                     <div class="row">
                         <div class=" form-group col-12" align="middle">
                             <label>Start date</label>
@@ -137,7 +142,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="border border-primary col-3" style="margin-bottom: 20px; width:30%; margin-right: 5%; padding: 10px">
+                <div class="border border-secondary rounded" style="margin-bottom: 20px; width:30%; margin-right: 5%; padding: 10px">
                     <div class="row">
                         <div class=" form-group col-12" align="middle">
                             <label>End date</label>
@@ -153,11 +158,12 @@
                     </div>
                 </div>
             </div>
+            </div>
 
         </form>
         <div align="middle">
-            <button id="activateFilter" class="btn btn-primary btn-lg" style="width: 90px">Find</button>
-            <button class="btn btn-danger btn-lg" onclick="resetContractFilter()" style="width: 90px">Reset</button>
+            <button id="activateFilter" class="btn btn-primary" style="width: 90px">Find</button>
+            <button class="btn btn-danger" onclick="resetContractFilter()" style="width: 90px">Reset</button>
         </div>
     </div>
 </div>
@@ -166,10 +172,12 @@
     <div class="alert alert-success" id="successCreation" style="display:none">
         <strong>Success!</strong> You have created invoices for all selected contracts with active status.
     </div>
-
-    <div class="row">
+</div>
+    <button onclick="createInvoicesConfirmation()" class="btn btn-outline-success float-right" style=";margin-bottom: 10px"
+    >Create invoices</button>
+    <div class="table-responsive">
         <form>
-        <table id="tableWithContracts" class="table table-striped table-hover">
+        <table id="tableWithContracts" class="table table-striped table-bordered table-hover">
             <thead class="thead-dark">
             <tr>
                 <th>
@@ -201,15 +209,14 @@
         <nav>
             <div class="pagination pagination-lg justify-content-center">
                 <div class="btn-group">
-                    <button class="btn btn-primary" id="previousPage">Previous page</button>
-                    <button class="btn btn-primary" id="currentPageButton"></button>
+                    <button class="btn btn-primary" id="previousPage" style="margin-right: 1%">Previous page</button>
+                    <button class="btn btn-primary" id="currentPageButton" style="margin-right: 1%"></button>
                     <button class="btn btn-primary" id="nextPage">Next page</button>
                 </div>
             </div>
         </nav>
     </div>
-    <button onclick="sendContractsForInvoicesCreation()" class="btn btn-success btn-lg"
-            data-toggle="modal" data-target="#exampleModal">Create invoices</button>
+
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -227,6 +234,26 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal send multiple invoices confirm -->
+<div class="modal fade" id="modalCreateInvoicesConfirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="clickModalYes('modalCreateInvoicesConfirm')" data-dismiss="modal" class="btn btn-primary">Yes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
             </div>
         </div>
     </div>

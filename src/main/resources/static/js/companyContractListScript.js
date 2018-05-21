@@ -103,16 +103,9 @@ function getAllContractsIds() {
 }
 
 function sendContractsForInvoicesCreation() {
-    fillArray();
     data={
          info :arr
     };
-    if (arr.length == 0){
-        $('.modal-title').text("Warning");
-        $('.modal-body').text('');
-        $('.modal-body').append("<p>Please select at least 1 contract</p>");
-        return;
-    }
     console.log(data);
     $.ajax({
         type: "POST",
@@ -120,15 +113,15 @@ function sendContractsForInvoicesCreation() {
         data: {info :arr},
         success: function (result) {
             console.log(result["created"]);
-            $('.modal-body').text('');
-            $('.modal-title').text("Invoice creation report");
-            $('.modal-body').append("<p>Created invoices: " + result.created + " invoice</p>");
-            $('.modal-body').append("<p>Skipped contracts: " + result.skipped + " contracts</p><br>");
-            $('.modal-body').append("<p>Note: contracts are skipped from creating invoices if there exist issued invoices for current month");
+            $('#exampleModal .modal-body').text('');
+            $('#exampleModal .modal-title').text("Invoice creation report");
+            $('#exampleModal .modal-body').append("<p>Created invoices: " + result.created + " invoice</p>");
+            $('#exampleModal .modal-body').append("<p>Skipped contracts: " + result.skipped + " contracts</p><br>");
+            $('#exampleModal .modal-body').append("<p>Note: contracts are skipped from creating invoices if there exist issued invoices for current month or the contract has the status other than Active");
+            $("#exampleModal").modal("show");
         }
 
     });
-    arr.length = 0;
 }
 
 $("th[scopeForSort='sort']").click(function () {
@@ -170,7 +163,7 @@ function fillTableWithContracts() {
         dateText=moment(listOfContracts[i].endDate).format("DD/MM/YYYY");
         row += "<td>" + dateText + "</td>";
         row += "<td>" + listOfContracts[i].fullName + "</td>";
-        row += "<td>" + listOfContracts[i].servicePrice + "</td>";
+        row += "<td>" + listOfContracts[i].servicePrice + " USD</td>";
         switch (listOfContracts[i].contractStatus){
             case "SIGNEDBYCLIENT":
                 row += "<td class='text-warning'><strong>Waiting</strong></td>";
@@ -194,14 +187,14 @@ function fillTableWithContracts() {
                 + " role=\"button\" class=\"btn btn-warning btn-sm \" style = \"display:inline;width: 71px\">Approve</a>"
                 + "<a href=" + "/contract/" + listOfContracts[i].id + "/deny"
                 + " role=\"button\" class=\"btn btn-danger btn-sm \" style = \"display:inline;width: 71px\">Deny</a></td>";
-            row +="<td></td>";
+            row +="<td>-</td>";
         } else if (listOfContracts[i].contractStatus === "ACTIVE"){
-            row +="<td></td>";
+            row +="<td>-</td>";
             row += "<td><a href=" + "/contract/"+ listOfContracts[i].id +"/createInvoice"
                 + " role=\"button\" class=\"btn btn-success btn-sm \" >Create invoice</a></td>";
         } else {
-            row +="<td></td>";
-            row +="<td></td>";
+            row +="<td>-</td>";
+            row +="<td>-</td>";
         }
         row += "</tr>";
         $("#tableWithContracts tbody").append(row);
@@ -310,7 +303,7 @@ function downloadBalance(){
         type: "POST",
         url: "/bank/balance",
         success: function (result) {
-            $("#balance").text(result.balance + " MDL");
+            $("#balance").text(result.balance + " USD");
         }
     });
 }
@@ -341,12 +334,13 @@ $(document).on("click", "input[type='checkbox'][name='idInvoice']", function(){
         arr.push(parseInt($(this).attr("id")));
     } else {
         $("#select_all").prop("checked", false);
+        chekedAll = false;
         arr.splice( $.inArray(parseInt($(this).attr("id")), arr), 1);
     }
 });
 
 function setPages() {
-    $("#currentPageButton").html("Page <input type='text' id='currentPage' style='width: 25%; text-align: right' min='1' max='" + maxPage + "'> from " + maxPage);
+    $("#currentPageButton").html("Page <input type='text' id='currentPage' style='width: 15%; text-align: center' min='1' max='" + maxPage + "'> from " + maxPage);
     $("#currentPage").val(currentPage);
 }
 
@@ -372,3 +366,22 @@ $(document).on("input change paste", "#currentPage", function () {
 $("#currentPageButton").click(function () {
     $("#currentPage").focus();
 });
+
+function createInvoicesConfirmation(){
+    if (arr.length == 0){
+        $('#exampleModal .modal-title').text("Warning");
+        $('#exampleModal .modal-body').text('');
+        $('#exampleModal .modal-body').append("<p>Please select at least 1 contract</p>");
+        $("#exampleModal").modal("show");
+
+        return;
+    }
+    $('#modalCreateInvoicesConfirm .modal-body').text("You are going to create invoices on all selected contracts.");
+    $('#modalCreateInvoicesConfirm .modal-body').append("<p>Please confirm!</p><br>");
+    $('#modalCreateInvoicesConfirm .modal-title').text("Confirm");
+    $("#modalCreateInvoicesConfirm").modal("show");
+}
+
+function clickModalYes(){
+    sendContractsForInvoicesCreation();
+}

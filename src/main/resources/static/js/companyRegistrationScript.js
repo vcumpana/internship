@@ -138,3 +138,8 @@ function toNeutral(feedback, input){
     $(input).removeClass("is-invalid");
     $(input).removeClass("is-valid");
 }
+
+$("#resetButton").click(function () {
+    toNeutral("#feedbackPassword", "#password");
+    toNeutral("#feedbackRepeatedPassword", "#repeatedPassword");
+});
