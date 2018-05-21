@@ -206,4 +206,11 @@ public class InvoicesRestController {
         modelAndView.setViewName("redirect:/company/invoices");
         return modelAndView;
     }
+
+    @GetMapping("/company/invoices/allIds")
+    public ResponseEntity getAllCompanyInvoicesId(){
+        int[] invoicesIds = invoiceService.getAllInvoicesIdsbyCompanyUsername(authUtils.getAuthenticatedUsername());
+        LOGGER.log(Level.DEBUG, invoicesIds);
+        return new ResponseEntity(invoicesIds, HttpStatus.OK);
+    }
 }

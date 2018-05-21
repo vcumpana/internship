@@ -224,4 +224,9 @@ public class InvoiceService {
         }
         return false;
     }
+
+    public int[] getAllInvoicesIdsbyCompanyUsername(String authenticatedUsername) {
+        int[] invoicesIds = invoiceDao.getAllInvoicesIdsByCompanyUsername(authenticatedUsername);
+        return invoicesIds;
+    }
 }

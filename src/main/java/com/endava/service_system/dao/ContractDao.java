@@ -25,4 +25,9 @@ public interface ContractDao extends JpaRepository<Contract,Long> {
 
     @Query("SELECT COUNT(c) FROM Contract AS c WHERE c.company = :company AND c.user = :user AND c.service = :service AND c.endDate > :startDate AND (c.status = 'ACTIVE' OR c.status = 'SIGNEDBYCLIENT')")
     int checkIfSuchContractExists(@Param("company") Company company, @Param("user") User user, @Param("service") Service service, @Param("startDate")LocalDate startDate);
+
+    @Query("select c.id from Contract c " +
+            "join c.company co " +
+            "join co.credential cr where cr.username=:username and c.status='ACTIVE'")
+    int[] getAllIds(@Param("username") String username);
 }

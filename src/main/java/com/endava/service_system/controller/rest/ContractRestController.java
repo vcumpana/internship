@@ -143,4 +143,10 @@ public class ContractRestController {
         }
         return direction;
     }
+
+    @GetMapping(value = "company/contracts/allIds")
+    public ResponseEntity getAllContractsIds(){
+        int [] contractsIds = contractService.getAllContractsIdsByCompanyUsername(authUtils.getAuthenticatedUsername());
+        return new ResponseEntity(contractsIds, HttpStatus.OK);
+    }
 }

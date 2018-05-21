@@ -4,13 +4,15 @@ var descArrow = "<i class=\"fa fa-arrow-up\"></i>";
 var arr = new Array();
 var currentPage = 1;
 var size = 10;
-var maxPageSize;
+var maxPage;
+var chekedAll = false;
+var timer = null;
 
 $(document).ready(function () {
     downloadContracts();
     isUnreadMessages();
     downloadBalance();
-
+    chekedAll = false;
 });
 
 $( document ).ajaxStart(function() {
@@ -30,27 +32,24 @@ $("#activateFilter").click(function (event) {
 $("#nextPage").click(function () {
     currentPage++;
     downloadContracts();
-    verifyIfPreviousExists();
-    verifyIfNextExists();
-    $('#select_all').prop("checked", false);});
+});
 
 $("#previousPage").click(function () {
     currentPage--;
     downloadContracts();
-    verifyIfPreviousExists();
-    verifyIfNextExists();
-    $('#select_all').prop("checked", false);});
+});
 
 $('#select_all').change(function() {
+    if (chekedAll == false){
+        chekedAll = true;
+        getAllContractsIds();
+    } else {
+        arr.length = 0;
+        chekedAll = false;
+    }
     var checkboxes = $(this).closest('form').find(':checkbox');
     checkboxes.prop('checked', $(this).is(':checked'));
 });
-
-function fillArray() {
-    $("input[type='checkbox'][name='idInvoice']:checked").each(function(i, v) {
-        arr.push($(v).attr("id"));
-    });
-}
 
 function makeURL(page) {
     var url = "/company/contracts?page=" + page + "&size=" + size + "&";
@@ -80,12 +79,25 @@ function downloadContracts() {
         type: "GET",
         url: url,
         success: function (result) {
+            $('#checkbox').addClass('hidden');
             listOfContracts = result.contracts;
-            maxPageSize=result.pages;
+            maxPage=result.pages;
+            setPages();
             //  listOfContracts.sort(comparatorForCategory);
             fillTableWithContracts();
-            verifyIfPreviousExists();
-            verifyIfNextExists();
+            setCheckboxes();
+        }
+    });
+}
+
+function getAllContractsIds() {
+    $.ajax({
+        type: "GET",
+        url: "/company/contracts/allIds",
+        success: function (result) {
+            arr = [];
+            arr = $.merge(arr, result);
+            //  listOfContracts.sort(comparatorForCategory);
         }
     });
 }
@@ -145,6 +157,7 @@ function fillTableWithContracts() {
     for (var i = 0; i < listOfContracts.length; i++) {
         var row = "<tr>";
         if (listOfContracts[i].contractStatus === "ACTIVE") {
+            $('#checkbox').removeClass('hidden');
             row += "<td><input type=\"checkbox\" name='idInvoice' id=\"" + listOfContracts[i].id + "\"></td>";
         } else
             row +="<td></td>";
@@ -193,6 +206,8 @@ function fillTableWithContracts() {
         row += "</tr>";
         $("#tableWithContracts tbody").append(row);
     }
+    verifyIfPreviousExists();
+    verifyIfNextExists();
 }
 
 function comparatorForCategory(a, b) {
@@ -269,7 +284,7 @@ function verifyIfPreviousExists() {
 }
 
 function verifyIfNextExists() {
-    if (currentPage === maxPageSize||maxPageSize===0) {
+    if (currentPage === maxPage||maxPage===0) {
         $("#nextPage").addClass("disabled");
         $("#nextPage").attr("disabled", true);
     } else {
@@ -311,4 +326,49 @@ $("#showSimpleFilters").click(function () {
 
 $("#showDatesFilters").click(function () {
     $("#dateFilters").slideToggle();
+});
+
+function setCheckboxes(){
+    for(var index in arr){
+        $("input[type='checkbox'][name='idInvoice'][id='" + arr[index] + "']").each(function(){
+            $(this).attr("checked", true);
+        });
+    }
+}
+
+$(document).on("click", "input[type='checkbox'][name='idInvoice']", function(){
+    if($(this).is(":checked")){
+        arr.push(parseInt($(this).attr("id")));
+    } else {
+        $("#select_all").prop("checked", false);
+        arr.splice( $.inArray(parseInt($(this).attr("id")), arr), 1);
+    }
+});
+
+function setPages() {
+    $("#currentPageButton").html("Page <input type='text' id='currentPage' style='width: 25%; text-align: right' min='1' max='" + maxPage + "'> from " + maxPage);
+    $("#currentPage").val(currentPage);
+}
+
+$(document).on("input change paste", "#currentPage", function () {
+    var page = $(this).val();
+    $(this).val(page.replace(/[^\d]/, ''));
+    if (/[^\d]/.test(page)) {
+        return;
+    }
+    clearTimeout(timer);
+    if (page < 1) {
+        page = 1;
+    }
+    if (page > maxPage) {
+        page = maxPage;
+    }
+    timer = setTimeout(function () {
+        currentPage = page;
+        downloadContracts();
+    }, 1000);
+});
+
+$("#currentPageButton").click(function () {
+    $("#currentPage").focus();
 });
