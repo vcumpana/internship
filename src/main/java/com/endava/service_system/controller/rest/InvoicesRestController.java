@@ -212,7 +212,7 @@ public class InvoicesRestController {
 
     @GetMapping("/company/invoices/allIds")
     public ResponseEntity getAllCompanyInvoicesId(){
-        int[] invoicesIds = invoiceService.getAllInvoicesIdsbyCompanyUsername(authUtils.getAuthenticatedUsername());
+        Long[] invoicesIds = invoiceService.getAllInvoicesIdsbyCompanyUsername(authUtils.getAuthenticatedUsername());
         LOGGER.log(Level.DEBUG, invoicesIds);
         return new ResponseEntity(invoicesIds, HttpStatus.OK);
     }

@@ -29,5 +29,5 @@ public interface ContractDao extends JpaRepository<Contract,Long> {
     @Query("select c.id from Contract c " +
             "join c.company co " +
             "join co.credential cr where cr.username=:username and c.status='ACTIVE'")
-    int[] getAllIds(@Param("username") String username);
+    long[] getAllIds(@Param("username") String username);
 }

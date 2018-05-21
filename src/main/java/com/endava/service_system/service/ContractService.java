@@ -15,6 +15,8 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -24,6 +26,7 @@ public class ContractService {
     private ConversionService conversionService;
     private ContractDao contractDao;
     private ServiceService serviceService;
+    private InvoiceService invoiceService;
     private UserService userService;
     private ContractsToUserDao contractsToUserDao;
 
@@ -49,6 +52,11 @@ public class ContractService {
 
     public List<Contract> getAllContractsByCompanyUsername(String companyUsername){
         return contractDao.getAllContractsByCompanyUsername(companyUsername);
+    }
+
+    @Autowired
+    public void setInvoiceService(InvoiceService invoiceService) {
+        this.invoiceService = invoiceService;
     }
 
     @Autowired
@@ -93,7 +101,14 @@ public class ContractService {
         contractDao.save(contract);
     }
 
-    public int[] getAllContractsIdsByCompanyUsername(String username) {
-        return contractDao.getAllIds(username);
+    public Long[] getAllContractsIdsByCompanyUsername(String username) {
+        long[] invoicesIds = contractDao.getAllIds(username);
+        List<Long> longList=new ArrayList<>();
+        for(Long id:invoicesIds){
+            longList.add(id);
+        }
+        List<Long> ids= invoiceService.canCreateInvoices(longList);
+
+        return ids.toArray(new Long[ids.size()]);
     }
 }

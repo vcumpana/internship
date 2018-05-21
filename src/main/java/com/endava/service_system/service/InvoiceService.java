@@ -3,6 +3,7 @@ package com.endava.service_system.service;
 import com.endava.service_system.dao.CurrentDateDao;
 import com.endava.service_system.dao.InvoiceEntityManagerDao;
 import com.endava.service_system.dao.InvoiceUpdateDao;
+import com.endava.service_system.model.dto.ContractForShowingDto;
 import com.endava.service_system.model.dto.InvoiceDisplayDto;
 import com.endava.service_system.model.dto.InvoiceForPaymentDto;
 import com.endava.service_system.model.dto.NewInvoiceDTO;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.endava.service_system.model.enums.ContractStatus.ACTIVE;
 import static com.endava.service_system.model.enums.InvoiceStatus.CREATED;
@@ -129,6 +131,61 @@ public class InvoiceService {
         return report;
     }
 
+    public List<ContractForShowingDto> setReadinessForInvoiceCreation(List<ContractForShowingDto> list) {
+        Contract contract;
+        Invoice invoice;
+        List<Long> ids=canCreateInvoices(list.stream().map(dto->dto.getId()).collect(Collectors.toList()));
+        for(Long id:ids){
+            for(ContractForShowingDto dto:list){
+                if(dto.getId()==id){
+                    dto.setAvailForInvoice(true);
+                }
+            }
+        }
+        return list;
+    }
+
+    public List<Long> canCreateInvoices(List<Long> list) {
+        Contract contract;
+        Invoice invoice;
+        List<Long> canCreateInvoice=new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            contract = contractService.getContractById(list.get(i));
+            if (contract.getStatus() != ACTIVE) {
+                continue;
+            }
+            invoice = new Invoice();
+            Company company = contract.getCompany();
+            List<Invoice> invoices = contract.getInvoices();
+            if (invoices != null && invoices.size() > 0) {
+                if ((invoices.get(invoices.size() - 1).getTillDate().getMonth().getValue() >= currentDateDao.findById(new Long(1)).get().getLocalDate().getMonth().getValue()
+                        && invoices.get(invoices.size() - 1).getTillDate().getYear() >= currentDateDao.findById(new Long(1)).get().getLocalDate().getYear()) ||
+                        (invoices.get(invoices.size() - 1).getTillDate().getMonth().getValue() > contract.getEndDate().getMonth().getValue()
+                                && invoices.get(invoices.size() - 1).getTillDate().getYear() >= contract.getEndDate().getYear())) {
+
+                    continue;
+                }
+                invoice.setFromDate(invoices.get(invoices.size() - 1).getTillDate().plusDays(1));
+            }else
+                invoice.setFromDate(contract.getStartDate());
+            if (contract.getEndDate().getYear() == currentDateDao.findById(new Long(1)).get().getLocalDate().getYear()
+                    && contract.getEndDate().getMonth().getValue() == currentDateDao.findById(new Long(1)).get().getLocalDate().getMonth().getValue())
+                invoice.setTillDate(contract.getEndDate());
+            else
+                invoice.setTillDate(currentDateDao.findById(new Long(1)).get().getLocalDate().with(TemporalAdjusters.lastDayOfMonth()));
+            if (invoice.getFromDate().isAfter(invoice.getTillDate())) {
+
+                continue;
+            }
+            canCreateInvoice.add(list.get(i));
+        }
+        return canCreateInvoice;
+    }
+
+
+
+
+
     public Period getPeriodBetweenDates(LocalDate firstInputDate, LocalDate secondInputDate) {
         final Period period = Period.between(firstInputDate, secondInputDate);
         System.out.println("days:"+period.getDays());
@@ -225,8 +282,9 @@ public class InvoiceService {
         return false;
     }
 
-    public int[] getAllInvoicesIdsbyCompanyUsername(String authenticatedUsername) {
-        int[] invoicesIds = invoiceDao.getAllInvoicesIdsByCompanyUsername(authenticatedUsername);
-        return invoicesIds;
+    public Long[] getAllInvoicesIdsbyCompanyUsername(String authenticatedUsername) {
+        long[] invoicesIds = invoiceDao.getAllInvoicesIdsByCompanyUsername(authenticatedUsername);
+        List longList=new ArrayList<>(Arrays.asList(invoicesIds));
+        return (Long[])canCreateInvoices(longList).toArray();
     }
 }
