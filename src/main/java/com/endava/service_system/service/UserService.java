@@ -9,6 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +23,7 @@ public class UserService {
     private UserDao userDao;
     private CredentialService credentialService;
     private BankService bankService;
-    public void saveUser(User user){
+    public void saveUser(User user) throws InvalidKeySpecException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, IOException {
         System.out.println("user save in saveUser UserService :"+user);
         //credentialService.save(user.getCredential());
         bankService.addBankAccount(user.getCredential());

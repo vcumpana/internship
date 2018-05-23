@@ -48,7 +48,7 @@ public interface ServiceDao extends JpaRepository<Service,Long> {
     Optional<Service> deleteServicesById(long id);
 
 
-    @Query(value = "select s.id as id, s.description as description , s.price as price, s.title as title, c.name as companyName, cat.name as category, c.url as url from service s " +
+    @Query(value = "select s.id as id, s.description as description , s.price as price, s.title as title, c.name as companyName, cat.name as category, c.company_url as company_url,c.image_name as image_name from service s " +
             "join company_services cs " +
             "on cs.services_id = s.id " +
             "join company c " +
