@@ -1,4 +1,4 @@
-var HOST = "http://localhost:8080";
+var HOST = "";
 var STATUS = function () {
 };
 STATUS.OK = 200;

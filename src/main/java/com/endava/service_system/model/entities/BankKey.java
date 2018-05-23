@@ -4,14 +4,18 @@ import lombok.Data;
 
 import javax.persistence.*;
 
-@Data
 @Entity
-public class BankAccount {
+@Data
+@Table(name = "bank_keys")
+public class BankKey {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Long countNumber;
-    @OneToOne
-    private BankKey bankKeys;
+    private long id;
+
+    //@Lob
+    private byte[] bankModulus;
+
+    //@Lob
+    private byte[] javaPrivateKey;
 
 }

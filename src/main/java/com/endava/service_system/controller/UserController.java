@@ -16,7 +16,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.spec.InvalidKeySpecException;
 
 @Controller
 public class UserController {
@@ -47,7 +52,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/user/registration")
-    public String register(Model model, @ModelAttribute("user") @Valid UserDto userDto, BindingResult bindingResult){
+    public String register(Model model, @ModelAttribute("user") @Valid UserDto userDto, BindingResult bindingResult) throws InvalidKeySpecException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, IOException {
         if(bindingResult.hasErrors()){
             model.addAttribute("user", userDto);
             return "userRegistration";
