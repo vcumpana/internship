@@ -40,11 +40,11 @@ $("#previousPage").click(function () {
 
 function getDataForTable() {
     var url = makeURL(currentPage);
-    console.log(url);
     $.ajax({
         type: "GET",
         url: url,
         success: function (result) {
+            console.log(result);
             maxPageSize = result.pages
             listOfInvoices = result.invoices;
             fillTableWithInvoices();
@@ -58,7 +58,8 @@ function makeURL(page) {
     var data = {
         "companyId": $("#companyName").val(),
         "categoryId": $("#categoryName").val(),
-        "orderByDueDate": $("#orderByDueDate").val(),
+        "orderBy": "PAYMENT_DATE",
+        "order": $("#orderByDueDate").val(),
         "status": $("#invoiceStatus").val()
     };
     for (key in data) {
@@ -73,16 +74,16 @@ function makeURL(page) {
 function fillTableWithInvoices() {
     $("#tableWithInvoices tbody").html("");
     for (var i = 0; i < listOfInvoices.length; i++) {
-        console.log(listOfInvoices[i]);
-        var row = "<tr>";
+        var row = "<tr id='invoice" + listOfInvoices[i].invoiceId + "'>";
         row += "<td>";
         if(listOfInvoices[i].invoiceStatus === "SENT") {
             row += "<input type='checkbox' id='" + listOfInvoices[i].invoiceId + "'/>"
         }
+        var newDate = new Date(listOfInvoices[i].fromDate);
         row+="</td>";
         row += "<td>" + listOfInvoices[i].companyTitle + "</td>";
         row += "<td>" + listOfInvoices[i].serviceTitle + "</td>";
-        row += "<td>" + listOfInvoices[i].price + "</td>";
+        row += "<td>" + listOfInvoices[i].price + " USD</td>";
         row += "<td>" + listOfInvoices[i].fromDate + "</td>";
         row += "<td>" + listOfInvoices[i].tillDate + "</td>";
         row += "<td>" + listOfInvoices[i].paymentDate + "</td>";
@@ -99,6 +100,7 @@ function fillTableWithInvoices() {
     }
     verifyIfPreviousExists();
     verifyIfNextExists();
+    parseURL();
 }
 
 function resetInvoiceFilter(event) {
@@ -106,6 +108,7 @@ function resetInvoiceFilter(event) {
     $("#orderByDueDate").val("asc");
     $("#companyName").val("");
     $("#categoryName").val("");
+    $("#invoiceStatus").val("");
     currentPage = 1;
     getDataForTable();
 }
@@ -188,7 +191,7 @@ function invoicePaidUi(id) {
 }
 
 function setPages() {
-    $("#currentPageButton").html("Page <input type='text' id='currentPage' style='width: 25%; text-align: center' min='1' max='" + maxPageSize + "'> from " + maxPageSize);
+    $("#currentPageButton").html("Page <input type='text' id='currentPage' style='width: 15%; text-align: center' min='1' max='" + maxPageSize + "'> from " + maxPageSize);
     $("#currentPage").val(currentPage);
 }
 
@@ -214,3 +217,34 @@ $(document).on("input change paste", "#currentPage", function () {
 $("#currentPageButton").click(function(){
     $("#currentPage").focus();
 });
+
+function parseURL() {
+    var url = new URL(window.location);
+    var id = url.searchParams.get("id");
+    var found = false;
+    if (id != null && id !== "null") {
+        $("#tableWithInvoices").find("tbody").find("tr").each(function () {
+            if ($(this).attr("id") === ("invoice" + id)) {
+                console.log("here");
+                found = true;
+                $(this).addClass("table-success");
+                $('html, body').animate({
+                    scrollTop: $(this).offset().top
+                }, 2000);
+            }
+            if (found) {
+                return false;
+            }
+        });
+        if (!found && currentPage < maxPageSize) {
+            currentPage++;
+            getDataForTable();
+        } else if (!found && currentPage === maxPageSize) {
+            window.history.pushState(null, null, '?id=null');
+            currentPage = 1;
+            getDataForTable();
+        } else if (found) {
+            window.history.pushState(null, null, '?id=null');
+        }
+    }
+}

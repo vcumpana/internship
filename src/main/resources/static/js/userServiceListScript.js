@@ -10,6 +10,7 @@ $(document).ready(function () {
     getDataForTable();
     isUnreadMessages();
     downloadBalance();
+    $('[data-toggle="tooltip"]').tooltip();
 });
 
 $(document).ajaxStart(function () {
@@ -86,8 +87,8 @@ function getDataForTable() {
         success: function (result) {
             listOfServices = result.services;
             maxPageSize = result.pages;
-            setPages();
             fillTableWithServices();
+            setPages();
         }
     });
 }
@@ -99,11 +100,9 @@ function fillTableWithServices() {
         if (listOfServices[i].companyUrl !== null && listOfServices[i].companyUrl !== '') {
             row += "<a href=\"http://" + listOfServices[i].companyUrl + "\">";
         }
-
         if (listOfServices[i].imageName !== null && listOfServices[i].imageName !== '') {
-            row += "<img border=\"0\" alt=\"W3Schools\" src=\"/image/" + listOfServices[i].imageName + "\" width=\"200\" height=\"100\">"
+            row += "<img border=\"0\" alt=\"logo\" src=\"/image/" + listOfServices[i].imageName + "\" width=\"200\" height=\"100\">"
         }
-
         if (listOfServices[i].companyUrl !== null && listOfServices[i].companyUrl !== '') {
             row += "</a>";
         }
@@ -113,7 +112,7 @@ function fillTableWithServices() {
         row += "<td>" + listOfServices[i].companyName + "</td>";
         row += "<td>" + listOfServices[i].title + "</td>";
         row += "<td>" + listOfServices[i].description + "</td>";
-        row += "<td>" + listOfServices[i].price + " MDL</td>";
+        row += "<td>" + listOfServices[i].price + " USD</td>";
         row += "<td><i class=\"fa fa-paw filter\" onclick='showServiceInfo(" + listOfServices[i].id + ")'></i></td>";
         row += "</tr>";
         $("#tableWithServices tbody").append(row);
@@ -135,7 +134,7 @@ function showServiceInfo(id) {
             $("#categoryInModal").text(result.category);
             $("#companyInModal").text(result.companyName);
             $("#titleInModal").text(result.title);
-            $("#priceInModal").text(result.price + " MDL");
+            $("#priceInModal").text(result.price + " USD");
             $("#descriptionInModal").text(result.description);
         }
     });
@@ -146,7 +145,8 @@ function makeURL(page) {
     var data = {
         "min": $("#minPrice").val(),
         "max": $("#maxPrice").val(),
-        "orderByPrice": $("#orderByPrice").val(),
+        "orderBy": "PRICE",
+        "order": $("#orderByPrice").val(),
         "companyId": $("#companyName").val(),
         "categoryId": $("#categoryName").val()
     };
@@ -184,7 +184,6 @@ function verifyIfPreviousExists() {
 
 function verifyIfNextExists() {
     if (currentPage == maxPageSize || maxPageSize == 0) {
-        console.log("no next");
         $("#nextPage").addClass("disabled");
         $("#nextPage").attr("disabled", true);
     } else {
@@ -273,13 +272,13 @@ function downloadBalance() {
         type: "POST",
         url: "/bank/balance",
         success: function (result) {
-            $("#balance").text(result.balance + " MDL");
+            $("#balance").text(result.balance + " USD");
         }
     });
 }
 
 function setPages() {
-    $("#currentPageButton").html("Page <input type='text' id='currentPage' style='width: 25%; text-align: center' min='1' max='" + maxPageSize + "'> from " + maxPageSize);
+    $("#currentPageButton").html("Page <input type='text' id='currentPage' style='width: 15%; text-align: center' min='1' max='" + maxPageSize + "'> from " + maxPageSize);
     $("#currentPage").val(currentPage);
 }
 

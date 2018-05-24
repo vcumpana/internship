@@ -54,14 +54,14 @@ public class InvoiceEntityManagerDao {
         query.setParameter("username", filter.getCurrentUserUsername());
 
         if (filter.getUserType() == UserType.COMPANY) {
-            if ( filter.getInvoiceStatus() != null) {
+            if (filter.getInvoiceStatus() != null) {
                 query.setParameter("invoiceStatus", filter.getInvoiceStatus());
             }
-            if(filter.getServiceId()!=null&&filter.getServiceId()>0){
+            if (filter.getServiceId() != null && filter.getServiceId() > 0) {
                 query.setParameter("serviceId", filter.getServiceId());
             }
         } else {
-            if ( filter.getInvoiceStatus() != null && filter.getInvoiceStatus() != InvoiceStatus.CREATED) {
+            if (filter.getInvoiceStatus() != null && filter.getInvoiceStatus() != InvoiceStatus.CREATED) {
                 query.setParameter("invoiceStatus", filter.getInvoiceStatus());
             } else {
                 query.setParameter("invoiceStatus", InvoiceStatus.CREATED);
@@ -74,40 +74,40 @@ public class InvoiceEntityManagerDao {
             } else if (filter.getCompanyId() != null) {
                 query.setParameter("companyId", filter.getCompanyId());
             }
-        }else{
-            if(filter.getUsersFirstName()!=null&&!filter.getUsersFirstName().isEmpty()){
+        } else {
+            if (filter.getUsersFirstName() != null && !filter.getUsersFirstName().isEmpty()) {
                 query.setParameter("firstName", filter.getUsersFirstName());
             }
-            if(filter.getUsersLastName()!=null&&!filter.getUsersLastName().isEmpty()){
+            if (filter.getUsersLastName() != null && !filter.getUsersLastName().isEmpty()) {
                 query.setParameter("lastName", filter.getUsersLastName());
             }
         }
 
-        if(filter.getFromStartDate()!=null){
+        if (filter.getFromStartDate() != null) {
             query.setParameter("fromStartDate", filter.getFromStartDate());
         }
 
-        if(filter.getTillStartDate()!=null){
+        if (filter.getTillStartDate() != null) {
             query.setParameter("tillStartDate", filter.getTillStartDate());
         }
 
-        if(filter.getFromTillDate()!=null){
+        if (filter.getFromTillDate() != null) {
             query.setParameter("fromTillDate", filter.getFromTillDate());
         }
 
-        if(filter.getTillTillDate()!=null){
+        if (filter.getTillTillDate() != null) {
             query.setParameter("tillTillDate", filter.getTillTillDate());
         }
 
-        if(filter.getFromDueDate()!=null){
+        if (filter.getFromDueDate() != null) {
             query.setParameter("fromDueDate", filter.getFromDueDate());
         }
 
-        if(filter.getTillDueDate()!=null){
+        if (filter.getTillDueDate() != null) {
             query.setParameter("tillDueDate", filter.getTillDueDate());
         }
 
-        if(filter.getContractId()!=null){
+        if (filter.getContractId() != null) {
             query.setParameter("contractId", filter.getContractId());
         }
 //
@@ -138,14 +138,14 @@ public class InvoiceEntityManagerDao {
     private String getOrderSqlExtension(InvoiceFilter filter) {
         StringBuilder builder = new StringBuilder();
         //TODO verify if user or company has right for this sorting ;
-        if(filter.getUserType()==UserType.USER&& filter.getOrderBy()== InvoiceOrderBy.CREATED_DATE){
+        if (filter.getUserType() == UserType.USER && filter.getOrderBy() == InvoiceOrderBy.CREATED_DATE) {
             return "";
         }
-        if (filter.getOrderBy()!=null) {
-            if(filter.getOrderDirection()==null){
+        if (filter.getOrderBy() != null) {
+            if (filter.getOrderDirection() == null) {
                 filter.setOrderDirection(Sort.Direction.ASC);
             }
-            builder.append(" ORDER BY "+getSortBy(filter.getOrderBy())+" ");
+            builder.append(" ORDER BY " + getSortBy(filter.getOrderBy()) + " ");
             if (filter.getOrderDirection() == Sort.Direction.ASC) {
                 builder.append(" ASC ");
             } else {
@@ -155,17 +155,26 @@ public class InvoiceEntityManagerDao {
         return builder.toString();
     }
 
-    private String getSortBy(InvoiceOrderBy sortBy){
-        switch (sortBy){
-            case NR:return "invoice.id";
-            case CLIENT_FULL_NAME:return "fullName";
-            case PRICE:return "invoice.price";
-            case TILL_DATE:return "invoice.tillDate";
-            case FROM_DATE:return "invoice.fromDate";
-            case COMPANY_NAME:return "company.name";
-            case CREATED_DATE:return "invoice.createdDate";
-            case PAYMENT_DATE:return "invoice.dueDate";
-            case SERVICE_TITLE:return "service.title";
+    private String getSortBy(InvoiceOrderBy sortBy) {
+        switch (sortBy) {
+            case NR:
+                return "invoice.id";
+            case CLIENT_FULL_NAME:
+                return "fullName";
+            case PRICE:
+                return "invoice.price";
+            case TILL_DATE:
+                return "invoice.tillDate";
+            case FROM_DATE:
+                return "invoice.fromDate";
+            case COMPANY_NAME:
+                return "company.name";
+            case CREATED_DATE:
+                return "invoice.createdDate";
+            case PAYMENT_DATE:
+                return "invoice.dueDate";
+            case SERVICE_TITLE:
+                return "service.title";
         }
         throw new RuntimeException("someone has used it wrong");
     }
@@ -193,7 +202,7 @@ public class InvoiceEntityManagerDao {
             if (filter.getInvoiceStatus() != null) {
                 builder.append(" AND invoice.invoiceStatus=:invoiceStatus ");
             }
-            if(filter.getServiceId()!=null&&filter.getServiceId()>0){
+            if (filter.getServiceId() != null && filter.getServiceId() > 0) {
                 builder.append(" AND service.id=:serviceId ");
             }
         } else {
@@ -210,40 +219,40 @@ public class InvoiceEntityManagerDao {
             } else if (filter.getCompanyId() != null) {
                 builder.append(" AND company.id=:companyId ");
             }
-        }else{
-            if(filter.getUsersFirstName()!=null&&!filter.getUsersFirstName().isEmpty()){
+        } else {
+            if (filter.getUsersFirstName() != null && !filter.getUsersFirstName().isEmpty()) {
                 builder.append(" AND lower(user.name) LIKE lower(CONCAT(:firstName,'%')) ");
             }
-            if(filter.getUsersLastName()!=null&&!filter.getUsersLastName().isEmpty()){
+            if (filter.getUsersLastName() != null && !filter.getUsersLastName().isEmpty()) {
                 builder.append(" AND lower(user.surname) LIKE lower(CONCAT(:lastName,'%')) ");
             }
         }
 
-        if(filter.getFromStartDate()!=null){
+        if (filter.getFromStartDate() != null) {
             builder.append(" AND invoice.fromDate>=:fromStartDate ");
         }
 
-        if(filter.getTillStartDate()!=null){
+        if (filter.getTillStartDate() != null) {
             builder.append(" AND invoice.fromDate<=:tillStartDate ");
         }
 
-        if(filter.getFromTillDate()!=null){
+        if (filter.getFromTillDate() != null) {
             builder.append(" AND invoice.tillDate>=:fromTillDate ");
         }
 
-        if(filter.getTillTillDate()!=null){
+        if (filter.getTillTillDate() != null) {
             builder.append(" AND invoice.tillDate<=:tillTillDate ");
         }
 
-        if(filter.getFromDueDate()!=null){
+        if (filter.getFromDueDate() != null) {
             builder.append(" AND invoice.dueDate>=:fromDueDate ");
         }
 
-        if(filter.getTillDueDate()!=null){
+        if (filter.getTillDueDate() != null) {
             builder.append(" AND invoice.dueDate<=:tillDueDate ");
         }
 
-        if(filter.getContractId()!=null){
+        if (filter.getContractId() != null) {
             builder.append(" AND contract.id=:contractId ");
         }
 //

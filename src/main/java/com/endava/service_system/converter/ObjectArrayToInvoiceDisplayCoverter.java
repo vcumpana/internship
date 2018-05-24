@@ -24,11 +24,11 @@ public class ObjectArrayToInvoiceDisplayCoverter implements Converter<Object[],I
                 .price((BigDecimal) source[3])
                 .invoiceStatus((InvoiceStatus) source[4])
                 .serviceTitle((String) source[5])
-                .paymentDate((LocalDate) source[6])
-                .fromDate((LocalDate) source[7])
-                .tillDate((LocalDate) source[8])
+                .paymentDate(((LocalDate) source[6]).toString())
+                .fromDate(((LocalDate) source[7]).toString())
+                .tillDate(((LocalDate) source[8]).toString())
                 .contractId((Long) source[9])
-                .createdDate((LocalDate)source[10])
+                .createdDate(((LocalDate)source[10]).toString())
                 .build();
     }
 }
