@@ -8,15 +8,26 @@ pipeline {
     stages {
         stage('Install') {
              steps {
-                sh 'mvn clean install -DskipTests'
                 script {
-                    version = sh(returnStdout: true, script: 'mvn help:evaluate -Dexpression=project.version | grep -e "^[^[]" ')
+                    version = sh(returnStdout: true, script: 'mvn help:evaluate -Dexpression=project.version | grep -e "^[^[]" ')  
+                    version = version.trim()
                  }
-                 echo 'target/service_system-' + version.trim() + '.jar'
+                 echo 'target/service_system-' + version.trim() + '.war'
                  script {
                     version2 = sh(returnStdout: true, script: 'mvn help:evaluate -Dexpression=project.version | grep -e "^[^[]" | sed "s/-SNAPSHOT//g"')
                  }
-                  echo version2.trim()
+
+                sh "mvn versions:set -DnewVersion=$version-$env.BUILD_NUMBER"
+                sh 'mvn clean install -DskipTests'
+
+                script {
+                    version = sh(returnStdout: true, script: 'mvn help:evaluate -Dexpression=project.version | grep -e "^[^[]" ')
+                 }
+                 echo 'target/service_system-' + version.trim() + '.war'
+                 script {
+                    version2 = sh(returnStdout: true, script: 'mvn help:evaluate -Dexpression=project.version | grep -e "^[^[]" | sed "s/-SNAPSHOT//g"')
+                 }
+                
             }
         }
 
@@ -35,7 +46,7 @@ pipeline {
 
         stage('Upload artifact') {
            steps {
-               nexusArtifactUploader artifacts: [[artifactId: 'service_system', classifier: '', file: 'target/service_system-' + version.trim() + '.jar', type: 'jar']], 
+               nexusArtifactUploader artifacts: [[artifactId: 'service_system', classifier: '', file: 'target/service_system-' + version.trim() + '.war', type: 'war']], 
                credentialsId: '9d977555-9613-4485-8c0c-a25b72a316e3', 
                groupId: 'com.endava', 
                nexusUrl: 'nexus.endava.net', 
@@ -48,3 +59,5 @@ pipeline {
         
         }     
 }
+
+//c
