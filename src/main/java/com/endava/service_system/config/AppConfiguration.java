@@ -3,6 +3,7 @@ package com.endava.service_system.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -22,6 +23,10 @@ import java.security.NoSuchAlgorithmException;
 @Configuration
 public class AppConfiguration{
 
+	@Value("${bankApi}")
+	private String bankApi;
+	@Value("${siteUrl")
+	private String siteUrl;
 	@Bean 
 	public PasswordEncoder getPasswordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -44,14 +49,13 @@ public class AppConfiguration{
 
 	@Bean
 	@Qualifier("bankApi")
-	public String getBankApiUrl(){
-		return "http://localhost:64509/api/";
+	public String getBankApi(){
+		return bankApi;
 	}
-
 	@Bean
 	@Qualifier("siteUrl")
 	public String getSiteUrl(){
-		return "http://localhost:8080";
+		return siteUrl;
 	}
 
 	@Bean
