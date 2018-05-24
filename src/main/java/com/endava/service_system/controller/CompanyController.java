@@ -1,7 +1,10 @@
 package com.endava.service_system.controller;
 
-import com.endava.service_system.dto.*;
-import com.endava.service_system.model.*;
+import com.endava.service_system.model.dto.CompanyDtoToShow;
+import com.endava.service_system.model.dto.CompanyRegistrationDTO;
+import com.endava.service_system.model.dto.NewInvoiceDTO;
+import com.endava.service_system.model.dto.NewServiceDTO;
+import com.endava.service_system.model.entities.*;
 import com.endava.service_system.service.*;
 import com.endava.service_system.utils.AuthUtils;
 import org.apache.logging.log4j.Level;
@@ -15,13 +18,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.Calendar;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +45,7 @@ public class CompanyController {
     @GetMapping("/company/registration")
     public String getCompanyRegistrationForm(Model model) {
         model.addAttribute("company", new CompanyRegistrationDTO());
+
         return "companyRegistration";
     }
 
@@ -66,7 +71,7 @@ public class CompanyController {
     public String companyCabinet(Model model){
         String username = authUtils.getAuthenticatedUsername();
         CompanyDtoToShow company = conversionService.convert(companyService.getCompanyByUsername(username).get(), CompanyDtoToShow.class);
-        model.addAttribute("username", username);
+        addCompanyNameToModel(model);
         model.addAttribute("user", company);
         addCompanyToModel(model);
         return "companyCabinet";
@@ -83,6 +88,8 @@ public class CompanyController {
     @GetMapping(value = "/company/mycontracts")
     public String getMyContractsPage(Model model){
         addCompanyNameToModel(model);
+        addCategoriesToModel(model);
+        addServicesToModel(model);
         return  "companyContractList";
     }
 
@@ -95,7 +102,15 @@ public class CompanyController {
     @GetMapping(value = "/company/myinvoices")
     public String getMyInvoicesPage(Model model){
         addCompanyNameToModel(model);
+        addCategoriesToModel(model);
+        addServicesToModel(model);
         return  "companyInvoices";
+    }
+
+    @GetMapping(value = "/company/statements")
+    public String userStatements(Model model){
+        addCompanyNameToModel(model);
+        return "companyStatement";
     }
 
     @GetMapping("/company/addservice")
@@ -103,12 +118,16 @@ public class CompanyController {
         model.addAttribute("service", new NewServiceDTO());
         List<Category> categories = categoryService.getAll();
         model.addAttribute("categories", categories);
+        addCompanyNameToModel(model);
         return "companyAddService";
     }
 
     @PostMapping("/company/addservice")
     public String registerNewService(Model model, @ModelAttribute("service") @Valid NewServiceDTO newServiceDTO, BindingResult bindingResult) {
+        System.out.println(newServiceDTO);
         if (bindingResult.hasErrors()) {
+            List<Category> categories = categoryService.getAll();
+            model.addAttribute("categories", categories);
             model.addAttribute("service", newServiceDTO);
             return "companyAddService";
         }
@@ -119,28 +138,66 @@ public class CompanyController {
 
     @GetMapping("/contract/{id}/createInvoice")
     public String getCompanyCreateInvoiceForm(Model model, @PathVariable("id") Long contractId) {
-        NewInvoiceDTO newInvoiceDTO = new NewInvoiceDTO();
-        newInvoiceDTO.setContractId(contractId);
+        NewInvoiceDTO newInvoiceDTO = invoiceService.getInvoiceDtoByContractId(contractId);
         model.addAttribute("invoice", newInvoiceDTO);
-
-        //List<Contract> contracts = contractService.getAllContractsByCompanyUsername(getAuthenticatedUsername());
-        //model.addAttribute("contracts", contracts);
+        addCompanyNameToModel(model);
         return "companyCreateInvoice";
     }
 
     @PostMapping("/company/createInvoice")
-    public String registerNewService(Model model, @ModelAttribute("invoice") @Validated NewInvoiceDTO newInvoiceDTO, BindingResult bindingResult) {
+    public String registerNewService(RedirectAttributes redirectAttributes, HttpServletResponse response,HttpServletRequest request,  Model model, @ModelAttribute("invoice") @Validated NewInvoiceDTO newInvoiceDTO, BindingResult bindingResult) {
         LOGGER.log(Level.DEBUG,newInvoiceDTO);
         LOGGER.log(Level.DEBUG,bindingResult.getAllErrors());
         if (bindingResult.hasErrors()) {
             model.addAttribute("invoice", newInvoiceDTO);
+            for(Cookie one:request.getCookies()) {
+                if (one.getName().equalsIgnoreCase("conflict")) {
+                    one.setValue("");
+                    one.setPath("/");
+                    one.setMaxAge(0);
+                    response.addCookie(one);
+                }
+            }
             return "companyCreateInvoice";
         }
+
+                //i
+        if(invoiceService.invoicePeriodExists(newInvoiceDTO)) {
+            String cookieValue=null;
+            for(Cookie one:request.getCookies()){
+                if(one.getName().equalsIgnoreCase("conflict")) {
+                    cookieValue=one.getValue();
+                }
+            }
+            System.out.println("cookieValue: "+cookieValue);
+            if (cookieValue== null || cookieValue.equalsIgnoreCase("true")) {
+                System.out.println("adding cookie : ");
+                Cookie conflictCookie = new Cookie("conflict", "true");
+                response.addCookie(conflictCookie);
+                return "companyCreateInvoice";
+            }else{
+
+                for(Cookie one:request.getCookies()){
+                    if(one.getName().equalsIgnoreCase("conflict")) {
+                        one.setValue("");
+                        one.setPath("/");
+                        one.setMaxAge(0);
+                        response.addCookie(one);
+                    }
+                }
+            }
+        }
+        System.out.println("there are no conflicts : ");
         Contract contract = contractService.getContractById(newInvoiceDTO.getContractId());
         Invoice invoice = conversionService.convert(newInvoiceDTO, Invoice.class);
         invoice.setContract(contract);
+        invoice.setCreatedDate(LocalDate.now());
         invoiceService.save(invoice);
-        //  companyService.addNewInvoice(invoice);
+        User user=contract.getUser();
+        String fullName=user.getName()+" "+user.getSurname();
+        String serviceTitle =contract.getService().getTitle();
+        redirectAttributes.addFlashAttribute("message","You have created an invoice for client: " +fullName +", on service : " +serviceTitle +" with sum " + invoice.getPrice() + " USD");
+        //companyService.addNewInvoice(invoice);
         return "redirect:/company/myinvoices";
     }
 
@@ -167,6 +224,20 @@ public class CompanyController {
 
     private void addCompanyToModel(Model model){
         model.addAttribute("company", companyService.getCompanyByUsername(getAuthenticatedUsername()).get());
+    }
+
+    private void addServicesToModel(Model model) {
+        model.addAttribute("services",serviceService.getServicesByCompanyName(companyService.getCompanyNameByUsername(authUtils.getAuthenticatedUsername()).get().getName()));
+    }
+
+    private void addUsernameToModel(Model model){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        model.addAttribute("username", username);
+    }
+
+    private void addCategoriesToModel(Model model){
+        model.addAttribute("categories",categoryService.getAll());
     }
 
     private String getAuthenticatedUsername(){

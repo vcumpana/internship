@@ -1,6 +1,6 @@
 package com.endava.service_system.controller.rest;
 
-import com.endava.service_system.model.Category;
+import com.endava.service_system.model.entities.Category;
 import com.endava.service_system.service.CategoryService;
 import com.endava.service_system.service.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;

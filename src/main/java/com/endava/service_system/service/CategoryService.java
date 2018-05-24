@@ -1,7 +1,7 @@
 package com.endava.service_system.service;
 
 import com.endava.service_system.dao.ICategoryDao;
-import com.endava.service_system.model.Category;
+import com.endava.service_system.model.entities.Category;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

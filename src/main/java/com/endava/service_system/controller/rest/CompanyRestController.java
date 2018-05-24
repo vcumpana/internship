@@ -1,12 +1,10 @@
 package com.endava.service_system.controller.rest;
 
-import com.endava.service_system.dto.CompanyAdminDTO;
-import com.endava.service_system.dto.CompanyRegistrationDTO;
-import com.endava.service_system.dto.CredentialDTO;
-import com.endava.service_system.dto.UserAdminDTO;
-import com.endava.service_system.enums.UserStatus;
-import com.endava.service_system.model.Company;
-import com.endava.service_system.model.Credential;
+import com.endava.service_system.model.dto.CompanyAdminDTO;
+import com.endava.service_system.model.dto.CredentialDTO;
+import com.endava.service_system.model.enums.UserStatus;
+import com.endava.service_system.model.entities.Company;
+import com.endava.service_system.model.entities.Credential;
 import com.endava.service_system.service.BankService;
 import com.endava.service_system.service.CompanyService;
 import com.endava.service_system.service.CredentialService;
@@ -15,13 +13,10 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

@@ -1,10 +1,9 @@
 package com.endava.service_system.dao;
 
-import com.endava.service_system.dto.ContractForShowingDto;
-import com.endava.service_system.enums.InvoiceStatus;
-import com.endava.service_system.enums.UserType;
-import com.endava.service_system.model.ContractForUserDtoFilter;
-import com.endava.service_system.model.InvoiceFilter;
+import com.endava.service_system.model.dto.ContractForShowingDto;
+import com.endava.service_system.model.enums.UserType;
+import com.endava.service_system.model.filters.ContractForUserDtoFilter;
+import com.endava.service_system.model.filters.order.ContractOrderBy;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -87,6 +86,32 @@ public class ContractsToUserDao {
             } else if (filter.getCompanyId() != null) {
                 builder.append(" AND comp.id=:companyId ");
             }
+        }else{
+            if(filter.getUsersFirstName()!=null&&!filter.getUsersFirstName().isEmpty()){
+                builder.append(" AND lower(u.name) LIKE lower(CONCAT(:firstName,'%')) ");
+            }
+            if(filter.getUsersLastName()!=null&&!filter.getUsersLastName().isEmpty()){
+                builder.append(" AND lower(u.surname) LIKE lower(CONCAT(:lastName,'%')) ");
+            }
+            if(filter.getServiceId()!=null && filter.getServiceId()>0){
+                builder.append(" AND s.id=:serviceId ");
+            }
+        }
+
+        if(filter.getFromStartDate()!=null){
+            builder.append(" AND cont.startDate>=:fromStartDate ");
+        }
+
+        if(filter.getTillStartDate()!=null){
+            builder.append(" AND cont.startDate<=:tillStartDate ");
+        }
+
+        if(filter.getFromEndDate()!=null){
+            builder.append(" AND cont.endDate>=:fromEndDate ");
+        }
+
+        if(filter.getTillEndDate()!=null){
+            builder.append(" AND cont.endDate<=:tillEndDate ");
         }
 
         if (filter.getCategoryName() != null) {
@@ -98,18 +123,31 @@ public class ContractsToUserDao {
     }
 
     private String createQueryForSearch(ContractForUserDtoFilter filter) {
-        StringBuilder builder = new StringBuilder("SELECT cont.id,comp.name,s.title,cat.name,s.price,cont.startDate,cont.endDate,cont.status,concat(u.name,' ',u.surname) ");
+        StringBuilder builder = new StringBuilder("SELECT cont.id,comp.name,s.title,cat.name,s.price,cont.startDate,cont.endDate,cont.status,concat(u.name,' ',u.surname) as fullName");
         builder.append(getSqlWithoutOrder(filter));
 
-        if (filter.getDirection() != null) {
-            builder.append(" ORDER BY cont.endDate ");
-            if (filter.getDirection() == Sort.Direction.ASC) {
+        if (filter.getOrderBy() != null) {
+            builder.append(" ORDER BY "+getOrderBy(filter.getOrderBy())+" ");
+            if (filter.getOrder() == Sort.Direction.ASC) {
                 builder.append(" ASC ");
             } else {
                 builder.append(" DESC ");
             }
         }
         return builder.toString();
+    }
+
+    private String getOrderBy(ContractOrderBy orderBy){
+        switch (orderBy){
+            case SERVICE_TITLE:return "s.title";
+            case COMPANY_NAME:return "comp.name";
+            case START_DATE:return "cont.startDate";
+            case END_DATE:return "cont.endDate";
+            case PRICE:return "s.price";
+            case NR:return "cont.id";
+            case CLIENT_FULL_NAME:return"fullName";
+        }
+        throw new RuntimeException("wrong usage");
     }
 
     private void setParamsForFilter(Query query, ContractForUserDtoFilter filter) {
@@ -134,6 +172,32 @@ public class ContractsToUserDao {
             } else if (filter.getCompanyId() != null) {
                 query.setParameter("companyId", filter.getCompanyId());
             }
+        }else{
+            if(filter.getUsersFirstName()!=null&&!filter.getUsersFirstName().isEmpty()){
+                query.setParameter("firstName", filter.getUsersFirstName());
+            }
+            if(filter.getUsersLastName()!=null&&!filter.getUsersLastName().isEmpty()){
+                query.setParameter("lastName", filter.getUsersLastName());
+            }
+            if(filter.getServiceId()!=null && filter.getServiceId()>0){
+                query.setParameter("serviceId", filter.getServiceId());
+            }
+        }
+
+        if(filter.getFromStartDate()!=null){
+            query.setParameter("fromStartDate", filter.getFromStartDate());
+        }
+
+        if(filter.getTillStartDate()!=null){
+            query.setParameter("tillStartDate", filter.getTillStartDate());
+        }
+
+        if(filter.getFromEndDate()!=null){
+            query.setParameter("fromEndDate", filter.getFromEndDate());
+        }
+
+        if(filter.getTillEndDate()!=null){
+            query.setParameter("tillEndDate", filter.getTillEndDate());
         }
 
         if (filter.getContractStatus() != null)

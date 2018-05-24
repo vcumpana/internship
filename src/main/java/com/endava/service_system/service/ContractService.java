@@ -3,20 +3,17 @@ package com.endava.service_system.service;
 import com.endava.service_system.dao.CompanyDao;
 import com.endava.service_system.dao.ContractDao;
 import com.endava.service_system.dao.ContractsToUserDao;
-import com.endava.service_system.dto.ContractDtoFromUser;
-import com.endava.service_system.dto.ContractForShowingDto;
-import com.endava.service_system.model.Contract;
+import com.endava.service_system.model.dto.ContractDtoFromUser;
+import com.endava.service_system.model.dto.ContractForShowingDto;
+import com.endava.service_system.model.entities.Contract;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.endava.service_system.model.ContractForUserDtoFilter;
+import com.endava.service_system.model.filters.ContractForUserDtoFilter;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 import java.util.List;
 
@@ -94,5 +91,9 @@ public class ContractService {
 
     public void update(Contract contract) {
         contractDao.save(contract);
+    }
+
+    public int[] getAllContractsIdsByCompanyUsername(String username) {
+        return contractDao.getAllIds(username);
     }
 }

@@ -15,6 +15,7 @@
             integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
             crossorigin="anonymous"></script>
     <script th:src="@{/js/moment.js}" type="text/javascript"></script>
+    <script th:src="@{/js/cookie.js}" type="text/javascript"></script>
     <style>
         .error-message {
             /*display: none;*/
@@ -26,6 +27,53 @@
     </style>
 </head>
 <body>
+<nav class="navbar navbar-expand-md navbar-dark bg-primary">
+    <span class="navbar-brand">Digital Marketplace</span>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/company/profile">Page 1</a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link" href="/company/serviceList">My services</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/company/mycontracts">My contracts</a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link" href="/company/myinvoices">My invoices</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/company/statements">Statements</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav my-2 my-lg-0">
+            <li class="nav-item">
+                <span style="display:block;padding:.5rem 1rem; color: white">Hi, <span id="companyName"
+                                                                                       th:text="${username}"></span>! <span id="balance"></span></span>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/company/cabinet">Personal cabinet <i class="fa fa-user"
+                                                                                style="font-size:16px; color:white"></i></a>
+            </li>
+            <li class="nav-item fa-stack">
+                <a class="nav-link" href="/company/notifications">
+                    <i class="fa fa-envelope fa-stack-2x" style="font-size: 20px; color:white">
+                        <i class="fa fa-circle fa-stack-1x" id="unreadMessages" style="color:red; font-size: 12px; top:-2px; left: 8px; display: none"></i>
+                    </i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout <i class="fa fa-sign-out"
+                                                             style="font-size:16px; color:white"></i></a>
+            </li>
+        </ul>
+    </div>
+</nav>
 <div class="container py-5">
     <div class="row">
         <div class="col-md-12">
@@ -34,25 +82,40 @@
                     <!-- form card login -->
                     <div class="card rounded-0">
                         <div class="card-header">
-                            <h3 class="mb-0">Create an invoice</h3>
+                            <h3 class="mb-0">New invoice</h3>
                         </div>
                         <div class="card-body">
-                            <form class="form" role="form" th:object="${invoice}" autocomplete="off"
-                                  id="registrationForm" action="/company/createInvoice" novalidate=""
+                            <form class="needs-validation" role="form" th:object="${invoice}" autocomplete="off"
+                                  id="registrationForm" action="/company/createInvoice" novalidate="novalidate"
                                   method="POST">
                                 <!--<div class="alert alert-danger" th:unless="${param.error == null}">Wrong username or-->
                                 <!--password-->
                                 <!--</div>-->
                                 <div class="form-group">
-                                    <label for="contractId">Contract Id</label>
+                                    <label for="contractId">Contract No.</label>
                                     <input type="text" class="form-control form-control-lg rounded-0" th:field = "*{contractId}"
-                                           id="contractId" required="" th:readonly="readonly">
+                                           id="contractId" required th:readonly="readonly">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="clientName">Client</label>
+                                    <input type="text" class="form-control form-control-lg rounded-0" th:field = "*{clientName}"
+                                           id="clientName" required th:readonly="readonly">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="service">Subscription plan</label>
+                                    <input type="text" class="form-control form-control-lg rounded-0" th:field = "*{service}"
+                                           id="service" required th:readonly="readonly">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="fromDate">From date</label>
                                     <input type="date" class="form-control form-control-lg rounded-0" th:field = "*{fromDate}"
                                            id="fromDate" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a date.
+                                    </div>
                                     <p class="error-message"
                                        th:each="error : ${#fields.errors('fromDate')}"
                                        th:text="${error}">Validation error</p>
@@ -62,6 +125,9 @@
                                     <label for="tillDate">To date</label>
                                     <input type="date" class="form-control form-control-lg rounded-0" th:field = "*{tillDate}"
                                            id="tillDate" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a date.
+                                    </div>
                                     <p class="error-message"
                                        th:each="error : ${#fields.errors('tillDate')}"
                                        th:text="${error}">Validation error</p>
@@ -71,6 +137,9 @@
                                     <label for="dueDate">Due date</label>
                                     <input type="date" class="form-control form-control-lg rounded-0" th:field = "*{dueDate}"
                                            id="dueDate" required>
+                                    <div class="invalid-feedback">
+                                        Please provide a date.
+                                    </div>
                                     <p class="error-message"
                                        th:each="error : ${#fields.errors('dueDate')}"
                                        th:text="${error}">Validation error</p>
@@ -80,7 +149,9 @@
                                     <label for="price">Price</label>
                                     <input type="text" class="form-control form-control-lg rounded-0" th:field = "*{price}"
                                            id="price" required>
-                                    <div id="feedbackPrice"></div>
+                                    <div class="invalid-feedback">
+                                        Please provide a price.
+                                    </div>
                                     <p class="error-message"
                                        th:each="error : ${#fields.errors('price')}"
                                        th:text="${error}">Validation error</p>
@@ -88,14 +159,14 @@
                                 <p class="error-message"
                                    th:each="error : ${#fields.errors('global')}"
                                    th:text="${error}">Validation error</p>
-                                <button type="submit" class="btn btn-success btn-lg btn-block" id="btnRegister">
+                                <button type="button"  onclick="createInvoiceConfirmation()" class="btn btn-success" id="btnRegister">
                                     Create
                                 </button>
-                                <button type="button" class="btn btn-success btn-lg btn-block" id="btnCancel">
+                                <a onclick="cancelCreateInvoice()"  role="button" class="btn btn-danger" id="btnCancel">
                                     Cancel
-                                </button>
-                                <span> <a href="/" th:href="@{/company/serviceList}">Back to service list</a></span>
+                                </a>
                             </form>
+                            <a href="/company/myinvoices" role="button" id="redirect"></a>
                         </div>
                         <!--/card-block-->
                     </div>
@@ -111,8 +182,139 @@
     </div>
     <!--/row-->
 </div>
+<!-- Modal first confirm -->
+<div class="modal fade" id="modalFirstConfirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="clickModalYes()" class="btn btn-primary">Yes</button>
+                <button type="button" onclick="clickModalNo()" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal second confirm -->
+<div class="modal fade" id="modalSecondConfirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="secondexampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="clickSecondModalYes()" class="btn btn-primary">Yes</button>
+                <button type="button" onclick="clickSecondModalNo()" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal cancel confirm -->
+<div class="modal fade" id="modalCancelConfirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelexampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="clickCancelModalYes()" class="btn btn-primary">Yes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!--/container-->
-<script type="text/javascript" th:src="@{/js/companyRegistrationScript.js}"></script>
+<!--<script type="text/javascript" th:src="@{/js/companyCreateInvoice.js}"></script>-->
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+
+$(document).ready(function () {
+    if (Cookies.get("conflict") === "true"){
+        $('#modalSecondConfirm .modal-body').append("You already have an invoice in this period,do you want to create a new one?");
+
+        $('#modalSecondConfirm .modal-title').text("Confirm");
+        $("#modalSecondConfirm").modal("show");
+        // if(confirm("You already have an invoice in this period,do you want to create a new one?")){
+        //     Cookies.remove('conflict', {path: '/company'})
+        //     Cookies.set("conflict","false");
+        //     $("#btnRegister").click();
+
+    }
+});
+    function cancelCreateInvoice() {
+        $('#modalCancelConfirm .modal-body').text("Your entry data will be lost, are you sure you want to continue?");
+        $('#modalCancelConfirm .modal-title').text("Confirm");
+        $("#modalCancelConfirm").modal("show");
+    }
+
+    function createInvoiceConfirmation(){
+        $('#modalFirstConfirm .modal-body').text("Are you sure you want to create a new invoice?");
+        $('#modalFirstConfirm .modal-title').text("Confirm");
+        $("#modalFirstConfirm").modal("show");
+    }
+
+    function clickModalYes(){
+
+        $("#registrationForm").submit();
+    }
+
+    function clickModalNo(){
+        $("#modalConfirm").hide();
+    }
+
+    function clickSecondModalYes(){
+        Cookies.remove('conflict', {path: '/company'});
+        Cookies.set("conflict","false");
+        $("#registrationForm").submit();
+    }
+
+    function clickSecondModalNo(){
+        $("#modalSecondConfirm").hide();
+    }
+
+    function clickCancelModalYes() {
+        window.location = "/company/mycontracts";
+    }
+</script>
 
 </body>
 </html>

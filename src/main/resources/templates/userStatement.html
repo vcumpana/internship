@@ -13,7 +13,10 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-primary">
-    <span class="navbar-brand">Name of our service</span>
+    <div class="inline">
+        <img src="/images/logo.png" style="height: 35px; width: 35px;" alt="logo">
+        <span class="navbar-brand">Digital Marketplace</span>
+    </div>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
             aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -57,31 +60,46 @@
         </ul>
     </div>
 </nav>
-<div class="container" style="margin-top: 15px;">
-    <div class="row">
-        <form class="form-inline">
-            <label for="startDate" class="mb-2 mr-sm-2">From:</label>
-            <input type="date" class="form-control mb-2 mr-sm-2" id="startDate">
-            <label for="endDate" class="mb-2 mr-sm-2">To:</label>
-            <input type="date" class="form-control mb-2 mr-sm-2" id="endDate">
-            <button class="btn btn-primary mb-2 mr-sm-2" onclick="downloadStatements(event)">Find</button>
-        </form>
+<div style="width: 99%; margin-left: auto; margin-right: auto">
+    <h1>Statements</h1>
+    <div class="container" style="margin-top: 15px;">
+        <div class="row">
+            <form class="form-inline">
+                <label for="startDate" class="mb-2 mr-sm-2">From:</label>
+                <input type="date" class="form-control mb-2 mr-sm-2" id="startDate">
+                <label for="endDate" class="mb-2 mr-sm-2">To:</label>
+                <input type="date" class="form-control mb-2 mr-sm-2" id="endDate">
+                <button class="btn btn-primary mb-2 mr-sm-2" onclick="downloadStatements(event)">Find</button>
+            </form>
+        </div>
     </div>
-</div>
-<div class="container">
-    <div class="row">
-        <div class="table-responsive">
-            <table id="tableWithStatements" class="table table-striped table-hover w-100">
-                <thead class="thead-dark">
-                <tr>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Comment</th>
-                    <th>State of count</th>
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+    <h4 id="balanceBefore"></h4>
+    <div class="table-responsive">
+        <table id="tableWithStatements" class="table table-striped table-hover w-95">
+            <thead class="thead-dark">
+            <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Comment</th>
+                <th>State of count</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="pleaseWaitDialog" class="modal" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1>Loading...</h1>
+                </div>
+                <div class="modal-body">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                             aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

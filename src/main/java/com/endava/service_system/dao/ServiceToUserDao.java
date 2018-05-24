@@ -1,7 +1,8 @@
 package com.endava.service_system.dao;
 
-import com.endava.service_system.dto.ServiceToUserDto;
-import com.endava.service_system.model.ServiceDtoFilter;
+import com.endava.service_system.model.dto.ServiceToUserDto;
+import com.endava.service_system.model.filters.ServiceDtoFilter;
+import com.endava.service_system.model.filters.order.ServiceOrderBy;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -86,17 +87,28 @@ public class ServiceToUserDao {
     }
     
     private String createQueryForSearch(ServiceDtoFilter filter) {
-        StringBuilder builder = new StringBuilder("SELECT c.name as name,s.id,s.title,cat.name,s.description,s.price ");
+        StringBuilder builder = new StringBuilder("SELECT c.name as name, s.id,s.title,cat.name,s.description,s.price, c.companyUrl ,c.imageName ");
         builder.append(getCommonSql(filter));
-        if (filter.getDirection() != null) {
-            builder.append(" ORDER BY s.price ");
-            if (filter.getDirection() == Sort.Direction.ASC) {
+        if (filter.getOrderBy() != null) {
+            if(filter.getOrder()==null){
+                filter.setOrder(Sort.Direction.ASC);
+            }
+            builder.append(" ORDER BY "+getOrderBy(filter.getOrderBy())+" ");
+            if (filter.getOrder() == Sort.Direction.ASC) {
                 builder.append(" ASC ");
             } else {
                 builder.append(" DESC ");
             }
         }
         return builder.toString();
+    }
+
+    private String getOrderBy(ServiceOrderBy serviceOrderBy){
+        if(serviceOrderBy==ServiceOrderBy.CATEGORY){
+            return "cat.name";
+        }else{
+            return "s.price";
+        }
     }
 
     private void appendIf(StringBuilder body, String appendPart, boolean condition) {

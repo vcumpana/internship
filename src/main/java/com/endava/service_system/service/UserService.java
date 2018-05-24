@@ -1,22 +1,19 @@
 package com.endava.service_system.service;
 
 import com.endava.service_system.dao.UserDao;
-import com.endava.service_system.dto.CredentialDTO;
-import com.endava.service_system.dto.UserDto;
-import com.endava.service_system.dto.UserDtoToShow;
-import com.endava.service_system.enums.UserStatus;
-import com.endava.service_system.model.BankAccount;
-import com.endava.service_system.model.Credential;
-import com.endava.service_system.model.Role;
-import com.endava.service_system.model.User;
+import com.endava.service_system.model.dto.UserDtoToShow;
+import com.endava.service_system.model.enums.UserStatus;
+import com.endava.service_system.model.entities.Credential;
+import com.endava.service_system.model.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,13 +23,17 @@ public class UserService {
     private UserDao userDao;
     private CredentialService credentialService;
     private BankService bankService;
-    public void saveUser(User user){
+    public void saveUser(User user) throws InvalidKeySpecException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, IOException {
         System.out.println("user save in saveUser UserService :"+user);
         //credentialService.save(user.getCredential());
         bankService.addBankAccount(user.getCredential());
         credentialService.encodePassword(user.getCredential());
         User saveUser=userDao.save(user);
         System.out.println("user saved in saveUser UserService :"+saveUser);
+    }
+
+    public User updateUserWithoutCredentials(User user){
+        return userDao.save(user);
     }
 
     public Optional<User> getByUsername(String username){

@@ -1,8 +1,8 @@
 package com.endava.service_system.controller;
 
-import com.endava.service_system.dto.UserDto;
-import com.endava.service_system.dto.UserDtoToShow;
-import com.endava.service_system.model.User;
+import com.endava.service_system.model.dto.UserDto;
+import com.endava.service_system.model.dto.UserDtoToShow;
+import com.endava.service_system.model.entities.User;
 import com.endava.service_system.service.CategoryService;
 import com.endava.service_system.service.CompanyService;
 import com.endava.service_system.service.UserService;
@@ -16,7 +16,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.spec.InvalidKeySpecException;
 
 @Controller
 public class UserController {
@@ -47,7 +52,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/user/registration")
-    public String register(Model model, @ModelAttribute("user") @Valid UserDto userDto, BindingResult bindingResult){
+    public String register(Model model, @ModelAttribute("user") @Valid UserDto userDto, BindingResult bindingResult) throws InvalidKeySpecException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, IOException {
         if(bindingResult.hasErrors()){
             model.addAttribute("user", userDto);
             return "userRegistration";

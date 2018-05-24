@@ -1,14 +1,10 @@
 package com.endava.service_system.service;
 
-import com.endava.service_system.enums.UserStatus;
+import com.endava.service_system.model.enums.UserStatus;
 import com.endava.service_system.exception.DeniedException;
 import com.endava.service_system.exception.InAprovalException;
 import com.endava.service_system.exception.WrongUsernameException;
-import com.endava.service_system.model.Credential;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.endava.service_system.model.entities.Credential;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

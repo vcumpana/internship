@@ -1,7 +1,7 @@
 package com.endava.service_system.controller.rest;
 
-import com.endava.service_system.dto.MessageDto;
-import com.endava.service_system.model.Message;
+import com.endava.service_system.model.dto.MessageDto;
+import com.endava.service_system.model.entities.Message;
 import com.endava.service_system.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor

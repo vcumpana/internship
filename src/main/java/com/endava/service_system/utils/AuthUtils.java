@@ -1,10 +1,9 @@
 package com.endava.service_system.utils;
 
-import static com.endava.service_system.model.Role.ROLE_ADMIN;
-import static com.endava.service_system.model.Role.ROLE_COMPANY;
-import static com.endava.service_system.model.Role.ROLE_USER;
+import static com.endava.service_system.model.enums.Role.ROLE_ADMIN;
+import static com.endava.service_system.model.enums.Role.ROLE_COMPANY;
+import static com.endava.service_system.model.enums.Role.ROLE_USER;
 
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

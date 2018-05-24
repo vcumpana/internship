@@ -2,16 +2,15 @@ package com.endava.service_system.service;
 
 import com.endava.service_system.dao.ServiceDao;
 import com.endava.service_system.dao.ServiceToUserDao;
-import com.endava.service_system.dto.ServiceToUserDto;
-import com.endava.service_system.model.Service;
+import com.endava.service_system.model.dto.ServiceToUserDto;
+import com.endava.service_system.model.entities.Service;
 import com.endava.service_system.utils.PDFMaking;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.endava.service_system.model.ServiceDtoFilter;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.endava.service_system.model.filters.ServiceDtoFilter;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +76,7 @@ public class ServiceService {
         return serviceDao.save(service);
     }
 
-    public String getPdfOfServices(){
+    public ByteArrayOutputStream getPdfOfServices(){
         return PDFMaking.makePDFOfServices(getAllServices());
     }
 
@@ -103,5 +102,9 @@ public class ServiceService {
 
     public Long getPagesSize(ServiceDtoFilter filter) {
         return serviceToUserDao.getPagesSize(filter);
+    }
+
+    public Optional<Service> getServicesByTitle(String title) {
+        return serviceDao.getByTitle(title);
     }
 }

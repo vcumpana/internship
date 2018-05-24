@@ -1,7 +1,8 @@
 var listOfInvoices = [];
-var maxPage;
+var maxPageSize;
 var currentPage = 1;
 var size = 10;
+var timer = null;
 
 $(document).ready(function () {
     getDataForTable();
@@ -9,7 +10,16 @@ $(document).ready(function () {
     downloadBalance();
 });
 
-$("#activateFilter").click(function () {
+$(document).ajaxStart(function () {
+    $("#pleaseWaitDialog").modal('show');
+});
+
+$(document).ajaxComplete(function () {
+    $("#pleaseWaitDialog").modal('hide');
+});
+
+$("#activateFilter").click(function (event) {
+    event.preventDefault();
     currentPage = 1;
     getDataForTable();
 });
@@ -30,15 +40,15 @@ $("#previousPage").click(function () {
 
 function getDataForTable() {
     var url = makeURL(currentPage);
+    console.log(url);
     $.ajax({
         type: "GET",
         url: url,
         success: function (result) {
-            maxPage=result.pages
+            maxPageSize = result.pages
             listOfInvoices = result.invoices;
             fillTableWithInvoices();
-            verifyIfPreviousExists();
-            verifyIfNextExists();
+            setPages();
         }
     });
 }
@@ -48,7 +58,8 @@ function makeURL(page) {
     var data = {
         "companyId": $("#companyName").val(),
         "categoryId": $("#categoryName").val(),
-        "orderByDueDate": $("#orderByDueDate").val()
+        "orderByDueDate": $("#orderByDueDate").val(),
+        "status": $("#invoiceStatus").val()
     };
     for (key in data) {
         if (data[key] !== "") {
@@ -64,20 +75,34 @@ function fillTableWithInvoices() {
     for (var i = 0; i < listOfInvoices.length; i++) {
         console.log(listOfInvoices[i]);
         var row = "<tr>";
+        row += "<td>";
+        if(listOfInvoices[i].invoiceStatus === "SENT") {
+            row += "<input type='checkbox' id='" + listOfInvoices[i].invoiceId + "'/>"
+        }
+        row+="</td>";
         row += "<td>" + listOfInvoices[i].companyTitle + "</td>";
         row += "<td>" + listOfInvoices[i].serviceTitle + "</td>";
         row += "<td>" + listOfInvoices[i].price + "</td>";
         row += "<td>" + listOfInvoices[i].fromDate + "</td>";
         row += "<td>" + listOfInvoices[i].tillDate + "</td>";
         row += "<td>" + listOfInvoices[i].paymentDate + "</td>";
-        row += "<td id='status"+listOfInvoices[i].invoiceId+"'>" + listOfInvoices[i].invoiceStatus + "</td>";
-        row += '<td><button class="btn btn-primary" onclick="payInvoice(this)" id="'+listOfInvoices[i].invoiceId+'">Pay</button></td>';
-        row += "<td></td></tr>";
+        if(listOfInvoices[i].invoiceStatus === "SENT") {
+            row += "<td class='text-warning' id='status" + listOfInvoices[i].invoiceId + "'><strong>To pay</strong></td>";
+            row += '<td><button class="btn btn-primary" onclick="payInvoice(this)" id="' + listOfInvoices[i].invoiceId + '">Pay</button></td>';
+        } else if(listOfInvoices[i].invoiceStatus === "PAID"){
+            row += "<td class='text-success' id='status" + listOfInvoices[i].invoiceId + "'><strong>Paid</strong></td><td></td>";
+        } else {
+            row += "<td class='text-danger' id='status" + listOfInvoices[i].invoiceId + "'><strong>Overdue</strong></td><td></td>";
+        }
+        row += "</tr>";
         $("#tableWithInvoices tbody").append(row);
     }
+    verifyIfPreviousExists();
+    verifyIfNextExists();
 }
 
-function resetInvoiceFilter() {
+function resetInvoiceFilter(event) {
+    event.preventDefault();
     $("#orderByDueDate").val("asc");
     $("#companyName").val("");
     $("#categoryName").val("");
@@ -96,14 +121,13 @@ function verifyIfPreviousExists() {
 }
 
 function verifyIfNextExists() {
-    if (currentPage===maxPage||maxPage===0) {
+    if (currentPage === maxPageSize || maxPageSize === 0) {
         $("#nextPage").addClass("disabled");
         $("#nextPage").attr("disabled", true);
     } else {
         $("#nextPage").removeClass("disabled");
         $("#nextPage").attr("disabled", false);
     }
-
 }
 
 function isUnreadMessages() {
@@ -118,7 +142,7 @@ function isUnreadMessages() {
     });
 }
 
-function downloadBalance(){
+function downloadBalance() {
     $.ajax({
         type: "POST",
         url: "/bank/balance",
@@ -128,30 +152,29 @@ function downloadBalance(){
     });
 }
 
-function payInvoice(element){
-    var id=element.id;
-    console.log(JSON.stringify({id:parseFloat(id)}));
+function payInvoice(element) {
+    var id = element.id;
     $.ajax({
-        type:"POST",
+        type: "POST",
         contentType: "application/json; charset=utf-8",
-        url:"/invoice/payInvoice",
-        data:JSON.stringify({id : parseFloat(id)}),
-        success:function (data) {
+        url: "/invoice/payInvoice",
+        data: JSON.stringify({id: id}),
+        success: function (data) {
             $("#balance").text(data.balance);
             invoicePaidUi(id);
         },
-        error:function(jqXhr, textStatus, errorThrown){
+        error: function (jqXhr, textStatus, errorThrown) {
             console.log(jqXhr)
-            var status=jqXhr.status;
+            var status = jqXhr.status;
             console.log(textStatus)
             console.log(errorThrown)
             console.log(jqXhr.responseText)
-            var response=JSON.parse(jqXhr.responseText)
-            if(jqXhr.responseText!=null && response!=null&&response.message!=null){
+            var response = JSON.parse(jqXhr.responseText)
+            if (jqXhr.responseText != null && response != null && response.message != null) {
                 displayMessage(response.message)
-            }else if (status == STATUS.BAD_REQUEST) {
+            } else if (status == STATUS.BAD_REQUEST) {
                 displayMessage("Bad request please contact admins ");
-             } else {
+            } else {
                 displayMessage("Error , please try it latter");
             }
         }
@@ -160,7 +183,34 @@ function payInvoice(element){
 }
 
 function invoicePaidUi(id) {
-    displayMessage("Invoice Nr: "+id+ " Paid");
-    $("#"+id).hide();
-    $("#status"+id).text("PAID");
+    displayMessage("Invoice Nr: " + id + " Paid");
+    $("#" + id).parent().parent().hide();
 }
+
+function setPages() {
+    $("#currentPageButton").html("Page <input type='text' id='currentPage' style='width: 25%; text-align: center' min='1' max='" + maxPageSize + "'> from " + maxPageSize);
+    $("#currentPage").val(currentPage);
+}
+
+$(document).on("input change paste", "#currentPage", function () {
+    var page = $(this).val();
+    $(this).val(page.replace(/[^\d]/, ''));
+    if (/[^\d]/.test(page)) {
+        return;
+    }
+    clearTimeout(timer);
+    if (page < 1) {
+        page = 1;
+    }
+    if (page > maxPageSize) {
+        page = maxPageSize;
+    }
+    timer = setTimeout(function () {
+        currentPage = page;
+        getDataForTable();
+    }, 1000);
+});
+
+$("#currentPageButton").click(function(){
+    $("#currentPage").focus();
+});

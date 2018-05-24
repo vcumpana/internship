@@ -2,13 +2,24 @@ var listOfContracts = [];
 var currentPage = 1;
 var size = 10;
 var maxPageSize;
+var timer = null;
+
 $(document).ready(function () {
     getDataForTable();
     isUnreadMessages();
     downloadBalance();
 });
 
-$("#activateFilter").click(function () {
+$(document).ajaxStart(function () {
+    $("#pleaseWaitDialog").modal('show');
+});
+
+$(document).ajaxComplete(function () {
+    $("#pleaseWaitDialog").modal('hide');
+});
+
+$("#activateFilter").click(function (event) {
+    event.preventDefault();
     currentPage = 1;
     getDataForTable();
 });
@@ -16,15 +27,11 @@ $("#activateFilter").click(function () {
 $("#nextPage").click(function () {
     currentPage++;
     getDataForTable();
-    verifyIfPreviousExists();
-    verifyIfNextExists();
 });
 
 $("#previousPage").click(function () {
     currentPage--;
     getDataForTable();
-    verifyIfPreviousExists();
-    verifyIfNextExists();
 });
 
 function getDataForTable() {
@@ -34,10 +41,9 @@ function getDataForTable() {
         url: url,
         success: function (result) {
             listOfContracts = result.contracts;
-            maxPageSize=result.pages;
+            maxPageSize = result.pages;
+            setPages();
             fillTableWithContracts();
-            verifyIfPreviousExists();
-            verifyIfNextExists();
         }
     });
 }
@@ -47,7 +53,9 @@ function makeURL(page) {
     var data = {
         "status": $("#status").val(),
         "companyId": $("#companyName").val(),
-        "categoryId": $("#categoryName").val()
+        "categoryId": $("#categoryName").val(),
+        "fromStartDate": $("#fromStartDate").val(),
+        "tillStartDate": $("#tillStartDate").val()
     };
     for (key in data) {
         if (data[key] !== "") {
@@ -76,16 +84,22 @@ function fillTableWithContracts() {
         } else {
             row += "<td class='text-danger'><strong>Inactive</strong></td>";
         }
-        row += "<td><i class=\"fa fa-paw filter\" onclick='showServiceInfo(" + listOfContracts[i].id + ")'></i></td>";
         row += "</tr>";
         $("#tableWithContracts tbody").append(row);
     }
+    verifyIfPreviousExists();
+    verifyIfNextExists();
 }
 
-function resetContractFilter() {
+function resetContractFilter(event) {
+    if (event !== null) {
+        event.preventDefault();
+    }
     $("#status").val("");
     $("#companyName").val("");
     $("#categoryName").val("");
+    $("#fromStartDate").val("");
+    $("#tillStartDate").val("");
     currentPage = 1;
     getDataForTable();
 }
@@ -101,7 +115,7 @@ function verifyIfPreviousExists() {
 }
 
 function verifyIfNextExists() {
-    if (currentPage === maxPageSize||maxPageSize===0) {
+    if (currentPage === maxPageSize || maxPageSize === 0) {
         $("#nextPage").addClass("disabled");
         $("#nextPage").attr("disabled", true);
     } else {
@@ -122,7 +136,7 @@ function isUnreadMessages() {
     });
 }
 
-function downloadBalance(){
+function downloadBalance() {
     $.ajax({
         type: "POST",
         url: "/bank/balance",
@@ -131,3 +145,31 @@ function downloadBalance(){
         }
     });
 }
+
+function setPages() {
+    $("#currentPageButton").html("Page <input type='text' id='currentPage' style='width: 25%; text-align: right' min='1' max='" + maxPageSize + "'> from " + maxPageSize);
+    $("#currentPage").val(currentPage);
+}
+
+$(document).on("input change paste", "#currentPage", function () {
+    var page = $(this).val();
+    $(this).val(page.replace(/[^\d]/, ''));
+    if (/[^\d]/.test(page)) {
+        return;
+    }
+    clearTimeout(timer);
+    if (page < 1) {
+        page = 1;
+    }
+    if (page > maxPageSize) {
+        page = maxPageSize;
+    }
+    timer = setTimeout(function () {
+        currentPage = page;
+        getDataForTable();
+    }, 1000);
+});
+
+$("#currentPageButton").click(function () {
+    $("#currentPage").focus();
+});

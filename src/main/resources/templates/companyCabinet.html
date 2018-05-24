@@ -14,7 +14,7 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-primary">
-    <span class="navbar-brand">Name of our service</span>
+    <span class="navbar-brand">Digital Marketplace</span>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -26,11 +26,14 @@
             <li class="nav-item ">
                 <a class="nav-link" href="/company/serviceList">My services</a>
             </li>
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="/company/mycontracts">My contracts</a>
             </li>
             <li class="nav-item ">
                 <a class="nav-link" href="/company/myinvoices">My invoices</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/company/statements">Statements</a>
             </li>
         </ul>
         <ul class="navbar-nav my-2 my-lg-0">
@@ -96,6 +99,11 @@
                 </span> <br />
             </div>
 
+            <form id="uploadForm">
+                <input type="file" name="file" accept="image/*" id="image">
+            </form>
+            <a id="uploadbutton" type="button" class="btn btn-secondary">Save</a>
+
             <div style="margin-top: 5px; margin-bottom: 5px">
                 <span class="h4">Email: </span><span class="h4" th:text="${user.email}" id="email"></span><br />
             </div>
@@ -150,5 +158,38 @@
     </div>
 </div>
 <script type="text/javascript" th:src="@{/js/userCabinetScript.js}"></script>
+<script>
+    $("#uploadbutton").on("click", function() {
+       //  //var formData =$('#uploadForm').files[0];
+       //  var values = $('#uploadForm input').files[0];
+       //  console.log(values);
+        var file_data = $('#image').prop('files')[0];
+        console.log(file_data);
+        var data={file:file_data};
+        var form_data = new FormData();
+        form_data.append('file',file_data);
+        //form_data.append('file', file_data);
+        console.log(form_data);
+
+        $.ajax({
+            type: "POST",
+            url: "/company/uploadimages",
+            processData: false,
+            contentType : false,
+            cache: false,
+            data: form_data,
+            success: function(response) {
+                alert("success");
+            },
+            error: function(a,b,c) {
+                console.log(a)
+                console.log(b)
+                console.log(c)
+                alert("unable to create the record");
+            }
+
+        });
+    });
+</script>
 </body>
 </html>

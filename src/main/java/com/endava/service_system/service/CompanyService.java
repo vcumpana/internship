@@ -1,22 +1,18 @@
 package com.endava.service_system.service;
 
 import com.endava.service_system.dao.CompanyDao;
-import com.endava.service_system.dao.InvoiceEntityManagerDao;
-import com.endava.service_system.dto.ContractDtoFromUser;
-import com.endava.service_system.dto.CredentialDTO;
-import com.endava.service_system.model.Company;
-import com.endava.service_system.model.Invoice;
+import com.endava.service_system.model.entities.Company;
 import com.endava.service_system.utils.AuthUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
-import com.endava.service_system.enums.UserStatus;
-import com.endava.service_system.model.Credential;
+import com.endava.service_system.model.enums.UserStatus;
+import com.endava.service_system.model.entities.Credential;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import com.endava.service_system.model.Service;
+import com.endava.service_system.model.entities.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +30,10 @@ public class CompanyService {
         credentialService.encodePassword(company.getCredential());
         Credential credential = credentialService.save(company.getCredential());
         company.setCredential(credential);
+        return companyDao.save(company);
+    }
+
+    public Company updateWithoutCredentials(Company company){
         return companyDao.save(company);
     }
 

@@ -1,9 +1,9 @@
 package com.endava.service_system.dao;
 
-import com.endava.service_system.model.Company;
-import com.endava.service_system.model.Contract;
-import com.endava.service_system.model.Service;
-import com.endava.service_system.model.User;
+import com.endava.service_system.model.entities.Company;
+import com.endava.service_system.model.entities.Contract;
+import com.endava.service_system.model.entities.Service;
+import com.endava.service_system.model.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
@@ -26,4 +25,9 @@ public interface ContractDao extends JpaRepository<Contract,Long> {
 
     @Query("SELECT COUNT(c) FROM Contract AS c WHERE c.company = :company AND c.user = :user AND c.service = :service AND c.endDate > :startDate AND (c.status = 'ACTIVE' OR c.status = 'SIGNEDBYCLIENT')")
     int checkIfSuchContractExists(@Param("company") Company company, @Param("user") User user, @Param("service") Service service, @Param("startDate")LocalDate startDate);
+
+    @Query("select c.id from Contract c " +
+            "join c.company co " +
+            "join co.credential cr where cr.username=:username and c.status='ACTIVE'")
+    int[] getAllIds(@Param("username") String username);
 }

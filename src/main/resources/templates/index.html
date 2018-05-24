@@ -3,8 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <title>Index</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+          integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css"
+          integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+    <link th:href="@{/css/main.css}" rel="stylesheet">
 </head>
-<body>
-    <p >New Project Tests</p>
+<body id="page-top">
+<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top"><img src="images/logo.png"
+                                                                        style="width:75px; height:75px" alt="logo"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger active" href="#home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="#mission">Our Mission</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="#digitalservices">Our offers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="contact">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="login">Sign in</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<section class="mywrap overflow-hidden relative" id="home">
+    <div class="container">
+        <div class="row centered">
+            <div class="col-lg-12 text-intro">Digital Marketplace</div>
+            <div class="col-lg-12 text-lead">We allow you to share with services and subscribe to them.</div>
+            <div class="col-lg-12">
+                <a class="btn btn-lg btn-primary mybtn js-scroll-trigger" role="button" href="contact">Contact us</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="mission">
+    <div class="container">
+        <div class="row centered">
+            <div class="col-lg-12 intro"><p>Our mission</p></div>
+            <div class="col-lg-12 lead">
+                <p>
+                    Digital Marketplace is a platform where service provider can register and share with services.<br/>
+                    Customers can choose some of them and sign contract.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="container cards">
+        <div class="card-deck mb-3 text-center">
+            <div class="card mb-12">
+                <div class="card-body">
+                    <div class="card-title text-center">
+                        <p class="my-0">Let's bring all digital services here</p>
+                        <img src="images/mission.jpg" class="mission-img" style="width:100%; hight:100%" alt="mission">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="cwsolutions" class="solutions-wrap">
+    <div class="container text-center">
+        <div class="row solutions-row">
+            <div class="col-lg-12 intro"><p>What we offer</p></div>
+            <div class="col-lg-12 lead"><p>we offer ...</p>
+                <hr>
+            </div>
+            <div class="borderbottom"></div>
+        </div>
+    </div>
+
+    <div class="container sol-blocks-container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="media pt-3 blocks-sol">
+                    <img src="images/solution_one.png" alt="" class="mr-2 img-sol">
+                    <p class="media-body pb-3 mb-0 lh-125">
+                        <strong class="d-block zag">Many service providers</strong>
+                        <span class="text-sol text-muted">Different service providers are waiting when you will choose them.</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="media pt-3 blocks-sol">
+                    <img src="images/solution_two.png" alt="" class="mr-2 img-sol">
+                    <p class="media-body pb-3 mb-0 lh-125">
+                        <strong class="d-block zag">Sign contracts</strong>
+                        <span class="text-sol text-muted">Sign contracts with company you would like on different period of time.</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="media pt-3 blocks-sol">
+                    <img src="images/solution_three.png" alt="" class="mr-2 img-sol">
+                    <p class="media-body pb-3 mb-0 lh-125">
+                        <strong class="d-block zag">Easy to pay</strong>
+                        <span class="text-sol text-muted">We will create for you bank account where you can easy put maoney and pay.</span>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="media pt-3 blocks-sol">
+                    <img src="images/solution_four.png" alt="" class="mr-2 img-sol">
+                    <p class="media-body pb-3 mb-0 lh-125">
+                        <strong class="d-block zag">Notifications</strong>
+                        <span class="text-sol text-muted">Be notified when something happens.</span><br>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<footer>
+    <div class="container">
+        <div class="row centered footer-row ">
+            <div class="col-md-4 tel-col">
+                <span class="phonenumber">Call us: +(373)XXXXXXXX</span>
+            </div>
+            <div class="col-md-4">
+                <span class="copyright">&copy; Digital Marketplace 2018</span>
+            </div>
+            <div class="col-md-4">
+                <img src="images/endava.png" style="height:100%; width: 70%">
+            </div>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

@@ -4,11 +4,20 @@ var currentServiceId;
 var currentPage = 1;
 var size = 10;
 var maxPageSize;
+var timer = null;
 
 $(document).ready(function () {
     getDataForTable();
     isUnreadMessages();
     downloadBalance();
+});
+
+$(document).ajaxStart(function () {
+    $("#pleaseWaitDialog").modal('show');
+});
+
+$(document).ajaxComplete(function () {
+    $("#pleaseWaitDialog").modal('hide');
 });
 
 $("#signContract").click(function () {
@@ -49,7 +58,8 @@ $("#signContract").click(function () {
     }
 });
 
-$("#activateFilter").click(function () {
+$("#activateFilter").click(function (event) {
+    event.preventDefault();
     currentPage = 1;
     getDataForTable();
 });
@@ -57,26 +67,16 @@ $("#activateFilter").click(function () {
 $("#nextPage").click(function () {
     currentPage++;
     getDataForTable();
-    verifyIfPreviousExists();
-    verifyIfNextExists();
 });
 
 $("#previousPage").click(function () {
     currentPage--;
     getDataForTable();
-    verifyIfPreviousExists();
-    verifyIfNextExists();
 });
 
-// $("#downloadPDF").click(function(){
-//     $.ajax({
-//         type: "GET",
-//         url: "/services/getPDF",
-//         success: function (result) {
-//
-//         }
-//     });
-// });
+$("#downloadFile").click(function () {
+    window.open("/services/getPDF");
+});
 
 function getDataForTable() {
     var url = makeURL(currentPage);
@@ -86,17 +86,29 @@ function getDataForTable() {
         success: function (result) {
             listOfServices = result.services;
             maxPageSize = result.pages;
+            setPages();
             fillTableWithServices();
         }
     });
-    verifyIfPreviousExists();
-    verifyIfNextExists();
 }
 
 function fillTableWithServices() {
     $("#tableWithServices tbody").html("");
     for (var i = 0; i < listOfServices.length; i++) {
-        var row = "<tr>";
+        var row = "<tr><td>";
+        if (listOfServices[i].companyUrl !== null && listOfServices[i].companyUrl !== '') {
+            row += "<a href=\"http://" + listOfServices[i].companyUrl + "\">";
+        }
+
+        if (listOfServices[i].imageName !== null && listOfServices[i].imageName !== '') {
+            row += "<img border=\"0\" alt=\"W3Schools\" src=\"/image/" + listOfServices[i].imageName + "\" width=\"200\" height=\"100\">"
+        }
+
+        if (listOfServices[i].companyUrl !== null && listOfServices[i].companyUrl !== '') {
+            row += "</a>";
+        }
+
+        row += "</td>";
         row += "<td>" + listOfServices[i].category + "</td>";
         row += "<td>" + listOfServices[i].companyName + "</td>";
         row += "<td>" + listOfServices[i].title + "</td>";
@@ -105,9 +117,9 @@ function fillTableWithServices() {
         row += "<td><i class=\"fa fa-paw filter\" onclick='showServiceInfo(" + listOfServices[i].id + ")'></i></td>";
         row += "</tr>";
         $("#tableWithServices tbody").append(row);
-        verifyIfPreviousExists();
-        verifyIfNextExists();
     }
+    verifyIfPreviousExists();
+    verifyIfNextExists();
 }
 
 function showServiceInfo(id) {
@@ -147,7 +159,10 @@ function makeURL(page) {
     return url;
 }
 
-function resetServiceFilter() {
+function resetServiceFilter(event) {
+    if (event !== null) {
+        event.preventDefault();
+    }
     $("#minPrice").val("");
     $("#maxPrice").val("");
     $("#orderByPrice").val("asc");
@@ -158,7 +173,7 @@ function resetServiceFilter() {
 }
 
 function verifyIfPreviousExists() {
-    if (currentPage === 1) {
+    if (currentPage == 1) {
         $("#previousPage").addClass("disabled");
         $("#previousPage").attr("disabled", true);
     } else {
@@ -168,8 +183,8 @@ function verifyIfPreviousExists() {
 }
 
 function verifyIfNextExists() {
-    var url = makeURL(currentPage + 1);
-    if (currentPage === maxPageSize || maxPageSize == 0) {
+    if (currentPage == maxPageSize || maxPageSize == 0) {
+        console.log("no next");
         $("#nextPage").addClass("disabled");
         $("#nextPage").attr("disabled", true);
     } else {
@@ -253,7 +268,7 @@ function toNeutral(feedback, input) {
     $(input).removeClass("is-valid");
 }
 
-function downloadBalance(){
+function downloadBalance() {
     $.ajax({
         type: "POST",
         url: "/bank/balance",
@@ -262,3 +277,31 @@ function downloadBalance(){
         }
     });
 }
+
+function setPages() {
+    $("#currentPageButton").html("Page <input type='text' id='currentPage' style='width: 25%; text-align: center' min='1' max='" + maxPageSize + "'> from " + maxPageSize);
+    $("#currentPage").val(currentPage);
+}
+
+$(document).on("input change paste", "#currentPage", function () {
+    var page = $(this).val();
+    $(this).val(page.replace(/[^\d]/, ''));
+    if (/[^\d]/.test(page)) {
+        return;
+    }
+    clearTimeout(timer);
+    if (page < 1) {
+        page = 1;
+    }
+    if (page > maxPageSize) {
+        page = maxPageSize;
+    }
+    timer = setTimeout(function () {
+        currentPage = page;
+        getDataForTable();
+    }, 1000);
+});
+
+$("#currentPageButton").click(function(){
+    $("#currentPage").focus();
+});

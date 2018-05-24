@@ -1,14 +1,13 @@
 package com.endava.service_system.dao;
 
-import com.endava.service_system.dto.ServiceToUserDto;
-import com.endava.service_system.model.Service;
+import com.endava.service_system.model.dto.ServiceToUserDto;
+import com.endava.service_system.model.entities.Service;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.websocket.server.PathParam;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,7 +26,8 @@ public interface ServiceDao extends JpaRepository<Service,Long> {
 
     Optional<Service> getByTitle(String title);
 
-    @Query(value = "select s.id as id, s.description as description , s.price as price, s.title as title, c.name as companyName, cat.name as category from service s " +
+    @Query(value = "select s.id as id, s.description as description , s.price as price, s.title as title, c.name as companyName" +
+            ", cat.name as category, c.url from service s " +
             "join company_services cs " +
             "on cs.services_id = s.id " +
             "join company c " +
@@ -48,7 +48,7 @@ public interface ServiceDao extends JpaRepository<Service,Long> {
     Optional<Service> deleteServicesById(long id);
 
 
-    @Query(value = "select s.id as id, s.description as description , s.price as price, s.title as title, c.name as companyName, cat.name as category from service s " +
+    @Query(value = "select s.id as id, s.description as description , s.price as price, s.title as title, c.name as companyName, cat.name as category, c.company_url as company_url,c.image_name as image_name from service s " +
             "join company_services cs " +
             "on cs.services_id = s.id " +
             "join company c " +

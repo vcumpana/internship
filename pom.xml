@@ -5,12 +5,10 @@
 
 	<groupId>com.endava</groupId>
 	<artifactId>service_system</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
-
+	<version>0.2.0-SNAPSHOT</version>
+	<packaging>war</packaging>
 	<name>service_system</name>
 	<description>Platform for choosing services</description>
-
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -19,9 +17,11 @@
 	</parent>
 
 	<properties>
+		<start-class>com.endava.service_system.ServiceSystemApplication</start-class>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+		<tomcat.version>8.5.29</tomcat.version>
 	</properties>
 
 
@@ -33,6 +33,10 @@
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -110,6 +114,12 @@
 			<version>2.18.3</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- marked the embedded servlet container as provided -->
+		<!--<dependency>-->
+			<!--<groupId>org.springframework.boot</groupId>-->
+			<!--<artifactId>spring-boot-starter-tomcat</artifactId>-->
+			<!--<scope>provided</scope>-->
+		<!--</dependency>-->
 
 
     </dependencies>

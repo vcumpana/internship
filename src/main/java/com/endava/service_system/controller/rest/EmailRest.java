@@ -1,29 +1,30 @@
 package com.endava.service_system.controller.rest;
 
-import com.endava.service_system.model.*;
-import com.endava.service_system.service.CompanyService;
-import com.endava.service_system.service.CredentialService;
-import com.endava.service_system.service.EmailService;
-import com.endava.service_system.service.UserService;
+import com.endava.service_system.model.dto.CredentialDTO;
+import com.endava.service_system.model.dto.PasswordDto;
+import com.endava.service_system.model.entities.Credential;
+import com.endava.service_system.model.entities.Token;
+import com.endava.service_system.service.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Locale;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,6 +39,9 @@ public class EmailRest {
     private CompanyService companyService;
     private MailSender mailSender;
     private PasswordEncoder passwordEncoder;
+    @Qualifier("siteUrl")
+    private String sireUrl;
+    private TokenService tokenService;
 
     @Autowired
     public void setEmailService(EmailService emailService) {
@@ -69,6 +73,15 @@ public class EmailRest {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Autowired
+    public void setSireUrl(@Qualifier("siteUrl") String sireUrl) {
+        this.sireUrl = sireUrl;
+    }
+
+    @Autowired
+    public void setTokenService(TokenService tokenService) {
+        this.tokenService = tokenService;
+    }
 
     @GetMapping("/email/test")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -121,11 +134,72 @@ public class EmailRest {
         }
     }
 
+    @GetMapping("/resetpassword/{token}")
+    public ModelAndView getResetPasswordView(@PathVariable("token")String token,Model model){
+        Optional<Token> tokenOptional=tokenService.getToken(token);
+        if(!tokenOptional.isPresent()){
+            model.addAttribute("tokenError","Wrong Token");
+        }else{
+            Token realToken=tokenOptional.get();
+            boolean isActual=realToken.getEndDate().isAfter(LocalDateTime.now());
+            if(!isActual){
+                model.addAttribute("tokenError","Token is expired ");
+            }
+            if(realToken.isUsed()){
+                model.addAttribute("tokenError","Token was used");
+            }
+        }
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("passwordDto",new PasswordDto());
+        modelAndView.setViewName("resetPassword");
+        return modelAndView;
+    }
+
+    @PostMapping("/resetpassword/{token}")
+    public ModelAndView resetPassword(@PathVariable("token")String token,@ModelAttribute("passwordDto") @Valid PasswordDto passwordDto, BindingResult bindingResult, RedirectAttributes redirectAttributes){
+        LOGGER.debug(passwordDto);
+        ModelAndView modelAndView = new ModelAndView();
+        Optional<Token> tokenOptional=tokenService.getToken(token);
+
+        Token realToken=null;
+        if(!tokenOptional.isPresent()){
+            bindingResult.rejectValue("token","wrong token","Wrong Token");
+        }else{
+            realToken=tokenOptional.get();
+            boolean isActual=realToken.getEndDate().isAfter(LocalDateTime.now());
+            if(!isActual){
+                bindingResult.rejectValue("token","wrong token","Token is expired ");
+            }
+            if(realToken.isUsed()){
+                bindingResult.rejectValue("token","wrong token","Token was used");
+            }
+        }
+        if(bindingResult.hasErrors()){
+            modelAndView.setViewName("resetPassword");
+        }else {
+            realToken.setUsed(true);
+            tokenService.save(realToken);
+            CredentialDTO credentialDTO=new CredentialDTO();
+            credentialDTO.setPassword(passwordDto.getNewPassword());
+            credentialDTO.setConfirmPassword(passwordDto.getRepeatedNewPassword());
+            credentialService.updateStatusAndPassword(realToken.getUsername(),credentialDTO);
+            redirectAttributes.addFlashAttribute("message","You have set new password");
+            modelAndView.setViewName("redirect:/login");
+        }
+        return modelAndView;
+    }
+
     private void resetPasswordToUser(Credential user) {
         String token = getToken();
-        credentialService.updatePassword(user.getUsername(), passwordEncoder.encode(token));
+        Token realToken=new Token();
+        realToken.setUsername(user.getUsername());
+        realToken.setToken(token);
+        realToken.setUsed(false);
+        realToken.setStartDate(LocalDateTime.now());
+        realToken.setEndDate(LocalDateTime.now().plusDays(1));
+        tokenService.save(realToken);
         String subject = "Password Reset in Payment System";
-        emailService.sendEmail(user.getEmail(), subject, "We have reseted your password for user " + user.getUsername() + ". Your new password is " + token);
+        emailService.sendEmail(user.getEmail(), subject, "You can reset your password here :  " + sireUrl + "/resetpassword/"+ token);
     }
 
 

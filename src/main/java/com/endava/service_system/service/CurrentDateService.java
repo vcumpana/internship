@@ -1,7 +1,7 @@
 package com.endava.service_system.service;
 
 import com.endava.service_system.dao.CurrentDateDao;
-import com.endava.service_system.model.CurrentDate;
+import com.endava.service_system.model.entities.CurrentDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,9 +1,7 @@
 package com.endava.service_system.controller.rest;
 
-import com.endava.service_system.dto.NotificationForUserDto;
-import com.endava.service_system.model.Notification;
+import com.endava.service_system.model.dto.NotificationForUserDto;
 import com.endava.service_system.service.NotificationService;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;

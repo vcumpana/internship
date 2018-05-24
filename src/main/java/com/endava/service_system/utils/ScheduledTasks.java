@@ -1,6 +1,6 @@
 package com.endava.service_system.utils;
 
-import com.endava.service_system.model.*;
+import com.endava.service_system.model.entities.*;
 import com.endava.service_system.service.CredentialService;
 import com.endava.service_system.service.CurrentDateService;
 import com.endava.service_system.service.InvoiceService;
@@ -33,10 +33,6 @@ public class ScheduledTasks {
         LocalDate today=getCurrentDate();
         invoiceService.deleteForgotenInvoices(today);
         changeStatusOfInvoices(today);
-        //TODO get 20 invoices that aren't payed and are overdued
-        //after i get them i should create notifications and change its status
-        //do it untill there is 0 invoices;
-
         LOGGER.log(Level.DEBUG,"end of changing invoice");
     }
 

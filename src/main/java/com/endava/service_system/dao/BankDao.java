@@ -1,6 +1,6 @@
 package com.endava.service_system.dao;
 
-import com.endava.service_system.model.BankAccount;
+import com.endava.service_system.model.entities.BankAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -1,27 +1,24 @@
 package com.endava.service_system.controller.rest;
 
-import com.endava.service_system.dto.ServiceToUserDto;
-import com.endava.service_system.model.Company;
-import com.endava.service_system.model.Service;
-import com.endava.service_system.model.ServiceDtoFilter;
+import com.endava.service_system.model.dto.ServiceToUserDto;
+import com.endava.service_system.model.entities.Service;
+import com.endava.service_system.model.filters.ServiceDtoFilter;
+import com.endava.service_system.model.filters.order.ServiceOrderBy;
 import com.endava.service_system.service.ServiceService;
-import com.itextpdf.text.Document;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 public class ServiceRestController {
@@ -72,18 +69,20 @@ public class ServiceRestController {
                                            @RequestParam(required = false, value = "company") String companyName,
                                            @RequestParam(required = false, value = "category") String categoryName,
                                            @RequestParam(required = false, value = "max") Integer max,
-                                           @RequestParam(required = false, value = "orderByPrice") String order) {
+                                           @RequestParam(required = false, value = "order") String order,
+                                           @RequestParam(required = false,value = "orderBy")ServiceOrderBy orderBy ) {
         Map<String, Object> map = new HashMap<>();
         Sort.Direction direction = getDirection(order);
         ServiceDtoFilter filter = ServiceDtoFilter.builder()
                 .size(size)
-                .direction(direction)
+                .order(direction)
                 .min(min)
                 .categoryId(categoryId)
                 .companyId(companyId)
                 .categoryName(categoryName)
                 .companyName(companyName)
                 .max(max)
+                .orderBy(orderBy)
                 .page(page)
                 .build();
         map.put("services", serviceService.getServicesWithFilter(filter));
@@ -100,27 +99,13 @@ public class ServiceRestController {
     }
 
     @GetMapping(value = "/services/getPDF", produces = "application/pdf")
-    public ResponseEntity<InputStreamResource> getPDFOfServices() {
-        String fileName = serviceService.getPdfOfServices();
-        ClassPathResource pdfFile = new ClassPathResource("/downloads/" + fileName);
+    public byte[] getPDFOfServices() {
+        ByteArrayOutputStream stream = serviceService.getPdfOfServices();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
         headers.add("Pragma", "no-cache");
         headers.add("Expires", "0");
-
-        try {
-            return ResponseEntity
-                    .ok()
-                    .headers(headers)
-                    .contentLength(pdfFile.contentLength())
-                    .contentType(MediaType.parseMediaType("application/pdf"))
-                    .body(new InputStreamResource(pdfFile.getInputStream()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity
-                    .status(500)
-                    .body(null);
-        }
+        return stream.toByteArray();
     }
 
     private Sort.Direction getDirection(String order) {

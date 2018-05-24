@@ -1,11 +1,25 @@
 var listOfStatements = [];
+var sumOnTheStart = 0;
 
 $(document).ready(function () {
     downloadBalance();
+    fillDate();
+    downloadStatements(null);
+    isUnreadMessages();
+});
+
+$( document ).ajaxStart(function() {
+    $( "#pleaseWaitDialog" ).modal('show');
+});
+
+$( document ).ajaxComplete(function() {
+    $( "#pleaseWaitDialog" ).modal('hide');
 });
 
 function downloadStatements(ev) {
-    ev.preventDefault();
+    if(ev !== null) {
+        ev.preventDefault();
+    }
     var data = {
         "date": $("#startDate").val(),
         "dateTo": $("#endDate").val()
@@ -16,19 +30,21 @@ function downloadStatements(ev) {
         url: "/bank/statements",
         data: JSON.stringify(data),
         success: function(result){
-            listOfStatements = result;
+            sumOnTheStart = result.balanceBefore;
+            listOfStatements = result.listOfTransactions;
             fillTableWithStatements();
         }
     });
 }
 
 function fillTableWithStatements() {
+    var currentSum = sumOnTheStart;
+    $("#balanceBefore").text("Balance on the beginning of period: " + sumOnTheStart + " MDL");
     $("#tableWithStatements tbody").html("");
     if(listOfStatements.length !== 0) {
         for (var i = 0; i < listOfStatements.length; i++) {
             var row = "<tr>";
             var date = new Date(listOfStatements[i].date);
-            console.log(date);
             row += "<td>" + moment(date).format("DD-MM-YYYY HH:mm") + "</td>";
             if (listOfStatements[i].sum > 0) {
                 row += "<td class='text-success'>+ " + listOfStatements[i].sum + " MDL</td>";
@@ -36,7 +52,8 @@ function fillTableWithStatements() {
                 row += "<td class='text-danger'>- " + Math.abs(listOfStatements[i].sum) + " MDL</td>";
             }
             row += "<td>" + listOfStatements[i].description + "</td>";
-            row += "<td></td>";
+            currentSum += listOfStatements[i].sum;
+            row += "<td>" + currentSum + " MDL</td>";
             row += "</tr>";
             $("#tableWithStatements tbody").append(row);
         }
@@ -52,6 +69,26 @@ function downloadBalance() {
         url: "/bank/balance",
         success: function (result) {
             $("#balance").text(result.balance + " MDL");
+        }
+    });
+}
+
+function fillDate(){
+    var currentDay = new Date();
+    var firstDay = new Date(currentDay.getFullYear(), currentDay.getMonth(), 1);
+    currentDay.setDate(currentDay.getDate() + 1);
+    $("#startDate").val(moment(firstDay).format("YYYY-MM-DD"));
+    $("#endDate").val(moment(currentDay).format("YYYY-MM-DD"));
+}
+
+function isUnreadMessages() {
+    $.ajax({
+        type: "GET",
+        url: "/notification/getNumberOfUnread",
+        success: function (result) {
+            if (result > 0) {
+                $("#unreadMessages").css('display', 'inline');
+            }
         }
     });
 }
