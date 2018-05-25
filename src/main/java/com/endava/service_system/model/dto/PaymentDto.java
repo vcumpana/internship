@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class PaymentDto {
-    private Long CorrespondentCount;
-    private double Sum;
-    private String Description;
+    private Long C;
+    private double S;
+    private String D;
 }

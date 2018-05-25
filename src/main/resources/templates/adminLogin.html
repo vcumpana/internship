@@ -30,7 +30,7 @@
 
 </head>
 <body>
-<nav class="navbar navbar-expand-lg fixed-top" id="mainNav">
+<nav class="navbar navbar-expand-lg" id="mainNav">
     <div class="container">
         <a class="navbar-brand js-scroll-trigger" href="/"><img src="images/logo.png"
                                                                         style="width:75px; height:75px" alt="logo"></a>
@@ -44,10 +44,10 @@
                     <a class="nav-link js-scroll-trigger active" href="/">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="#mission">Our Mission</a>
+                    <a class="nav-link js-scroll-trigger" href="/#mission">Our Mission</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="#digitalservices">Our offers</a>
+                    <a class="nav-link js-scroll-trigger" href="/#offers">Our offers</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link js-scroll-trigger" href="contact">Contact</a>
@@ -76,7 +76,7 @@
                                    <span th:id="error"th:text="${errorMsg}">Wrong input!</span>
                                 </div>
                                 <div class="alert alert-success" th:if="${message!=null}">
-                                    <span th:text="${message}"></span>
+                                    <span  th:text="${message}"></span>
                                 </div>
                                 <div class="form-group">
                                     <label for="username">Username</label>

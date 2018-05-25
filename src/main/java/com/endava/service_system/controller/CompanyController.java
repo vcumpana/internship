@@ -4,8 +4,20 @@ import com.endava.service_system.model.dto.CompanyDtoToShow;
 import com.endava.service_system.model.dto.CompanyRegistrationDTO;
 import com.endava.service_system.model.dto.NewInvoiceDTO;
 import com.endava.service_system.model.dto.NewServiceDTO;
-import com.endava.service_system.model.entities.*;
-import com.endava.service_system.service.*;
+
+import com.endava.service_system.model.entities.Category;
+import com.endava.service_system.model.entities.Company;
+import com.endava.service_system.model.entities.Service;
+import com.endava.service_system.model.entities.Contract;
+import com.endava.service_system.model.entities.Invoice;
+import com.endava.service_system.model.entities.User;
+
+import com.endava.service_system.service.CategoryService;
+import com.endava.service_system.service.CompanyService;
+import com.endava.service_system.service.ServiceService;
+import com.endava.service_system.service.ContractService;
+import com.endava.service_system.service.InvoiceService;
+
 import com.endava.service_system.utils.AuthUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +30,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.Cookie;

@@ -1,5 +1,6 @@
 package com.endava.service_system.controller.rest;
 
+import com.endava.service_system.exception.BadRequestException;
 import com.endava.service_system.model.dto.*;
 import com.endava.service_system.model.entities.BankAccount;
 import com.endava.service_system.model.entities.BankKey;
@@ -12,13 +13,12 @@ import com.endava.service_system.service.InvoiceService;
 import com.endava.service_system.service.NotificationService;
 import com.endava.service_system.utils.AuthUtils;
 import com.endava.service_system.utils.EncryptionUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -28,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
@@ -42,14 +43,13 @@ public class BankRestController {
     private static final Logger LOGGER = LogManager.getLogger(BankRestController.class);
     private RestTemplate restTemplate;
     private BankService bankService;
-    private @Qualifier("bankApi")
-    String bankApi;
+    private @Qualifier("bankApi") String bankApi;
     private CredentialService credentialService;
     private AuthUtils authUtils;
-    private ObjectMapper objectMapper;
     private InvoiceService invoiceService;
     private NotificationService notificationService;
     private EncryptionUtils encryptionUtils;
+    private ConversionService converter;
 
     @Autowired
     public void setRestTemplate(RestTemplate restTemplate) {
@@ -77,11 +77,6 @@ public class BankRestController {
     }
 
     @Autowired
-    public void setObjectMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
-
-    @Autowired
     public void setInvoiceService(InvoiceService invoiceService) {
         this.invoiceService = invoiceService;
     }
@@ -89,6 +84,11 @@ public class BankRestController {
     @Autowired
     public void setNotificationService(NotificationService notificationService) {
         this.notificationService = notificationService;
+    }
+
+    @Autowired
+    public void setConverter(ConversionService converter){
+        this.converter=converter;
     }
 
     @Autowired
@@ -159,34 +159,19 @@ public class BankRestController {
         BankKey bankKey=bankAccount.getBankKeys();
         encryptionUtils.init(bankKey);
         String encryptedData=encryptionUtils.encryptData(data);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        headers.add("CountNumber", String.valueOf(bankAccount.getCountNumber()));
-        //map.add("email", "first.last@example.com");
-        //String json=objectMapper.writeValueAsString(rangeDto);
+        HttpHeaders headers = createHeader(bankAccount.getCountNumber());
         HttpEntity<Object> request = new HttpEntity<>(encryptedData, headers);
         ResponseEntity rs = restTemplate.postForEntity(bankApi + "statement/statement", request, Object.class);
-        System.out.println(rs.getBody());
-        System.out.println(rs);
+        LOGGER.debug(rs.getBody());
+        LOGGER.debug(rs);
         String encoded=rs.getBody().toString();
         ShortTransactionsDto shortTransactionsDto= (ShortTransactionsDto) encryptionUtils.decryptData(encoded,ShortTransactionsDto.class);
         NormalTransactionsDto normalTransactions=new NormalTransactionsDto();
         normalTransactions.setPages(shortTransactionsDto.getPages());
         normalTransactions.setBalanceBefore(shortTransactionsDto.getBalanceBefore());
-        normalTransactions.setListOfTransactions(
-            shortTransactionsDto.getListOfTransactions()
-                    .stream().map(tr-> {
-                NormalTransaction nr=new NormalTransaction();
-                nr.setCorrespondentCount(tr.getC());
-                nr.setDate(tr.getD());
-                nr.setDescription(tr.getDr());
-                nr.setMainCount(tr.getM());
-                nr.setSum(tr.getS());
-                return nr;
-            }).collect(Collectors.toList())
-
-
-        );
+        List<NormalTransaction> transactions=shortTransactionsDto.getListOfTransactions()
+                .stream().map(tr->converter.convert(tr,NormalTransaction.class)).collect(Collectors.toList());
+        normalTransactions.setListOfTransactions(transactions);
         return new ResponseEntity<Object>(normalTransactions, rs.getStatusCode());
     }
 
@@ -202,11 +187,7 @@ public class BankRestController {
         BankAccount bankAccount = bankAccountOptional.get();
         BankKey key=bankAccount.getBankKeys();
         encryptionUtils.init(key);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-
-        headers.add("CountNumber", String.valueOf(bankAccount.getCountNumber()));
-        //map.add("email", "first.last@example.com");
+        HttpHeaders headers = createHeader(bankAccount.getCountNumber());
         HttpEntity request = new HttpEntity<>(headers);
         ResponseEntity rs = restTemplate.postForEntity(bankApi + "bankaccount/balance", request, Object.class);
         BalanceDto balanceDto=(BalanceDto)encryptionUtils.decryptData(rs.getBody().toString(), BalanceDto.class);
@@ -217,86 +198,112 @@ public class BankRestController {
 
     @PostMapping("/invoice/payInvoice")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity payIds(@RequestBody Map<String, Object> map) throws IOException, IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
+    public ResponseEntity payIds(@RequestBody Map<String, Object> map) {
         LOGGER.debug("ids: " + map.get("ids"));
         LOGGER.debug("id: " + map.get("id"));
         ResponseEntity resultResponseEntity;
-        List ids = (List) map.get("ids");
-        Object id = map.get("id");
-        if (id instanceof String) {
-            resultResponseEntity = payInvoices(Arrays.asList(Long.valueOf((String) id)));
-        } else if (ids instanceof List) {
-            ids = (List<Long>) ids.stream().map(s -> Long.valueOf((String) s)).collect(Collectors.toList());
-            resultResponseEntity = payInvoices(ids);
-        } else {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-        if (resultResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
-            return new ResponseEntity(HttpStatus.OK);
-        } else {
-            return new ResponseEntity(resultResponseEntity.getBody(), resultResponseEntity.getStatusCode());
+        try {
+            List ids = getIds(map);
+            if (ids != null && !ids.isEmpty()) {
+                resultResponseEntity = payInvoices(ids);
+                if (resultResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
+                    return new ResponseEntity(HttpStatus.OK);
+                } else {
+                    return new ResponseEntity(resultResponseEntity.getBody(), resultResponseEntity.getStatusCode());
+                }
+            } else {
+                return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            }
+        }catch (GeneralSecurityException|IOException e){
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }catch (BadRequestException e){
+            return new ResponseEntity(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
     }
 
-    private ResponseEntity payInvoices(List<Long> ids) throws InvalidKeySpecException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, IOException {
-        LOGGER.debug("trying to pay  ids : " + ids);
-        Optional<BankAccount> bankAccountOptional = bankService.getBankAccountByUsername(authUtils.getAuthenticatedUsername());
-        if (!bankAccountOptional.isPresent()) {
-            String json = "{\"message\":\"You don't have a bank account please contact admin\"}";
-            return new ResponseEntity(json, HttpStatus.BAD_REQUEST);
+    private List<Long> getIds(Map<String,Object> map){
+        List ids = (List) map.get("ids");
+        Object id = map.get("id");
+        if (id instanceof String) {
+            ids = Arrays.asList(Long.valueOf((String) id));
+        } else if (ids instanceof List) {
+            ids = (List<Long>) ids.stream().map(s -> Long.valueOf((String) s)).collect(Collectors.toList());
         }
-        BankAccount bankAccount = bankAccountOptional.get();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        headers.add("CountNumber", String.valueOf(bankAccount.getCountNumber()));
+        return ids;
+    }
+
+    private ResponseEntity payInvoices(List<Long> ids) throws InvalidKeySpecException, IOException, BadPaddingException, IllegalBlockSizeException, InvalidKeyException, BadRequestException {
+        LOGGER.debug("trying to pay  ids : " + ids);
+        BankAccount bankAccount = getBankAccount();
+        HttpHeaders headers = createHeader(bankAccount.getCountNumber());
         List<PaymentDto> listOfPayments = new ArrayList<>();
         List<InvoiceForPaymentDto> invoiceForPaymentDtos = new ArrayList<>();
-        for (Long id : ids) {
-            Optional<InvoiceForPaymentDto> invoiceOptional = invoiceService.getFullInvoiceById(id);
-            if (!invoiceOptional.isPresent()) {
-                String json = "{\"message\":\"This invoice doesn't exist , please report to admins\"}";
-                return new ResponseEntity(json, HttpStatus.BAD_REQUEST);
-            }
-            InvoiceForPaymentDto invoice = invoiceOptional.get();
-            LOGGER.debug(invoice);
-            if (!invoice.getUserUsername().equals(authUtils.getAuthenticatedUsername())) {
-                String json = "{\"message\":\"This isn't your invoice,if you want to pay someones invoice , please contact admins.\"}";
-                return new ResponseEntity(json, HttpStatus.BAD_REQUEST);
-            }
-            if (invoice.getStatus() == InvoiceStatus.CREATED) {
-                String json = "{\"message\":\"This invoice is not valid.\"}";
-                return new ResponseEntity(json, HttpStatus.BAD_REQUEST);
-            }
-            if (invoice.getStatus() == PAID) {
-                String json = "{\"message\":\"This invoice was already paid.\"}";
-                return new ResponseEntity(json, HttpStatus.BAD_REQUEST);
-            }
-            if (invoice.getStatus() == InvoiceStatus.OVERDUE) {
-                String json = "{\"message\":\"You already overdued your payment.\"}";
-                return new ResponseEntity(json, HttpStatus.BAD_REQUEST);
-            }
-
-            PaymentDto paymentDto = new PaymentDto();
-            paymentDto.setCorrespondentCount(invoice.getCompanyBankCount());
-            paymentDto.setDescription("Invoice " + invoice.getInvoiceId());
-            paymentDto.setSum(invoice.getPrice());
-            listOfPayments.add(paymentDto);
-            invoiceForPaymentDtos.add(invoice);
-        }
+        List paymentData=getInvoicesForPayment(ids);
+        listOfPayments= (List<PaymentDto>) paymentData.get(1);
+        System.out.println(listOfPayments);
+        invoiceForPaymentDtos= (List<InvoiceForPaymentDto>) paymentData.get(0);
         BankKey bankKey=bankAccount.getBankKeys();
         encryptionUtils.init(bankKey);
         String encrypted= encryptionUtils.encryptData(listOfPayments);
         System.out.println(encrypted);
         HttpEntity<String> request = new HttpEntity<>(encrypted, headers);
         ResponseEntity rs = restTemplate.postForEntity(bankApi + "sendmoney/BulkPayment", request, Object.class);
-        BalanceDto balanceDto=(BalanceDto)encryptionUtils.decryptData(rs.getBody().toString(),BalanceDto.class);
+        Object decryptData= encryptionUtils.decryptData(rs.getBody().toString(),Object.class);
+        System.out.println(decryptData);
         if (rs.getStatusCode() == HttpStatus.OK) {
             invoiceService.makeInvoicesPayed(ids);
             sendNotifications(invoiceForPaymentDtos);
-            //TODO create notifications
         }
-        return new ResponseEntity(balanceDto,rs.getStatusCode());
-        //TODO implement when rest will be ready;
+        return new ResponseEntity(decryptData,rs.getStatusCode());
+    }
+
+
+    private BankAccount getBankAccount() throws BadRequestException{
+        Optional<BankAccount> bankAccountOptional = bankService.getBankAccountByUsername(authUtils.getAuthenticatedUsername());
+        if (!bankAccountOptional.isPresent()) {
+            String json = "{\"message\":\"You don't have a bank account please contact admin\"}";
+            throw  new BadRequestException(json);
+        }
+        return bankAccountOptional.get();
+    }
+    //Returns List ${length=2} first List<InvoiceForPaymentDto> second List<PaymentDto>
+    private List getInvoicesForPayment(List<Long> ids) throws BadRequestException{
+        List<InvoiceForPaymentDto> invoiceForPaymentDtos = new ArrayList<>();
+        List<PaymentDto> paymentDtoList=new ArrayList<>();
+        for (Long id : ids) {
+            Optional<InvoiceForPaymentDto> invoiceOptional = invoiceService.getFullInvoiceById(id);
+            if (!invoiceOptional.isPresent()) {
+                String json = "{\"message\":\"This invoice doesn't exist , please report to admins\"}";
+                throw  new BadRequestException(json);
+            }
+            InvoiceForPaymentDto invoice = invoiceOptional.get();
+            LOGGER.debug(invoice);
+            if (!invoice.getUserUsername().equals(authUtils.getAuthenticatedUsername())) {
+                String json = "{\"message\":\"This isn't your invoice,if you want to pay someones invoice , please contact admins.\"}";
+                throw  new BadRequestException(json);
+            }
+            if (invoice.getStatus() == InvoiceStatus.CREATED) {
+                String json = "{\"message\":\"This invoice is not valid.\"}";
+                throw  new BadRequestException(json);
+            }
+            if (invoice.getStatus() == PAID) {
+                String json = "{\"message\":\"This invoice was already paid.\"}";
+                throw  new BadRequestException(json);
+            }
+            if (invoice.getStatus() == InvoiceStatus.OVERDUE) {
+                String json = "{\"message\":\"You already overdued your payment.\"}";
+                throw  new BadRequestException(json);
+            }
+
+            PaymentDto paymentDto = new PaymentDto();
+            paymentDto.setC(invoice.getCompanyBankCount());
+            paymentDto.setD("Invoice " + invoice.getInvoiceId());
+            paymentDto.setS(invoice.getPrice());
+            paymentDtoList.add(paymentDto);
+            invoiceForPaymentDtos.add(invoice);
+        }
+
+        return Arrays.asList(invoiceForPaymentDtos,paymentDtoList);
     }
 
     private void sendNotifications(List<InvoiceForPaymentDto> invoiceForPaymentDtos) {

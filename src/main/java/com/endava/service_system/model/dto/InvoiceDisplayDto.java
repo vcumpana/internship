@@ -17,8 +17,8 @@ public class InvoiceDisplayDto {
     private BigDecimal price;
     private InvoiceStatus invoiceStatus;
     private String serviceTitle;
-    private LocalDate paymentDate;
-    private LocalDate fromDate;
-    private LocalDate tillDate;
-    private LocalDate createdDate;
+    private String paymentDate;
+    private String fromDate;
+    private String tillDate;
+    private String createdDate;
 }
