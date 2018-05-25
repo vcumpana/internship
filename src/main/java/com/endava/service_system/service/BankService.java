@@ -145,8 +145,8 @@ public class BankService {
                     "<a href='/user/profile?id=" + contractId + "'>contract nr." + contractId + "</a>.";
         }
         if(message.toLowerCase().contains("sum") && (currentUser.getRole() == ROLE_USER)){
-            message = message.replaceAll("\\D+", "");
-            result = "You added " + message + " USD to your count.";
+            float f = Float.valueOf(message.replaceAll("[^\\d.]+|\\.(?!\\d)", ""));
+            result = "You added " + f + " USD to your count.";
         }
         return result;
     }
