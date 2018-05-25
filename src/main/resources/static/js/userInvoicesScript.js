@@ -27,15 +27,11 @@ $("#activateFilter").click(function (event) {
 $("#nextPage").click(function () {
     currentPage++;
     getDataForTable();
-    verifyIfPreviousExists();
-    verifyIfNextExists();
 });
 
 $("#previousPage").click(function () {
     currentPage--;
     getDataForTable();
-    verifyIfPreviousExists();
-    verifyIfNextExists();
 });
 
 function getDataForTable() {
@@ -150,7 +146,7 @@ function downloadBalance() {
         type: "POST",
         url: "/bank/balance",
         success: function (result) {
-            $("#balance").text(result.balance + " MDL");
+            $("#balance").text(result.balance.toFixed(2) + " USD");
         }
     });
 }
@@ -163,8 +159,8 @@ function payInvoice(element) {
         url: "/invoice/payInvoice",
         data: JSON.stringify({id: id}),
         success: function (data) {
-            $("#balance").text(data.balance);
             invoicePaidUi(id);
+            downloadBalance();
         },
         error: function (jqXhr, textStatus, errorThrown) {
             console.log(jqXhr)

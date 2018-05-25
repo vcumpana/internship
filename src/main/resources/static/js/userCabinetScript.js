@@ -11,6 +11,14 @@ $(document).ready(function () {
     downloadBalance();
 });
 
+$(document).ajaxStart(function () {
+    $("#pleaseWaitDialog").modal('show');
+});
+
+$(document).ajaxComplete(function () {
+    $("#pleaseWaitDialog").modal('hide');
+});
+
 $("a[scopeInThisDoc='update']").click(function () {
     var value = $(this).attr("value");
     hideCurrentButton(value);
@@ -52,7 +60,7 @@ $("#addMoney").click(function () {
 
 $("#addAction").click(function () {
     data = {
-        "sum": parseInt($("#money").val())
+        "sum": $("#money").val()
     };
     $.ajax({
         type: "POST",
@@ -60,9 +68,10 @@ $("#addAction").click(function () {
         url: "/bank/addmoney/",
         data: JSON.stringify(data),
         success: function (rs) {
-            var balance = JSON.parse(rs).balance;
-            $("#balance").text(balance + " USD");
-            $("#balanceInCabinet").text(balance + " USD");
+            console.log(rs);
+            var balance = rs.balance;
+            $("#balance").text(balance.toFixed(2) + " USD");
+            $("#balanceInCabinet").text(balance.toFixed(2) + " USD");
             $("#modalForMoney").modal("hide");
         }
     });
@@ -298,8 +307,8 @@ function downloadBalance() {
         type: "POST",
         url: "/bank/balance",
         success: function (result) {
-            $("#balance").text(result.balance + " USD");
-            $("#balanceInCabinet").text(result.balance + " USD");
+            $("#balance").text(result.balance.toFixed(2) + " USD");
+            $("#balanceInCabinet").text(result.balance.toFixed(2) + " USD");
         }
     });
 }

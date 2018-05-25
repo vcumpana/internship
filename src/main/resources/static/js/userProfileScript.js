@@ -144,7 +144,7 @@ function downloadBalance() {
         type: "POST",
         url: "/bank/balance",
         success: function (result) {
-            $("#balance").text(result.balance + " USD");
+            $("#balance").text(result.balance.toFixed(2) + " USD");
         }
     });
 }
