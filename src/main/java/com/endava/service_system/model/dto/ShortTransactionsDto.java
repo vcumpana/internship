@@ -7,7 +7,9 @@ import java.util.List;
 
 @Data
 public class ShortTransactionsDto {
-    private long pages;
-    private BigDecimal balanceBefore;
+    private long p;
+    private BigDecimal bfc;
+    private BigDecimal bf;
+    private BigDecimal ba;
     private List<ShortTransaction> listOfTransactions;
 }

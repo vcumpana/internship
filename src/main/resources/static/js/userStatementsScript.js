@@ -39,7 +39,7 @@ function downloadStatements(ev) {
 
 function fillTableWithStatements() {
     var currentSum = sumOnTheStart;
-    $("#balanceBefore").text("Balance on the beginning of period: " + sumOnTheStart + " USD");
+    $("#balanceBefore").text("Balance on the beginning of period: " + sumOnTheStart + " MDL");
     $("#tableWithStatements tbody").html("");
     if(listOfStatements.length !== 0) {
         for (var i = 0; i < listOfStatements.length; i++) {

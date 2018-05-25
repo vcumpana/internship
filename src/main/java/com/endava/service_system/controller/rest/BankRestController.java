@@ -167,8 +167,10 @@ public class BankRestController {
         String encoded=rs.getBody().toString();
         ShortTransactionsDto shortTransactionsDto= (ShortTransactionsDto) encryptionUtils.decryptData(encoded,ShortTransactionsDto.class);
         NormalTransactionsDto normalTransactions=new NormalTransactionsDto();
-        normalTransactions.setPages(shortTransactionsDto.getPages());
-        normalTransactions.setBalanceBefore(shortTransactionsDto.getBalanceBefore());
+        normalTransactions.setPages(shortTransactionsDto.getP());
+        normalTransactions.setBalanceBefore(shortTransactionsDto.getBf());
+        normalTransactions.setBalanceAfter(shortTransactionsDto.getBa());
+        normalTransactions.setBalanceBeforeCurrentPage(shortTransactionsDto.getBfc());
         List<NormalTransaction> transactions=shortTransactionsDto.getListOfTransactions()
                 .stream().map(tr->converter.convert(tr,NormalTransaction.class)).collect(Collectors.toList());
         normalTransactions.setListOfTransactions(transactions);
