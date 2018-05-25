@@ -1,6 +1,8 @@
 package com.endava.service_system.controller.rest;
 
 import com.endava.service_system.model.dto.ContractDtoFromUser;
+import com.endava.service_system.model.dto.ContractForShowingDto;
+import com.endava.service_system.model.entities.Invoice;
 import com.endava.service_system.model.filters.order.ContractOrderBy;
 import com.endava.service_system.model.enums.ContractStatus;
 import com.endava.service_system.model.enums.UserType;
@@ -8,6 +10,7 @@ import com.endava.service_system.model.entities.Contract;
 import com.endava.service_system.model.filters.ContractForUserDtoFilter;
 import com.endava.service_system.service.CompanyService;
 import com.endava.service_system.service.ContractService;
+import com.endava.service_system.service.InvoiceService;
 import com.endava.service_system.utils.AuthUtils;
 import com.endava.service_system.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.endava.service_system.model.enums.ContractStatus.ACTIVE;
@@ -34,6 +38,7 @@ public class ContractRestController {
 
     private final ContractService contractService;
     private final CompanyService companyService;
+    private final InvoiceService invoiceService;
     private final AuthUtils authUtils;
     private final NotificationService notificationService;
 
@@ -93,7 +98,9 @@ public class ContractRestController {
                 .page(page)
                 .serviceId(serviceId)
                 .build();
-        map.put("contracts",contractService.getContracts(filter));
+        List<ContractForShowingDto> list = contractService.getContracts(filter);
+        list = invoiceService.setReadinessForInvoiceCreation(list);
+        map.put("contracts",list);
         map.put("pages",contractService.getPagesSizeForFilter(filter));
         return map;
     }
@@ -146,7 +153,7 @@ public class ContractRestController {
 
     @GetMapping(value = "company/contracts/allIds")
     public ResponseEntity getAllContractsIds(){
-        int [] contractsIds = contractService.getAllContractsIdsByCompanyUsername(authUtils.getAuthenticatedUsername());
+        Long [] contractsIds = contractService.getAllContractsIdsByCompanyUsername(authUtils.getAuthenticatedUsername());
         return new ResponseEntity(contractsIds, HttpStatus.OK);
     }
 }

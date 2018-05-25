@@ -34,5 +34,5 @@ public interface InvoiceDao extends JpaRepository<Invoice,Long> {
             "join i.contract c " +
             "join c.company co " +
             "join co.credential cr where cr.username=:username and i.invoiceStatus='CREATED'")
-    int[] getAllInvoicesIdsByCompanyUsername(@Param("username") String authenticatedUsername);
+    long[] getAllInvoicesIdsByCompanyUsername(@Param("username") String authenticatedUsername);
 }

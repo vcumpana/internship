@@ -147,9 +147,10 @@ $("th[scopeForSort='sort']").click(function () {
 function fillTableWithContracts() {
     $("#tableWithContracts tbody").html("");
     var dateText;
+    var today = new Date();
     for (var i = 0; i < listOfContracts.length; i++) {
         var row = "<tr>";
-        if (listOfContracts[i].contractStatus === "ACTIVE") {
+        if (listOfContracts[i].availForInvoice === true) {
             $('#checkbox').removeClass('hidden');
             row += "<td><input type=\"checkbox\" name='idInvoice' id=\"" + listOfContracts[i].id + "\"></td>";
         } else
@@ -188,7 +189,7 @@ function fillTableWithContracts() {
                 + "<a href=" + "/contract/" + listOfContracts[i].id + "/deny"
                 + " role=\"button\" class=\"btn btn-danger btn-sm \" style = \"display:inline;width: 71px\">Deny</a></td>";
             row +="<td>-</td>";
-        } else if (listOfContracts[i].contractStatus === "ACTIVE"){
+        } else if (listOfContracts[i].contractStatus === "ACTIVE" && listOfContracts[i].availForInvoice === true){
             row +="<td>-</td>";
             row += "<td><a href=" + "/contract/"+ listOfContracts[i].id +"/createInvoice"
                 + " role=\"button\" class=\"btn btn-success btn-sm \" >Create invoice</a></td>";

@@ -30,4 +30,6 @@ public class ContractForShowingDto {
     private BigDecimal servicePrice;
 
     private ContractStatus contractStatus;
+
+    private boolean availForInvoice;
 }
