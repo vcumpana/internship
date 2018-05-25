@@ -2,6 +2,7 @@ package com.endava.service_system.service;
 
 import com.endava.service_system.dao.ServiceDao;
 import com.endava.service_system.dao.ServiceToUserDao;
+import com.endava.service_system.model.dto.ServiceToCompanyDto;
 import com.endava.service_system.model.dto.ServiceToUserDto;
 import com.endava.service_system.model.entities.Service;
 import com.endava.service_system.utils.PDFMaking;
@@ -37,6 +38,11 @@ public class ServiceService {
         return services;
     }
 
+    public Service updateService(Service service) {
+      //  companyService.updateService(service);
+        return serviceDao.save(service);
+    }
+
     public List<Service> getServicesByCompanyName(String companyName) {
         return companyService.getCompanyByNameWithServices(companyName)
                 .get()
@@ -53,7 +59,8 @@ public class ServiceService {
         return serviceToUserDao.getAllServices(dtoFilter);
     }
 
-    public Optional<Service> deleteService(long id) {
+    public int deleteService(long id) {
+        companyService.deleteServiceByIdFromCompany(id);
         return serviceDao.deleteServicesById(id);
     }
 
@@ -106,5 +113,20 @@ public class ServiceService {
 
     public Optional<Service> getServicesByTitle(String title) {
         return serviceDao.getByTitle(title);
+    }
+
+    public List<ServiceToCompanyDto> getServicesDtoByCompanyName(String companyName) {
+        List<Service> services = getServicesByCompanyName(companyName);
+        List<ServiceToCompanyDto> servicesDto = new ArrayList<>();
+        for(Service service : services){
+            ServiceToCompanyDto serviceDto = conversionService.convert(service, ServiceToCompanyDto.class);
+            serviceDto.setNumberOfContracts(serviceDao.countContracts(serviceDto.getTitle(), companyName));
+            servicesDto.add(serviceDto);
+        }
+        return servicesDto;
+    }
+
+    public List<Service> getServicesByTitleAndId(String title, long id) {
+        return serviceDao.getByTitleAndIdIsNot(title, id);
     }
 }

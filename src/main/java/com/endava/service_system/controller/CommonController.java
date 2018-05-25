@@ -34,7 +34,7 @@ public class CommonController {
             }else if(authUtils.isUser(auth)){
                 return Optional.of("redirect:/user/profile");
             }else if(authUtils.isCompany(auth)){
-                return Optional.of("redirect:/company/profile");
+                return Optional.of("redirect:/company/cabinet");
             }
         }
         return Optional.empty();

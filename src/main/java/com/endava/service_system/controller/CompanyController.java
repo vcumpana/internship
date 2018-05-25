@@ -76,11 +76,11 @@ public class CompanyController {
         return "redirect:/login";
     }
 
-    @GetMapping("/company/profile")
-    public String getCompanyProfile(Model model){
-        addCompanyNameToModel(model);
-        return "companyProfilePage";
-    }
+//    @GetMapping("/company/profile")
+//    public String getCompanyProfile(Model model){
+//        addCompanyNameToModel(model);
+//        return "companyCabinet";
+//    }
 
     @GetMapping(value = "/company/cabinet")
     public String companyCabinet(Model model){
@@ -137,6 +137,29 @@ public class CompanyController {
         return "companyAddService";
     }
 
+    @GetMapping("/service/{id}/edit")
+    public String editInvoice(@PathVariable("id") Long serviceId, HttpServletRequest request, Model model) {
+        Service service = serviceService.getServiceById(serviceId).get();
+        NewServiceDTO serviceDTO = new NewServiceDTO();
+        serviceDTO.setCategory(service.getCategory().getName());
+        serviceDTO.setDescription(service.getDescription());
+        serviceDTO.setTitle(service.getTitle());
+        serviceDTO.setPrice(service.getPrice());
+        serviceDTO.setId(service.getId());
+        Optional<Company> company = companyService.getCompanyNameByUsername(authUtils.getAuthenticatedUsername());
+        if (service != null) {
+            if (serviceService.getServicesByCompanyName(company.get().getName()).contains(service)) {
+                List<Category> categories = categoryService.getAll();
+                model.addAttribute("categories", categories);
+                model.addAttribute("username", company.get().getName());
+                model.addAttribute("service", serviceDTO);
+                System.out.println(serviceDTO);
+                return "companyEditService";
+            }
+        }
+        return "redirect:/company/serviceList";
+    }
+
     @PostMapping("/company/addservice")
     public String registerNewService(Model model, @ModelAttribute("service") @Valid NewServiceDTO newServiceDTO, BindingResult bindingResult) {
         System.out.println(newServiceDTO);
@@ -148,6 +171,22 @@ public class CompanyController {
         }
         Service service = serviceService.save(conversionService.convert(newServiceDTO, Service.class));
         companyService.addNewService(service);
+        return "redirect:/company/serviceList";
+    }
+
+    @PostMapping("/company/updateService")
+    public String updateService(Model model, @ModelAttribute("service") @Valid NewServiceDTO newServiceDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        System.out.println(newServiceDTO);
+        if (bindingResult.hasErrors()) {
+            List<Category> categories = categoryService.getAll();
+            model.addAttribute("categories", categories);
+            model.addAttribute("service", newServiceDTO);
+            return "companyAddService";
+        }
+        Service beforeSaving=conversionService.convert(newServiceDTO, Service.class);
+        beforeSaving.setId(newServiceDTO.getId());
+        companyService.updateService(beforeSaving);
+        redirectAttributes.addFlashAttribute("message", "Service has been successfully updated");
         return "redirect:/company/serviceList";
     }
 
