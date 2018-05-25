@@ -34,7 +34,6 @@ function downloadStatements(ev) {
         url: "/bank/statements",
         data: JSON.stringify(data),
         success: function(result){
-            console.log(result.listOfTransactions);
             sumOnTheStart = result.balanceBefore;
             sumOnTheEnd = result.balanceAfter;
             listOfStatements = result.listOfTransactions;

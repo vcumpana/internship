@@ -7,7 +7,6 @@ import org.springframework.beans.BeanWrapperImpl;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.lang.annotation.Annotation;
 import java.time.LocalDate;
 
 public class DateConsecutiveValidator implements ConstraintValidator<DateConsecutiveConstraint, NewInvoiceDTO> {

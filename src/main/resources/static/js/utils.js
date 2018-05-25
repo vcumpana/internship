@@ -10,7 +10,6 @@ var currentTimeOut;
 var futureShowing;
 
 function displayMessage(message) {
-    console.log("displayMessage:" + message)
     var x = document.getElementById("snackbar");
     if (currentTimeOut != null) {
         clearTimeout(currentTimeOut);

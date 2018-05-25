@@ -1,15 +1,16 @@
 package com.endava.service_system.model.filters;
 
 
+import com.endava.service_system.model.enums.ContractStatus;
+import com.endava.service_system.model.enums.UserType;
+import com.endava.service_system.model.filters.order.ContractOrderBy;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort;
+
 import java.time.LocalDate;
-import com.endava.service_system.model.enums.*;
-import  com.endava.service_system.model.filters.order.ContractOrderBy;
 @Data
 @NoArgsConstructor
 @Builder

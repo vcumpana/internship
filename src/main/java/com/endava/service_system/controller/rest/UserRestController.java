@@ -5,16 +5,18 @@ import com.endava.service_system.model.dto.UserAdminDTO;
 import com.endava.service_system.model.dto.UserDtoToShow;
 import com.endava.service_system.model.dto.UserPasswordDto;
 import com.endava.service_system.model.entities.Credential;
-import com.endava.service_system.model.enums.UserStatus;
 import com.endava.service_system.model.entities.User;
+import com.endava.service_system.model.enums.UserStatus;
 import com.endava.service_system.service.BankService;
 import com.endava.service_system.service.CredentialService;
 import com.endava.service_system.service.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,17 +25,20 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
 public class UserRestController {
 
+    private static final Logger LOGGER=LogManager.getLogger(UserRestController.class);
     private UserService userService;
     private CredentialService credentialService;
     private PasswordEncoder passwordEncoder;
     private ConversionService conversionService;
     private BankService bankService;
+    private static final int DEFAULT_USERS_SIZE=10;
 
     @PutMapping(value = "/user/selfUpdate")
     public void updateUser(@RequestBody UserDtoToShow userDtoToShow) {
@@ -45,9 +50,10 @@ public class UserRestController {
     @PutMapping(value = "/user/selfUpdatePassword")
     public ResponseEntity updateUserPassword(@RequestBody UserPasswordDto userPasswordDto) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userService.getByUsername(username).get();
-        if (passwordEncoder.matches(userPasswordDto.getOldPassword(), user.getCredential().getPassword())) {
-            userService.updateUserPassword(username, userPasswordDto.getNewPassword());
+        Credential credential = credentialService.getByUsername(username).get();
+        if (passwordEncoder.matches(userPasswordDto.getOldPassword(), credential.getPassword())) {
+            String encoded=passwordEncoder.encode(userPasswordDto.getNewPassword());
+            credentialService.updatePassword(username, encoded);
             return new ResponseEntity(HttpStatus.OK);
         } else {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -55,29 +61,22 @@ public class UserRestController {
     }
 
     @GetMapping("/admin/users")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity getAllUsers(@RequestParam(required = false, value = "status") UserStatus status) {
-        List<User> users = getAllUsersWithStatus(status);
-        if (!users.isEmpty()) {
-            List<UserAdminDTO> usersForAdmin = users.stream()
-                    .map((user) -> conversionService.convert(user, UserAdminDTO.class))
-                    .collect(Collectors.toList());
-            return new ResponseEntity(usersForAdmin, HttpStatus.OK);
-        } else {
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
+    public ResponseEntity getAllUsers(@RequestParam(required = false, value = "status") UserStatus status,
+                                      @RequestParam(required = false,value = "page") Integer page) {
+        if(page==null||page<0){
+            page=0;
         }
-    }
-
-    private List<User> getAllUsersWithStatus(UserStatus status) {
-        if (status == null) {
-            return userService.getAllWithCredentials();
-        }else{
-            return userService.getAllWithCredentialsAndStatus(status);
-        }
+        Map<String,Object> result= userService.getAll(PageRequest.of(page,DEFAULT_USERS_SIZE),status);
+        List<User> users = (List<User>) result.get("users");
+        List<UserAdminDTO> usersForAdmin = users.stream()
+                .map((user) -> conversionService.convert(user, UserAdminDTO.class))
+                .collect(Collectors.toList());
+        result.put("users",usersForAdmin);
+        LOGGER.debug(result);
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
     @PutMapping("/admin/users/{username}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity changePasswordWithStatus(@PathVariable("username") String username,
                                                    @Validated @RequestBody CredentialDTO credentialDTO,
                                                    BindingResult bindingResult) {

@@ -72,7 +72,7 @@
                         <div class="card-body">
                             <form class="form" role="form" autocomplete="off" id="formLogin" novalidate=""
                                   method="POST">
-                                <div class="alert alert-danger" th:if="${param.error!=null&&session['SPRING_SECURITY_LAST_EXCEPTION']!=null}" th:with="errorMsg=${session['SPRING_SECURITY_LAST_EXCEPTION'].message}">
+                                <div class="alert alert-danger" th:if="${error!=null&&session['SPRING_SECURITY_LAST_EXCEPTION']!=null}" th:with="errorMsg=${session['SPRING_SECURITY_LAST_EXCEPTION'].message}">
                                    <span th:id="error"th:text="${errorMsg}">Wrong input!</span>
                                 </div>
                                 <div class="alert alert-success" th:if="${message!=null}">

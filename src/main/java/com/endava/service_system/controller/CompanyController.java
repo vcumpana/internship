@@ -4,20 +4,8 @@ import com.endava.service_system.model.dto.CompanyDtoToShow;
 import com.endava.service_system.model.dto.CompanyRegistrationDTO;
 import com.endava.service_system.model.dto.NewInvoiceDTO;
 import com.endava.service_system.model.dto.NewServiceDTO;
-
-import com.endava.service_system.model.entities.Category;
-import com.endava.service_system.model.entities.Company;
-import com.endava.service_system.model.entities.Service;
-import com.endava.service_system.model.entities.Contract;
-import com.endava.service_system.model.entities.Invoice;
-import com.endava.service_system.model.entities.User;
-
-import com.endava.service_system.service.CategoryService;
-import com.endava.service_system.service.CompanyService;
-import com.endava.service_system.service.ServiceService;
-import com.endava.service_system.service.ContractService;
-import com.endava.service_system.service.InvoiceService;
-
+import com.endava.service_system.model.entities.*;
+import com.endava.service_system.service.*;
 import com.endava.service_system.utils.AuthUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -75,12 +63,6 @@ public class CompanyController {
         companyService.save(conversionService.convert(companyRegistrationDTO, Company.class));
         return "redirect:/login";
     }
-
-//    @GetMapping("/company/profile")
-//    public String getCompanyProfile(Model model){
-//        addCompanyNameToModel(model);
-//        return "companyCabinet";
-//    }
 
     @GetMapping(value = "/company/cabinet")
     public String companyCabinet(Model model){
@@ -153,7 +135,7 @@ public class CompanyController {
                 model.addAttribute("categories", categories);
                 model.addAttribute("username", company.get().getName());
                 model.addAttribute("service", serviceDTO);
-                System.out.println(serviceDTO);
+                LOGGER.debug(serviceDTO);
                 return "companyEditService";
             }
         }
@@ -162,7 +144,7 @@ public class CompanyController {
 
     @PostMapping("/company/addservice")
     public String registerNewService(Model model, @ModelAttribute("service") @Valid NewServiceDTO newServiceDTO, BindingResult bindingResult) {
-        System.out.println(newServiceDTO);
+        LOGGER.debug(newServiceDTO);
         if (bindingResult.hasErrors()) {
             List<Category> categories = categoryService.getAll();
             model.addAttribute("categories", categories);
@@ -176,7 +158,7 @@ public class CompanyController {
 
     @PostMapping("/company/updateService")
     public String updateService(Model model, @ModelAttribute("service") @Valid NewServiceDTO newServiceDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        System.out.println(newServiceDTO);
+        LOGGER.debug(newServiceDTO);
         if (bindingResult.hasErrors()) {
             List<Category> categories = categoryService.getAll();
             model.addAttribute("categories", categories);
@@ -223,9 +205,9 @@ public class CompanyController {
                     cookieValue=one.getValue();
                 }
             }
-            System.out.println("cookieValue: "+cookieValue);
+            LOGGER.debug("cookieValue: "+cookieValue);
             if (cookieValue== null || cookieValue.equalsIgnoreCase("true")) {
-                System.out.println("adding cookie : ");
+                LOGGER.debug("adding cookie : ");
                 Cookie conflictCookie = new Cookie("conflict", "true");
                 response.addCookie(conflictCookie);
                 return "companyCreateInvoice";
@@ -241,7 +223,7 @@ public class CompanyController {
                 }
             }
         }
-        System.out.println("there are no conflicts : ");
+        LOGGER.debug("there are no conflicts : ");
         Contract contract = contractService.getContractById(newInvoiceDTO.getContractId());
         Invoice invoice = conversionService.convert(newInvoiceDTO, Invoice.class);
         invoice.setContract(contract);

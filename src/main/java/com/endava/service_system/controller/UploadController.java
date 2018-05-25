@@ -9,12 +9,11 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -47,7 +46,6 @@ public class UploadController {
         return name;
     }
 
-    @PreAuthorize("hasRole('ROLE_COMPANY')")
     @PostMapping(value = "/company/uploadimages")
     public ResponseEntity uploadDefaultImage(Authentication authentication,@RequestParam("file") MultipartFile file) throws IOException {
 

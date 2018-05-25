@@ -4,10 +4,10 @@ function displayUsersInUi(arr) {
         'Surname':null,
         'Username':null,
         'Email':null,
+        'Bank Account':null,
         'User status':null
     };
     addObjectTheads(theadsForUser);
-    console.log(arr)
     var tags='';
     var users = [];
     Object.keys(arr).forEach(nr => {
@@ -17,7 +17,17 @@ function displayUsersInUi(arr) {
         tags += `<td id="company_name">` + arr[nr]['name'] + `</td>`;
         tags += `<td id="company_surname">` + arr[nr]['surname'] + `</td>`;
         tags += `<td id="company_username">` + arr[nr]['username'] + `</td>`;
-        tags += `<td id="company_email">` + arr[nr]['email'] + `</td>`;
+        if(arr[nr]['email']!==null&&arr[nr]['email']!==``) {
+            tags += `<td id="company_email">` + arr[nr]['email'] + `</td>`;
+        }else{
+            tags += `<td id="company_email">` + `-` + `</td>`;
+        }
+
+        if(arr[nr]['bankAccount']===null||arr[nr]['bankAccount']===0){
+            tags += `<td id="company_bankaccount">` + `-` + `</td>`;
+        }else{
+            tags += `<td id="company_bankaccount">` + arr[nr]['bankAccount'] + `</td>`;
+        }
         tags += `<td id="company_status">` + arr[nr]['status'] + `</td>`;
         //});
         tags += `</tr>`;
@@ -29,10 +39,7 @@ function displayUsersInUi(arr) {
             //SET value to edit company and open edit
             var status=$('tr[value="'+user+'"] #company_status').text();
             $('#input_company_status input[value="'+status+'"]').prop("checked", true);
-            console.log(user);
-            console.log("wtf2");
             $("#edit_company_name").text(user);
-            console.log("wtf2");
             //$("#input_company_status").text(company);
             $("#editCompany").dialog('option', 'title', "Edit user");
             $("#editCompany").dialog("open");

@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Component
 public class ServiceToUserDTOConverter implements Converter<Map, ServiceToUserDto> {
@@ -21,7 +19,9 @@ public class ServiceToUserDTOConverter implements Converter<Map, ServiceToUserDt
             service.setDescription((String)map.get("description"));
             service.setPrice((BigDecimal) map.get("price"));
             service.setTitle((String)map.get("title"));
+            if(map.get("image_name")!=null)
             service.setImageName((String)map.get("image_name"));
+            if(map.get("company_url")!=null)
             service.setCompanyUrl((String)map.get("company_url"));
         return service;
     }

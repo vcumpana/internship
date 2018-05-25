@@ -106,13 +106,11 @@ function sendContractsForInvoicesCreation() {
     data={
          info :arr
     };
-    console.log(data);
     $.ajax({
         type: "POST",
         url: "/company/newinvoices/",
         data: {info :arr},
         success: function (result) {
-            console.log(result["created"]);
             $('#exampleModal .modal-body').text('');
             $('#exampleModal .modal-title').text("Invoice creation report");
             $('#exampleModal .modal-body').append("<p>Created invoices: " + result.created + " invoice</p>");

@@ -3,11 +3,8 @@ package com.endava.service_system.model.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GeneratorType;
-import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
-import java.util.Collection;
 
 @Entity
 @Data
@@ -21,9 +18,5 @@ public class Category {
 
     @Column(unique = true)
     private String name;
-
-//    @OneToMany
-//    Collection<Service> services;
-
 
 }

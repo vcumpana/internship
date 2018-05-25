@@ -19,13 +19,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private final LogoutSuccessHandler logoutSuccessHandler;
     private final DaoAuthenticationProvider daoAuthenticationProvider;
+    private final AuthenticationFailureHandler authenticationFailureHandler;
 
     public SecurityConfiguration(@Qualifier("userDetailsService") UserDetailsService userDetailsService,
                                  LogoutSuccessHandler logoutSuccessHandler,
-                                 @Qualifier("userDaoAuthProvider") DaoAuthenticationProvider daoAuthenticationProvider) {
+                                 @Qualifier("userDaoAuthProvider") DaoAuthenticationProvider daoAuthenticationProvider, AuthenticationFailureHandler authenticationFailureHandler) {
         this.daoAuthenticationProvider = daoAuthenticationProvider;
         this.userDetailsService = userDetailsService;
         this.logoutSuccessHandler = logoutSuccessHandler;
+        this.authenticationFailureHandler = authenticationFailureHandler;
     }
 
     @Autowired
@@ -38,22 +40,26 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.authorizeRequests()
-                .antMatchers("/", "/login", "/index", "/services").permitAll()
-                .antMatchers("/user/registration","/company/registration").not().authenticated()
+                .antMatchers("/", "/login", "/index", "/services","/contact").permitAll()
+                .antMatchers("/user/registration","/company/registration","/forgotPassword","/resetPassword/*").not().authenticated()
                 .antMatchers("/logout","/category").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER') or hasRole('ROLE_COMPANY')")
-                .antMatchers("/invoces").access("hasRole('ROLE_USER') or hasRole('ROLE_COMPANY')")
-                .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
-                .antMatchers("/user/**").access("hasRole('ROLE_USER')")
-                .antMatchers("/company/**").access("hasRole('ROLE_COMPANY')")
+                .antMatchers("/invoces","/bank/**","/notification/**","/image/*","/user/selfUpdatePassword","/services/*").access("hasRole('ROLE_USER') or hasRole('ROLE_COMPANY')")
+                .antMatchers("/admin/**","/email/test").access("hasRole('ROLE_ADMIN')")
+                .antMatchers("/user/**","/newContract","/invoice/payInvoice","/services","/*/services","/services/getPDF","/services/*").access("hasRole('ROLE_USER')")
+                .antMatchers("/company/**","/contract/**","/invoice/*/*","/service/**").access("hasRole('ROLE_COMPANY')")
                 .and().formLogin().loginPage("/login")
+                .failureHandler(authenticationFailureHandler)
                 .defaultSuccessUrl("/success")
-                .usernameParameter("username").passwordParameter("password");
+                .usernameParameter("username").passwordParameter("password")
+                .and()
+                .exceptionHandling()
+                .accessDeniedPage("/success")
+        ;
         http.csrf().disable();
         //TODO add csrf in all forms and enable crsf (for protection)!!
         http.logout().deleteCookies()
                 .logoutUrl("/logout").invalidateHttpSession(true).clearAuthentication(true)
-                .logoutSuccessUrl("/login").logoutSuccessHandler(logoutSuccessHandler);
+                .logoutSuccessUrl("/").logoutSuccessHandler(logoutSuccessHandler);
     }
-
 
 }

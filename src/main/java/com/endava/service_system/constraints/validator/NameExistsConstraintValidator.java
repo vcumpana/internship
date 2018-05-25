@@ -20,9 +20,8 @@ public class NameExistsConstraintValidator implements ConstraintValidator<NameIn
    }
 
    public boolean isValid(String name, ConstraintValidatorContext context){
-      Optional<Company> company = companyService.getCompanyByName(name);
-       if (company.isPresent())
-      return false;
+       Optional<Company> company = companyService.getCompanyByName(name);
+       if (company.isPresent()) return false;
        return true;
    }
 }

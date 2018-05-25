@@ -1,7 +1,10 @@
 package com.endava.service_system.exception;
 
-public class WrongUsernameException extends RuntimeException {
+import org.springframework.security.core.AuthenticationException;
+
+public class WrongUsernameException extends AuthenticationException {
     private static final String MESSAGE="You have mistyped your username";
+
     public WrongUsernameException(){
         super(MESSAGE);
     }

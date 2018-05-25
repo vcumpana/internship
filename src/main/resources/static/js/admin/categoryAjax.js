@@ -43,6 +43,7 @@ function getAllCategoriesFromDb(){
         url: HOST.concat("/category"),
         type: 'GET', success: function (rs) {
             createCategoryThead();
+            deletePagination();
             $("#tbody").empty();
             rs.forEach(function(category){
                 addCategoryInUi(category);
@@ -73,7 +74,6 @@ function changeCategoryInDb(oldCategoryName, newCategoryName) {
         }
     });
     request.error(function (e) {
-        console.log(e);
         $("#input_" + oldCategoryName).val(oldCategoryName);
         status = e.status;
         if (status == STATUS.BAD_REQUEST) {

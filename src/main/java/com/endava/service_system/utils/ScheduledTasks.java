@@ -2,7 +2,6 @@ package com.endava.service_system.utils;
 
 import com.endava.service_system.model.entities.*;
 import com.endava.service_system.service.CredentialService;
-import com.endava.service_system.service.CurrentDateService;
 import com.endava.service_system.service.InvoiceService;
 import com.endava.service_system.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ public class ScheduledTasks {
     private final static long ONCE_AN_HOUR =60*60*1000;
     private final static int AMOUNT_OF_NOTIFICATIONS_AT_ONCE=20;
     private final static Logger LOGGER= LogManager.getLogger(ScheduledTasks.class);
-    private final CurrentDateService currentDateService;
     private final InvoiceService invoiceService;
     private final CredentialService credentialService;
     private final NotificationService notificationService;
@@ -49,7 +47,6 @@ public class ScheduledTasks {
                 Company company=invoice.getContract().getCompany();
                 Contract contract=invoice.getContract();
                 Notification userNotification=notificationService.createNotificationPaymentOverduedForCompany(user,company,admin,contract,LocalDateTime.now());
-                //Notification companyNotification=createNotificationPaymentOverduedForCompany(user,company,admin,contract,LocalDateTime.now());
                 Notification companyNotification=notificationService.createNotificationPaymentOverduedForUser(user,company,admin,contract,LocalDateTime.now());
                 notifications.add(userNotification);
                 notifications.add(companyNotification);
@@ -66,9 +63,7 @@ public class ScheduledTasks {
 
 
     private LocalDate getCurrentDate(){
-        CurrentDate currentDate=currentDateService.getCurrentDate();
-        LOGGER.log(Level.DEBUG,"currentDate:"+currentDate.getLocalDate());
-        return currentDate.getLocalDate();
+        return LocalDate.now();
     }
 
     private Credential getAdminCredentials(){

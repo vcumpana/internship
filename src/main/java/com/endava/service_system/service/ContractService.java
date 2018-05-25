@@ -31,7 +31,7 @@ public class ContractService {
     private ContractsToUserDao contractsToUserDao;
 
     public Contract saveContract(ContractDtoFromUser contractDto) {
-        System.out.println(contractDto);
+        LOGGER.debug(contractDto);
         Contract contract;
         contract = conversionService.convert(contractDto, Contract.class);
         contract.setService(serviceService.getServiceById(contractDto.getServiceId()).get());

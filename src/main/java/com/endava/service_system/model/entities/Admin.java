@@ -1,11 +1,10 @@
 package com.endava.service_system.model.entities;
 
-import javax.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
 
 @Entity
 @Data

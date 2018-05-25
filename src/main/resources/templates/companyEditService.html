@@ -200,11 +200,6 @@
     </div>
 </div>
 <script>
-    // $(window).on('beforeunload', function(event){
-    //     console.log(event.target);
-    //     return 'Are you sure you want to leave?';
-    // });
-    // Example starter JavaScript for disabling form submissions if there are invalid fields
     (function() {
         'use strict';
         window.addEventListener('load', function() {
@@ -222,7 +217,6 @@
                         event.stopPropagation();
                         return;
                     }
-                    console.log("ttttttt");
                     form.classList.add('was-validated');
                 }, false);
             });

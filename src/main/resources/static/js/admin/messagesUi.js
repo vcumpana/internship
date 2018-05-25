@@ -9,8 +9,6 @@ function getReadButton(){
 function displayMessagesInUi(data){
     $("#tbody").empty();
     $("#thead").empty();
-    console.log(data);
-
     if(page<0){
         page=0;
     }
@@ -22,7 +20,6 @@ function displayMessagesInUi(data){
     };
     addObjectTheads(theadsForCompany);
     arr=data.content;
-    console.log(arr)
     var tags='';
     var messageIds = [];
     Object.keys(arr).forEach(nr => {
@@ -34,7 +31,7 @@ function displayMessagesInUi(data){
             aditText="alert-warning"
         }
 
-        var dateText=moment(arr[nr]['date']).format("hh:mm DD/MM/YYYY")
+        var dateText=moment(arr[nr]['date']).format("HH:mm DD/MM/YYYY")
         tags += `<tr value="` + arr[nr]["id"] + `" class="main `+aditText+`">`;
         //Object.keys(arr[nr]).forEach(key => {
         tags += `<td id="message_email">` + arr[nr]['fromEmail'] + `</td>`;
@@ -53,34 +50,15 @@ function displayMessagesInUi(data){
     $("#tbody").empty();
     $("#tbody").append(tags);
 
-    $("#tbody").append(`<tr>
-                                    <td></td>
-                                    <td><button class=\"btn btn-primary btn-lg disabled\" id="previousPage" onclick="prevMessagePage()" >Previous</button></td>
-                                    <td><button class=\"btn btn-primary btn-lg disabled\" id="nextPage" onclick="nextMessagePage()">Next</button></td>
-                               <td></td></tr>
-                           `);
-    if(page==0){
-        $("#previousPage").attr('disabled','disabled');
-    }else{
-        $("#previousPage").removeClass('disabled')
-    }
-
-    if(page>=data.totalPages-1){
-        $("#nextPage").attr('disabled','disabled');
-    }else{
-        $("#nextPage").removeClass('disabled')
-    }
 }
 
 function markAsRead(ele){
-    console.log(ele.parentNode);
     var text=ele.parentNode.getAttribute('value');
     displayMessage("trying to mark as read");
     markAsReadAjax(text);
 }
 
 function markAsUnread(ele){
-    console.log(ele.parentNode);
     var text=ele.parentNode.getAttribute('value');
     displayMessage("trying to mark as unread");
     markAsUnreadAjax(text);

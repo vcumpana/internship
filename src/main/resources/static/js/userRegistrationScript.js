@@ -41,7 +41,6 @@ $("#resetButton").click(function () {
 });
 
 $("#registerUser").click(function(event){
-    console.log("submit pressed");
     var errors = 0;
     if(validatePassword("#password") == false){
         errors++;

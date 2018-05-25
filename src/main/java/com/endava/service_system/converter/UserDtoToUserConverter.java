@@ -2,8 +2,8 @@ package com.endava.service_system.converter;
 
 import com.endava.service_system.model.dto.UserDto;
 import com.endava.service_system.model.entities.Credential;
-import com.endava.service_system.model.enums.Role;
 import com.endava.service_system.model.entities.User;
+import com.endava.service_system.model.enums.Role;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
