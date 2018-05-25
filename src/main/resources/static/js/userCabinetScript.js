@@ -60,7 +60,7 @@ $("#addMoney").click(function () {
 
 $("#addAction").click(function () {
     data = {
-        "sum": $("#money").val()
+        "sum": parseFloat($("#money").val())
     };
     $.ajax({
         type: "POST",

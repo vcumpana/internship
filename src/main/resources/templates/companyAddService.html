@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>New company</title>
+    <title>New service</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
           integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -25,16 +25,15 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-primary">
-    <span class="navbar-brand">Digital Marketplace</span>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+    <div class="inline">
+        <img src="/images/logo.png" style="height: 35px; width: 35px;" alt="logo">
+        <span class="navbar-brand">Digital Marketplace</span>
+    </div>    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
             aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/company/profile">Page 1</a>
-            </li>
             <li class="nav-item active">
                 <a class="nav-link" href="#">My services</a>
             </li>
@@ -109,6 +108,9 @@
                                     <p class="error-message"
                                        th:each="error : ${#fields.errors('title')}"
                                        th:text="${error}">Validation error</p>
+                                    <p class="error-message"
+                                       th:each="error : ${#fields.errors('global')}"
+                                       th:text="${error}">Validation error</p>
                                 </div>
                                 <div class="form-group">
                                     <label>Description</label>
@@ -124,15 +126,15 @@
 
                                 <div class="form-group">
                                     <label for="price">Price</label>
-                                    <input type="number" class="form-control form-control-lg rounded-0" name="price"
+                                    <input type="number" class="form-control form-control-lg rounded-0" th:field="${service.price}"
                                            id="price" required>
                                     <div class="invalid-feedback">Please provide a price.</div>
                                     <p class="error-message"
                                        th:each="error : ${#fields.errors('price')}"
                                        th:text="${error}">Validation error</p>
                                 </div>
-                                <button type="button" onclick="createServiceConfirmation()" class="btn btn-success" id="btnRegister">
-                                    Add service
+                                <button type="submit"  class="btn btn-success" id="btnRegister">
+                                    Create
                                 </button>
                                 <a onclick="cancelCreateService()"  role="button" class="btn btn-danger" id="btnCancel">
                                     Cancel
@@ -196,6 +198,10 @@
     </div>
 </div>
 <script>
+    // $(window).on('beforeunload', function(event){
+    //     console.log(event.target);
+    //     return 'Are you sure you want to leave?';
+    // });
     // Example starter JavaScript for disabling form submissions if there are invalid fields
     (function() {
         'use strict';
@@ -208,29 +214,20 @@
                     if (form.checkValidity() === false) {
                         event.preventDefault();
                         event.stopPropagation();
+                    } else {
+                        createServiceConfirmation();
+                        event.preventDefault();
+                        event.stopPropagation();
+                        return;
                     }
+                    console.log("ttttttt");
                     form.classList.add('was-validated');
                 }, false);
             });
         }, false);
+
     })();
 
-    function validate(){
-        console.log("start")
-            // Fetch all the forms we want to apply custom Bootstrap validation styles to
-            var forms = document.getElementsByClassName('needs-validation');
-            // Loop over them and prevent submission
-            var validation = Array.prototype.filter.call(forms, function(form) {
-                form.addEventListener('submit', function(event) {
-                    if (form.checkValidity() === false) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                }, false);
-            });
-
-    };
     function cancelCreateService() {
         $('#modalCancelConfirm .modal-body').text("Your entry data will be lost, are you sure you want to continue?");
         $('#modalCancelConfirm .modal-title').text("Confirm");
@@ -238,7 +235,6 @@
     }
 
     function createServiceConfirmation(){
-        validate();
         $('#modalFirstConfirm .modal-body').text("Are you sure you want to create a new service?");
         $('#modalFirstConfirm .modal-title').text("Confirm");
         $("#modalFirstConfirm").modal("show");

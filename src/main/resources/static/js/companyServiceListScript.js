@@ -6,6 +6,12 @@ $(document).ready(function () {
     downloadServices();
     isUnreadMessages();
     downloadBalance();
+    if ($('#message').length !== 0){
+        $('#exampleModal .modal-title').text("Succes!");
+        $('#exampleModal .modal-body').text('');
+        $('#exampleModal .modal-body').append("<p>"+$("#message").val()+"</p>");
+        $('#exampleModal').modal("show");
+    }
 });
 
 function downloadServices() {
@@ -28,6 +34,45 @@ function downloadBalance(){
             $("#balance").text(result.balance + " MDL");
         }
     });
+}
+
+function deleteService(id) {
+    $.ajax({
+        type: "DELETE",
+        url: "/service/" + id,
+        success: function (result) {
+            console.log(result);
+            $('#exampleModal .modal-title').text("Succes!");
+            $('#exampleModal .modal-body').text('');
+            $('#exampleModal .modal-body').append("<p>Service has been successfully deleted</p>");
+            $('#exampleModal').modal("show");
+            // $("#successCanceling").show();
+            // setTimeout(function () {
+            //     $("#successCanceling").hide();
+            // }, 5000);
+            downloadServices();
+        }
+    });
+}
+
+$(document).on("click", ".cancel", function () {
+    var invoiceId = $(this).data('id');
+    console.log(invoiceId);
+    $("#modalDeleteServiceConfirm #serviceId").val(invoiceId);
+    // As pointed out in comments,
+    // it is superfluous to have to manually call the modal.
+    // $('#addBookDialog').modal('show');
+    $('#modalDeleteServiceConfirm .modal-body').text("You are going to delete a service");
+    $('#modalDeleteServiceConfirm .modal-body').append("<p>Please confirm!</p><br>");
+    $('#modalDeleteServiceConfirm .modal-title').text("Confirm");
+    $("#modalDeleteServiceConfirm").modal("show");
+});
+
+function clickModalYes() {
+        console.log("yes");
+        var id = $('#modalDeleteServiceConfirm #serviceId').val();
+        console.log(id);
+        deleteService(id);
 }
 
 $("th[scopeForSort='sort']").click(function () {
@@ -57,8 +102,15 @@ function fillTableWithServices() {
         row += "<td>" + listOfServices[i].category.name + "</td>";
         row += "<td>" + listOfServices[i].title + "</td>";
         row += "<td>" + listOfServices[i].description + "</td>";
-        row += "<td>" + listOfServices[i].price + "</td>";
-        row += "<td></td>";
+        row += "<td>" + listOfServices[i].price + " USD</td>";
+        row += "<td>" + listOfServices[i].numberOfContracts + "</td>";
+        if (listOfServices[i].numberOfContracts == 0){
+            row += "<td><a role = \"button\" style = \"display: inline-block;;width: 58px\" class=\"btn btn-info btn-sm send\" href=\"/service/"+ listOfServices[i].id+"/edit\" data-id="+ listOfServices[i].id+" >Edit</a>" +
+                "<button class=\"btn btn-danger btn-sm cancel\" style = \"display:inline;width: 58px\" data-id="+ listOfServices[i].id+ " >Delete</button></td>";
+
+        } else {
+            row += "<td>-</td>";
+        }
         row += "</tr>";
         $("#tableWithServices tbody").append(row);
     }

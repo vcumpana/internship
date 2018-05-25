@@ -161,9 +161,12 @@ public class InvoicesRestController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    @GetMapping("/invoice/{id}/{action}")
+    @PostMapping("/invoice/{id}/{action}")
+    @PreAuthorize("hasAnyRole('ROLE_COMPANY')")
     public ResponseEntity sendOrCancelInvoice(@PathVariable("id") Long invoiceId, @PathVariable("action") String action,
                                               HttpServletRequest request, Model model) {
+        LOGGER.log(Level.DEBUG, invoiceId);
+        LOGGER.log(Level.DEBUG, action);
         Invoice invoice = invoiceService.getInvoiceById(invoiceId);
         if (invoice != null) {
             if (invoice.getContract().getCompany().getCredential().getUsername().equals((authUtils.getAuthenticatedUsername()))) {

@@ -51,7 +51,7 @@ $('#select_all').change(function() {
         chekedAll = false;
         arr.length = 0;
     }
-    var checkboxes = $(this).closest('form').find(':checkbox');
+    var checkboxes = $(this).closest('table').find(':checkbox');
     checkboxes.prop('checked', $(this).is(':checked'));
 });
 
@@ -80,6 +80,7 @@ $(document).on("click", "input[type='checkbox'][name='idInvoice']", function(){
         arr.push(parseInt($(this).attr("id")));
     } else {
         $("#select_all").prop("checked", false);
+        chekedAll = false;
         arr.splice( $.inArray(parseInt($(this).attr("id")), arr), 1);
     }
 });
@@ -99,7 +100,7 @@ function downloadInvoices() {
         success: function (result) {
             $('#checkbox').addClass('hidden');
             listOfInvoices = result.invoices;
-            maxPage = result.pages
+            maxPage = result.pages;
             setPages();
             //  listOfContracts.sort(comparatorForCategory);
             fillTableWithInvoices();
@@ -123,7 +124,13 @@ function checkInvoice() {
 }
 
 function sendInvoices() {
-    fillArray();
+    if (arr.length == 0){
+        $('#exampleModal .modal-title').text("Warning");
+        $('#exampleModal .modal-body').text('');
+        $('#exampleModal .modal-body').append("<p>Please select at least 1 invoice</p>");
+        $('#exampleModal').modal("show");
+        return;
+    }
     data = {
         info: arr
     };
@@ -133,10 +140,14 @@ function sendInvoices() {
         url: "/company/sendinvoices/",
         data: {info: arr},
         success: function (result) {
-            $("#successSending").show();
-            window.setTimeout(function () {
-                $("#successSending").hide();
-            }, 5000);
+            $('#exampleModal .modal-title').text("Succes!");
+            $('#exampleModal .modal-body').text('');
+            $('#exampleModal .modal-body').append("<p>Invoices have been successfully sent</p>");
+            $('#exampleModal').modal("show");
+            //$("#successSending").show();
+            // window.setTimeout(function () {
+            //     $("#successSending").hide();
+            // }, 5000);
             downloadInvoices();
         }
     });
@@ -145,13 +156,19 @@ function sendInvoices() {
 
 function sendInvoice(id) {
     $.ajax({
-        type: "GET",
+        type: "POST",
         url: "/invoice/" + id + "/send",
         success: function (result) {
-            $("#successSending").show();
-            setTimeout(function () {
-                $("#successSending").hide();
-            }, 5000);
+            $('#exampleModal .modal-title').text("Succes!");
+            $('#exampleModal .modal-body').text('');
+            $('#exampleModal .modal-body').append("<p>Invoice has been successfully sent</p>");
+            $('#exampleModal').modal("show");
+            /*
+$("#successSending").show();
+             setTimeout(function () {
+                 $("#successSending").hide();
+             }, 5000);
+*/
             downloadInvoices();
         }
     });
@@ -159,20 +176,30 @@ function sendInvoice(id) {
 
 function cancelInvoice(id) {
     $.ajax({
-        type: "GET",
+        type: "POST",
         url: "/invoice/" + id + "/cancel",
         success: function (result) {
-            $("#successCanceling").show();
-            setTimeout(function () {
-                $("#successCanceling").hide();
-            }, 5000);
+            $('#exampleModal .modal-title').text("Succes!");
+            $('#exampleModal .modal-body').text('');
+            $('#exampleModal .modal-body').append("<p>Invoice has been successfully deleted</p>");
+            $('#exampleModal').modal("show");
+            // $("#successCanceling").show();
+            // setTimeout(function () {
+            //     $("#successCanceling").hide();
+            // }, 5000);
             downloadInvoices();
         }
     });
 }
 
 function cancelInvoices() {
-    fillArray();
+    if (arr.length == 0){
+        $('#exampleModal .modal-title').text("Warning");
+        $('#exampleModal .modal-body').text('');
+        $('#exampleModal .modal-body').append("<p>Please select at least 1 invoice</p>");
+        $('#exampleModal').modal("show");
+        return;
+    }
     data = {
         info: arr
     };
@@ -182,10 +209,14 @@ function cancelInvoices() {
         url: "/company/cancelinvoices/",
         data: {info: arr},
         success: function (result) {
-            $("#successCancel").show();
-            window.setTimeout(function () {
-                $("#successCancel").hide();
-            }, 5000);
+            $('#exampleModal .modal-title').text("Success!");
+            $('#exampleModal .modal-body').text('');
+            $('#exampleModal .modal-body').append("<p>Invoices have been successfully deleted</p>");
+            $('#exampleModal').modal("show");
+           // $("#successCancel").show();
+           //  window.setTimeout(function () {
+           //      $("#successCancel").hide();
+           //  }, 5000);
             downloadInvoices();
         }
     });
@@ -216,7 +247,8 @@ function makeURL(page) {
     var url = "/invoices?page=" + page + "&size=" + size + "&";
     var data = {
         "categoryId": $("#categoryName").val(),
-        "orderByDueDate": $("#orderByDueDate").val(),
+
+        "order": $("#orderByDueDate").val(),
         "status": $("#invoiceStatus").val(),
         "fromStartDate": $("#fromStartDate").val(),
         "tillStartDate": $("#tillStartDate").val(),
@@ -228,6 +260,15 @@ function makeURL(page) {
         "usersLastName": $("#usersLastName").val(),
         "serviceId" : $("#serviceName").val()
     };
+
+    //TODO if
+    if ($("#orderByDueDate").val() !== ""){
+        data.orderBy = "PAYMENT_DATE";
+        data.order=$("#orderByDueDate").val();
+    }else{
+        data.orderBy = "STATUS";
+    }
+
     for (key in data) {
         if (data[key] !== "") {
             url += key + "=" + data[key] + "&";
@@ -263,13 +304,13 @@ function fillTableWithInvoices() {
         switch (listOfInvoices[i].invoiceStatus) {
             case "CREATED":
                 row += "<td>-</td>";
-                row += "<td>" + listOfInvoices[i].price + " MDL</td>";
+                row += "<td>" + listOfInvoices[i].price + " USD</td>";
                 unpaid += listOfInvoices[i].price;
                 row += "<td>-</td>";
                 row += "<td class='text-secondary'><strong>Created</strong></td>";
                 break;
             case "PAID":
-                row += "<td>" + listOfInvoices[i].price + " MDL</td>";
+                row += "<td>" + listOfInvoices[i].price + " USD</td>";
                 row += "<td>-</td>";
                 row += "<td>-</td>";
                 paid += listOfInvoices[i].price;
@@ -278,13 +319,13 @@ function fillTableWithInvoices() {
             case "OVERDUE":
                 row += "<td>-</td>";
                 row += "<td>-</td>";
-                row += "<td>" + listOfInvoices[i].price + " MDL</td>";
+                row += "<td>" + listOfInvoices[i].price + " USD</td>";
                 overdue += listOfInvoices[i].price;
                 row += "<td class='text-danger'><strong>Overdue</strong></td>";
                 break;
             case "SENT":
                 row += "<td>-</td>";
-                row += "<td>" + listOfInvoices[i].price + " MDL</td>";
+                row += "<td>" + listOfInvoices[i].price + " USD</td>";
                 unpaid += listOfInvoices[i].price;
                 row += "<td>-</td>";
                 row += "<td class='text-warning'><strong>Sent</strong></td>";
@@ -292,17 +333,18 @@ function fillTableWithInvoices() {
             default:
         }
         if (listOfInvoices[i].invoiceStatus === "CREATED") {
-            row += "<td><button class=\"btn btn-info btn-sm\" onclick=\"sendInvoice(" + listOfInvoices[i].invoiceId + ")\">Send</button><button class=\"btn btn-danger btn-sm\" onclick=\"cancelInvoice(" + listOfInvoices[i].invoiceId + ")\">Cancel</button></td>";
-            row += "<td><a class=\"btn btn-secondary btn-sm\" href=" + "/invoice/" + listOfInvoices[i].invoiceId + "/edit" + ">Edit</a></td>";
+            row += "<td><button class=\"btn btn-info btn-sm send\" style = \"display:inline;width: 55px\" data-id="+ listOfInvoices[i].invoiceId+" >Send</button>" +
+                "<button class=\"btn btn-danger btn-sm cancel\" style = \"display:inline;width: 55px\" data-id="+ listOfInvoices[i].invoiceId+ " >Delete</button></td>";
+            row += "<td><a class=\"btn btn-secondary btn-sm\" style = \"display:inline;width: 55px\" href=" + "/invoice/" + listOfInvoices[i].invoiceId + "/edit" + ">Edit</a></td>";
         } else {
-            row += "<td></td>";
-            row += "<td></td>";
+            row += "<td>-</td>";
+            row += "<td>-</td>";
         }
         row += "</tr>";
         $("#tableWithInvoices tbody").append(row);
     }
     var row = "<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td>" +
-        "<td>Total</td><td>" + paid.toFixed(2) + " MDL</td><td>" + unpaid.toFixed(2) + " MDL</td><td>" + overdue.toFixed(2) + " MDL</td><td></td><td></td><td></td></tr>";
+        "<td>Total per page</td><td>" + paid.toFixed(2) + " USD</td><td>" + unpaid.toFixed(2) + " USD</td><td>" + overdue.toFixed(2) + " USD</td><td></td><td></td><td></td></tr>";
     $("#tableWithInvoices tbody").append(row);
     verifyIfPreviousExists();
     verifyIfNextExists();
@@ -412,7 +454,7 @@ function downloadBalance() {
         type: "POST",
         url: "/bank/balance",
         success: function (result) {
-            $("#balance").text(result.balance + " MDL");
+            $("#balance").text(result.balance + " USD");
         }
     });
 }
@@ -430,7 +472,7 @@ $("#showDatesFilters").click(function () {
 });
 
 function setPages() {
-    $("#currentPageButton").html("Page <input type='text' id='currentPage' style='width: 25%; text-align: right' min='1' max='" + maxPage + "'> from " + maxPage);
+    $("#currentPageButton").html("Page <input type='text' id='currentPage' style='width: 15%; text-align: center' min='1' max='" + maxPage + "'> from " + maxPage);
     $("#currentPage").val(currentPage);
 }
 
@@ -456,3 +498,80 @@ $(document).on("input change paste", "#currentPage", function () {
 $("#currentPageButton").click(function () {
     $("#currentPage").focus();
 });
+
+function sendInvoicesConfirmation(){
+    if (arr.length == 0){
+        $('#exampleModal .modal-title').text("Warning");
+        $('#exampleModal .modal-body').text('');
+        $('#exampleModal .modal-body').append("<p>Please select at least 1 invoice</p>");
+        $('#exampleModal').modal("show");
+        return;
+    }
+    $('#modalSendInvoicesConfirm .modal-body').text("You are going to send "+ arr.length+" invoices to your clients");
+    $('#modalSendInvoicesConfirm .modal-body').append("<p>Please confirm!</p><br>");
+    $('#modalSendInvoicesConfirm .modal-title').text("Confirm");
+    $("#modalSendInvoicesConfirm").modal("show");
+}
+
+function deleteInvoicesConfirmation(){
+    if (arr.length == 0){
+        $('#exampleModal .modal-title').text("Warning");
+        $('#exampleModal .modal-body').text('');
+        $('#exampleModal .modal-body').append("<p>Please select at least 1 invoice</p>");
+        $('#exampleModal').modal("show");
+        return;
+    }
+    $('#modalDeleteInvoicesConfirm .modal-body').text("You are going to delete " + arr.length+" invoices");
+    $('#modalDeleteInvoicesConfirm .modal-body').append("<p>Please confirm!</p><br>");
+    $('#modalDeleteInvoicesConfirm .modal-title').text("Confirm");
+    $("#modalDeleteInvoicesConfirm").modal("show");
+}
+
+$(document).on("click", ".cancel", function () {
+    var invoiceId = $(this).data('id');
+    console.log(invoiceId);
+    $("#modalDeleteOneInvoiceConfirm #invoiceId").val(invoiceId);
+    // As pointed out in comments,
+    // it is superfluous to have to manually call the modal.
+    // $('#addBookDialog').modal('show');
+    $('#modalDeleteOneInvoiceConfirm .modal-body').text("You are going to delete an invoice");
+    $('#modalDeleteOneInvoiceConfirm .modal-body').append("<p>Please confirm!</p><br>");
+    $('#modalDeleteOneInvoiceConfirm .modal-title').text("Confirm");
+    $("#modalDeleteOneInvoiceConfirm").modal("show");
+});
+
+$(document).on("click", ".send", function () {
+    var invoiceId = $(this).data('id');
+    console.log(invoiceId);
+    $("#modalSendOneInvoiceConfirm #invoiceId1").val(invoiceId);
+    // As pointed out in comments,
+    // it is superfluous to have to manually call the modal.
+    // $('#addBookDialog').modal('show');
+    $('#modalSendOneInvoiceConfirm .modal-body').text("You are going to send an invoice");
+    $('#modalSendOneInvoiceConfirm .modal-body').append("<p>Please confirm!</p><br>");
+    $('#modalSendOneInvoiceConfirm .modal-title').text("Confirm");
+    $("#modalSendOneInvoiceConfirm").modal("show");
+});
+
+function clickModalYes(modalName){
+    if (modalName === 'modalSendInvoicesConfirm'){
+        sendInvoices();
+    }
+    if (modalName === 'modalDeleteInvoicesConfirm'){
+        cancelInvoices();
+    }
+    if (modalName === 'modalDeleteOneInvoiceConfirm'){
+        console.log("yes");
+        var id = $('#modalDeleteOneInvoiceConfirm #invoiceId').val();
+        console.log(id);
+        cancelInvoice(id);
+    }
+    if (modalName === 'modalSendOneInvoiceConfirm'){
+        var id = $('#modalSendOneInvoiceConfirm #invoiceId1').val();
+        sendInvoice(id);
+    }
+}
+
+function clickModalNo(modalName){
+    $("#modalConfirm").hide();
+}

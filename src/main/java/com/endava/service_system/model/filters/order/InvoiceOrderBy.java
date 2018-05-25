@@ -10,5 +10,6 @@ public enum InvoiceOrderBy {
     CLIENT_FULL_NAME,
     COMPANY_NAME,
     //JUST For Companies
-    CREATED_DATE
+    CREATED_DATE,
+    STATUS
 }
