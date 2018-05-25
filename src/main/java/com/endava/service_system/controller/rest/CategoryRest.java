@@ -17,7 +17,6 @@ import java.util.List;
 public class CategoryRest {
 
     private CategoryService categoryService;
-    private ServiceService serviceService;
 
     @PostMapping("/admin/category")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -78,8 +77,4 @@ public class CategoryRest {
         this.categoryService = categoryService;
     }
 
-    @Autowired
-    public void setServiceService(ServiceService serviceService) {
-        this.serviceService = serviceService;
-    }
 }
