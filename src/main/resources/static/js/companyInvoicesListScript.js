@@ -310,7 +310,7 @@ function fillTableWithInvoices() {
             default:
         }
         if (listOfInvoices[i].invoiceStatus === "CREATED") {
-            row += "<td><button class=\"btn btn-info btn-sm send\" style = \"display:inline;width: 55px\" data-id="+ listOfInvoices[i].invoiceId+" >Send</button>" +
+            row += "<td><button class=\"btn btn-primary btn-sm send\" style = \"display:inline;width: 55px\" data-id="+ listOfInvoices[i].invoiceId+" >Send</button>" +
                 "<button class=\"btn btn-danger btn-sm cancel\" style = \"display:inline;width: 55px\" data-id="+ listOfInvoices[i].invoiceId+ " >Delete</button></td>";
             row += "<td><a class=\"btn btn-secondary btn-sm\" style = \"display:inline;width: 55px\" href=" + "/invoice/" + listOfInvoices[i].invoiceId + "/edit" + ">Edit</a></td>";
         } else {
@@ -431,7 +431,8 @@ function downloadBalance() {
         type: "POST",
         url: "/bank/balance",
         success: function (result) {
-            $("#balance").text(result.balance.toFixed(2) + " USD");
+            $("#balance").addClass("balance");
+            $("#balance").text("Balance: " + result.balance.toFixed(2) + " USD");
         }
     });
 }

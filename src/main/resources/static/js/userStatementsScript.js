@@ -100,7 +100,8 @@ function downloadBalance() {
             activeAJAX++;
         },
         success: function (result) {
-            $("#balance").text(result.balance.toFixed(2) + " USD");
+            $("#balance").addClass("balance");
+            $("#balance").text("Balance: " + result.balance.toFixed(2) + " USD");
         }
     });
 }

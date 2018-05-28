@@ -201,14 +201,14 @@ function fillTableWithContracts() {
         }
         if (listOfContracts[i].contractStatus === "SIGNEDBYCLIENT") {
             row += "<td><button data-id=" + listOfContracts[i].id + " data-client=\"" + listOfContracts[i].fullName + "\" data-service=\"" + listOfContracts[i].categoryName + ", " + listOfContracts[i].serviceTitle
-                + "\" class=\"btn btn-warning btn-sm approve\" style = \"display:inline;width: 71px\">Approve</button>"
+                + "\" class=\"btn btn-primary btn-sm approve\" style = \"display:inline;width: 71px\">Approve</button>"
                 + "<button data-id=" + listOfContracts[i].id + " data-client=\"" + listOfContracts[i].fullName + "\" data-service=\"" + listOfContracts[i].categoryName + ", " + listOfContracts[i].serviceTitle
                 + "\" class=\"btn btn-danger btn-sm deny\" style = \"display:inline;width: 71px\">Deny</button></td>";
             row +="<td>-</td>";
         } else if (listOfContracts[i].contractStatus === "ACTIVE" && listOfContracts[i].availForInvoice === true){
             row +="<td>-</td>";
             row += "<td><a href=" + "/contract/"+ listOfContracts[i].id +"/createInvoice"
-                + " role=\"button\" class=\"btn btn-success btn-sm \" >Create invoice</a></td>";
+                + " role=\"button\" class=\"btn btn-primary btn-sm \" >Create invoice</a></td>";
         } else {
             row +="<td>-</td>";
             row +="<td>-</td>";
@@ -351,7 +351,8 @@ function downloadBalance(){
         type: "POST",
         url: "/bank/balance",
         success: function (result) {
-            $("#balance").text(result.balance.toFixed(2) + " USD");
+            $("#balance").addClass("balance");
+            $("#balance").text("Balance: " + result.balance.toFixed(2) + " USD");
         }
     });
 }
