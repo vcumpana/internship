@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.interfaces.RSAPrivateKey;
@@ -132,7 +133,7 @@ public class BankService {
         return Optional.of(bankAccount);
     }
 
-    public String parseMessageFromBank(String message){
+    public String parseMessageFromBank(String message, BigDecimal sum){
         String result = message;
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Credential currentUser = credentialService.getByUsername(username).get();
@@ -145,8 +146,8 @@ public class BankService {
                     "<a href='/user/profile?id=" + contractId + "'>contract nr." + contractId + "</a>.";
         }
         if(message.toLowerCase().contains("sum") && (currentUser.getRole() == ROLE_USER)){
-            float f = Float.valueOf(message.replaceAll("[^\\d.]+|\\.(?!\\d)", ""));
-            result = "You added " + f + " USD to your count.";
+            sum = sum.setScale(2);
+            result = "You added " + sum.toString() + " USD to your count.";
         }
         return result;
     }
