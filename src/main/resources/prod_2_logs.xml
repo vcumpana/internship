@@ -5,8 +5,8 @@
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
         </Console>
         <RollingFile name="roll-by-time-and-size"
-                     fileName="${catalina.base}/logs/Catalina.out"
-                     filePattern="${catalina.base}/logs/app.%d{MM-dd-yyyy-HH-mm}.%i.log.gz"
+                     fileName="C:\Users\iocojocari\Downloads\tomcat\apache-tomcat-8.5.29\logs\Catalina.out"
+                     filePattern="C:\Users\iocojocari\Downloads\tomcat\apache-tomcat-8.5.29\logs\app.%d{MM-dd-yyyy-HH-mm}.%i.log.gz"
                      ignoreExceptions="false">
             <PatternLayout>
                 <Pattern>%d{yyyy-MM-dd HH:mm:ss} %p %m%n</Pattern>
@@ -18,7 +18,7 @@
             </Policies>
             <DefaultRolloverStrategy>
                 <Delete basePath="${baseDir}" maxDepth="2">
-                    <IfFileName glob="${catalina.base}/logs/app.*.log.gz" />
+                    <IfFileName glob="C:\Users\iocojocari\Downloads\tomcat\apache-tomcat-8.5.29\logs\app.*.log.gz" />
                     <IfLastModified age="10d" />
                 </Delete>
             </DefaultRolloverStrategy>
@@ -30,7 +30,7 @@
         </Logger>
         <Root level="warn" >
             <AppenderRef level="warn" ref="Console"/>
-            <AppenderRef level="warn" ref="roll-by-time-and-size" />
+            <AppenderRef level="trace" ref="roll-by-time-and-size" />
         </Root>
     </Loggers>
 </Configuration>

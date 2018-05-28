@@ -78,11 +78,12 @@ public class EncryptionUtils {
 
     public byte[] decryptBytes(byte[] data) throws BadPaddingException, IllegalBlockSizeException, InvalidKeyException {
         decrypter.init(Cipher.PRIVATE_KEY,privateKey);
-        byte[] newArr=new byte[data.length-1];
-        for(int i=0;i<newArr.length;i++){
-            newArr[i]=data[i+1];
-        }
-        byte[] decoded=decrypter.doFinal(newArr);
+//        byte[] newArr=new byte[data.length-1];
+//        for(int i=0;i<newArr.length;i++){
+//            newArr[i]=data[i+1];
+//        }
+//        System.out.println("new Arr size:"+newArr.length);
+        byte[] decoded=decrypter.doFinal(data);
         return decoded;
     }
 
@@ -91,7 +92,7 @@ public class EncryptionUtils {
      * This string is a json
      */
     public Object decryptData(String encodedString,Class classObject) throws BadPaddingException, IllegalBlockSizeException, IOException, InvalidKeyException {
-        byte[] dataEncoded=Base64.getDecoder().decode(new String(encodedString.getBytes(),"UTF-8"));
+        byte[] dataEncoded=Base64.getDecoder().decode(new String(encodedString.getBytes()));
         byte[] decoded=decryptBytes(dataEncoded);
         String realJson=new String(decoded);
         return objectMapper.readValue(realJson,classObject);
