@@ -47,7 +47,7 @@ $('#select_all').change(function() {
         arr.length = 0;
         chekedAll = false;
     }
-    var checkboxes = $(this).closest('form').find(':checkbox');
+    var checkboxes = $(this).closest('table').find(':checkbox');
     checkboxes.prop('checked', $(this).is(':checked'));
 });
 
@@ -83,7 +83,6 @@ function downloadContracts() {
             listOfContracts = result.contracts;
             maxPage=result.pages;
             setPages();
-            //  listOfContracts.sort(comparatorForCategory);
             fillTableWithContracts();
             setCheckboxes();
         }
@@ -97,7 +96,6 @@ function getAllContractsIds() {
         success: function (result) {
             arr = [];
             arr = $.merge(arr, result);
-            //  listOfContracts.sort(comparatorForCategory);
         }
     });
 }
@@ -114,7 +112,6 @@ function sendContractsForInvoicesCreation() {
             $('#exampleModal .modal-body').text('');
             $('#exampleModal .modal-title').text("Invoice creation report");
             $('#exampleModal .modal-body').append("<p>Created invoices: " + result.created + " invoice</p>");
-            $('#exampleModal .modal-body').append("<p>Skipped contracts: " + result.skipped + " contracts</p><br>");
             $('#exampleModal .modal-body').append("<p>Note: contracts are skipped from creating invoices if there exist issued invoices for current month or the contract has the status other than Active");
             $("#exampleModal").modal("show");
         }
@@ -126,20 +123,20 @@ $("th[scopeForSort='sort']").click(function () {
     var field = $(this).attr("field");
     removeTypeOfSort(field);
     if(field === "category"){
-        listOfServices.sort(comparatorForCategory);
+        listOfContracts.sort(comparatorForCategory);
     }
     if(field === "price"){
-        listOfServices.sort(comparatorForPrice);
+        listOfContracts.sort(comparatorForPrice);
     }
     if($(this).attr("typeOfSort") === "asc"){
-        listOfServices.reverse();
+        listOfContracts.reverse();
         setArrowForSort(field, "desc");
         $(this).attr("typeOfSort", "desc");
     } else {
         setArrowForSort(field, "asc");
         $(this).attr("typeOfSort", "asc");
     }
-    fillTableWithServices();
+    fillTableWithContracts();
 });
 
 function fillTableWithContracts() {
@@ -153,7 +150,6 @@ function fillTableWithContracts() {
             row += "<td><input type=\"checkbox\" name='idInvoice' id=\"" + listOfContracts[i].id + "\"></td>";
         } else
             row +="<td></td>";
-        //row +="<td><input type=\"checkbox\"></td>";
         row += "<td>" + listOfContracts[i].id+ "</td>";
         row += "<td>" + listOfContracts[i].serviceTitle + "</td>";
         row += "<td>" + listOfContracts[i].categoryName + "</td>";
@@ -302,7 +298,7 @@ function downloadBalance(){
         type: "POST",
         url: "/bank/balance",
         success: function (result) {
-            $("#balance").text(result.balance + " USD");
+            $("#balance").text(result.balance.toFixed(2) + " USD");
         }
     });
 }

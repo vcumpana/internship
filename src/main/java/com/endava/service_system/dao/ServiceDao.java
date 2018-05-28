@@ -20,44 +20,46 @@ public interface ServiceDao extends JpaRepository<Service,Long> {
 
     Optional<Service> getByTitle(String title);
 
+    Optional<Service> getByTitleAndId(String title, long id);
+
     List<Service> getByTitleAndIdIsNot(String title, long id);
 
-    @Query(value = "select s.id as id, s.description as description , s.price as price, s.title as title, c.name as companyName" +
-            ", cat.name as category, c.company_url, c.image_name from service s " +
-            "join company_services cs " +
-            "on cs.services_id = s.id " +
-            "join company c " +
-            "on c.id = cs.company_id " +
-            "join categories cat " +
-            "on cat.id = s.category_id", nativeQuery = true)
+    @Query(value = "SELECT s.id AS id, s.description AS description , s.price AS price, s.title AS title, c.name AS companyName" +
+            ", cat.name AS category, c.url FROM service s " +
+            "JOIN company_services cs " +
+            "ON cs.services_id = s.id " +
+            "JOIN company c " +
+            "ON c.id = cs.company_id " +
+            "JOIN categories cat " +
+            "ON cat.id = s.category_id", nativeQuery = true)
     List<Map> getAll();
 
-    @Query(value = "select s.id as id, s.description as description , s.price as price, s.title as title, c.name as companyName, cat.name as category from service s " +
-            "join company_services cs " +
-            "on cs.services_id = s.id " +
-            "join company c " +
-            "on c.id = cs.company_id " +
-            "join categories cat " +
-            "on cat.id = s.category_id WHERE cat.name=:categoryName", nativeQuery = true)
+    @Query(value = "SELECT s.id AS id, s.description AS description , s.price AS price, s.title AS title, c.name AS companyName, cat.name AS category from service s " +
+            "JOIN company_services cs " +
+            "ON cs.services_id = s.id " +
+            "JOIN company c " +
+            "ON c.id = cs.company_id " +
+            "JOIN categories cat " +
+            "ON cat.id = s.category_id WHERE cat.name=:categoryName", nativeQuery = true)
     List<Map> getByCategoryName(@Param("categoryName") String categoryName);
 
     @Transactional
     @Modifying
-    @Query(value = "delete from Service s where s.id=:id")
+    @Query(value = "delete from Service s WHERE s.id=:id")
     int deleteServicesById(@Param("id") long id);
 
-    @Query(value = "select s.id as id, s.description as description , s.price as price, s.title as title, c.name as companyName, cat.name as category, c.company_url as company_url,c.image_name as image_name from service s " +
-            "join company_services cs " +
-            "on cs.services_id = s.id " +
-            "join company c " +
-            "on c.id = cs.company_id " +
-            "join categories cat " +
-            "on cat.id = s.category_id WHERE s.id=:id", nativeQuery = true)
+    @Query(value = "SELECT s.id AS id, s.description AS description , s.price AS price, s.title AS title, c.name AS companyName, cat.name AS category, c.company_url AS company_url,c.image_name AS image_name from service s " +
+            "JOIN company_services cs " +
+            "ON cs.services_id = s.id " +
+            "JOIN company c " +
+            "ON c.id = cs.company_id " +
+            "JOIN categories cat " +
+            "ON cat.id = s.category_id WHERE s.id=:id", nativeQuery = true)
     List<Map> getServiceDtoById(@Param("id") long id);
 
-    @Query(value = "select count (c) as count from Contract c " +
-            "join c.service s " +
-            "join c.company co " +
-            "where s.title=:title and co.name =:companyName and c.status='ACTIVE'")
+    @Query(value = "SELECT COUNT (c) AS count FROM Contract c " +
+            "JOIN c.service s " +
+            "JOIN c.company co " +
+            "WHERE s.title=:title AND co.name =:companyName")
     int countContracts(@Param("title") String title, @Param("companyName") String companyName);
 }

@@ -101,7 +101,7 @@ function fillTableWithServices() {
             row += "<a href=\"http://" + listOfServices[i].companyUrl + "\">";
         }
         if (listOfServices[i].imageName !== null && listOfServices[i].imageName !== '') {
-            row += "<img border=\"0\" alt=\"logo\" src=\"/image/" + listOfServices[i].imageName + "\" width=\"200\" height=\"100\">"
+            row += "<img border=\"0\" alt=\"logo\" src=\"/image/" + listOfServices[i].imageName + "\" width=\"200\" height=\"40\">"
         }
         if (listOfServices[i].companyUrl !== null && listOfServices[i].companyUrl !== '') {
             row += "</a>";

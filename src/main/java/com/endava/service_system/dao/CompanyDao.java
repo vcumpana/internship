@@ -1,7 +1,7 @@
 package com.endava.service_system.dao;
 
-import com.endava.service_system.model.entities.Company;
 import com.endava.service_system.model.enums.UserStatus;
+import com.endava.service_system.model.entities.Company;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -40,4 +40,9 @@ public interface CompanyDao extends JpaRepository<Company,Long> {
     List<Company> getAllBy(Pageable pageable);
 
     List<Company> getByCredentialStatus(Pageable pageable,UserStatus userStatus);
+    @Query("SELECT cr.username FROM Company c INNER JOIN c.credential cr WHERE c.name=:name")
+    Optional<String> getCredentialUsernameByName(@Param("name") String name);
+
+    @Query(value = "SELECT c.imageName from Company c JOIN c.credential cr WHERE cr.username=:username")
+    String getImageName(@Param("username") String username);
 }

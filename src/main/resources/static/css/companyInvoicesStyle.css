@@ -30,6 +30,18 @@
     margin-left: 15px;
 }
 
+.error-message {
+    width: 100%;
+    margin-top: .25rem;
+    font-size: 80%;
+    color: #dc3545;
+}
+
+.hidden
+{
+    display: none;
+}​
+
 .filter:hover {
     cursor: pointer;
 }

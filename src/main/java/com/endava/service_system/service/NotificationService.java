@@ -64,7 +64,7 @@ public class NotificationService {
         Notification notification = new Notification();
         notification.setSender(credentialDao.getByUsername(username).get());
         notification.setRecipient(credentialDao.getByCompanyName(company.getName()).get());
-        notification.setMessage("Customer " + user.getSurname() + " " + user.getSurname() + " wants to sign with your company contract.");
+        notification.setMessage("Customer " + user.getName() + " " + user.getSurname() + " wants to sign with your company a contract.");
         notification.setNotificationStatus(UNREAD);
         notification.setDateTime(LocalDateTime.now());
         notificationDao.save(notification);
@@ -78,7 +78,7 @@ public class NotificationService {
         Notification notification = new Notification();
         notification.setSender(credentialDao.getByUsername(username).get());
         notification.setRecipient(credentialDao.getByUserId(user.getId()).get());
-        message += "Company " + company.getName() + (contract.getStatus() == ContractStatus.ACTIVE ? " approved" : " denied") + " your request to sign ";
+        message += "Company has" + company.getName() + (contract.getStatus() == ContractStatus.ACTIVE ? " approved" : " denied") + " your request to sign ";
         message += "<a href='/user/profile?id=" + contract.getId() + "'>contract</a>.";
         notification.setMessage(message);
         notification.setNotificationStatus(UNREAD);
@@ -171,5 +171,17 @@ public class NotificationService {
         notification.setNotificationStatus(UNREAD);
         notification.setDateTime(LocalDateTime.now());
         notificationDao.save(notification);
+    }
+
+    public Notification createNotificationContractExpiredForCompany(User user, Company company, Credential admin, Contract contract, LocalDateTime now) {
+        String message ="Contract No. " + contract.getId() + " signed with " + user.getName() + " " + user.getSurname() + " for " + contract.getService().getCategory().getName() + ", " + contract.getService().getTitle() + " subscription plan, has expired.";
+        Notification notification = createNotificationForCredential(admin, company.getCredential(), now, message);
+        return notification;
+    }
+
+    public Notification createNotificationContractExpiredForUser(User user, Company company, Credential admin, Contract contract, LocalDateTime now) {
+        String message ="Contract No. " + contract.getId() + " signed with " + company.getName() + " for " + contract.getService().getCategory().getName() + ", " + contract.getService().getTitle() + " subscription plan, has expired.";
+        Notification notification = createNotificationForCredential(admin, user.getCredential(), now, message);
+        return notification;
     }
 }

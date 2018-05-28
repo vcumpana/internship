@@ -4,6 +4,7 @@ import com.endava.service_system.model.entities.Company;
 import com.endava.service_system.model.entities.ImageEntity;
 import com.endava.service_system.service.CompanyService;
 import com.endava.service_system.service.StorageService;
+import com.endava.service_system.utils.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +23,8 @@ import java.util.Optional;
 public class UploadController {
     private final StorageService storageService;
     private final CompanyService companyService;
+    private final AuthUtils authUtils;
+
     @GetMapping("/image/{filename:.+}")
     public ResponseEntity serveFile(@PathVariable String filename) throws IOException, SQLException {
         Optional<ImageEntity> entityOptional=storageService.getImage(filename);
@@ -30,6 +33,20 @@ public class UploadController {
         }
         ImageEntity entity=entityOptional.get();
         ByteArrayResource inputStream=new ByteArrayResource(entity.getContent());
+        HttpHeaders headers=new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + entity.getName() + "\"");
+        headers.setContentLength(inputStream.contentLength());
+        return new ResponseEntity(inputStream,headers,HttpStatus.OK);
+    }
+
+    @GetMapping("/company/logo")
+    public ResponseEntity serveLogo() throws IOException, SQLException {
+        String filename = companyService.getImageNameByCompanyUsername(authUtils.getAuthenticatedUsername());
+        Optional<ImageEntity> entityOptional=storageService.getImage(filename);
+        if(!entityOptional.isPresent())
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        ImageEntity entity = entityOptional.get();
+        ByteArrayResource inputStream = new ByteArrayResource(entity.getContent());
         HttpHeaders headers=new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + entity.getName() + "\"");
         headers.setContentLength(inputStream.contentLength());

@@ -115,19 +115,8 @@ public class CompanyService {
         LOGGER.log(Level.DEBUG,username);
         Company company = companyDao.getByUsername(username).get();
         LOGGER.log(Level.DEBUG,company);
-       // List<Service> services = serviceService.getServicesByCompanyName(company.getName());
-//        for (int i = 0; i< services.size(); i++) {
-//            if (service.getId() == services.get(i).getId()) {
-//                services.get(i).setCategory(service.getCategory());
-//                services.get(i).setDescription(service.getDescription());
-//                services.get(i).setPrice(service.getPrice());
-//                services.get(i).setTitle(service.getTitle());
-//            }
-//        }
-       // company.setServices(services);
         LOGGER.debug("trying to update : "+service);
         serviceService.saveService(service);
-    //    companyDao.save(company);
     }
 
     public void deleteServiceByIdFromCompany(long id) {
@@ -142,6 +131,10 @@ public class CompanyService {
         }
         company.setServices(services);
         companyDao.save(company);
+    }
+
+    public String getImageNameByCompanyUsername(String username) {
+        return companyDao.getImageName(username);
     }
 
     @Autowired
@@ -168,6 +161,4 @@ public class CompanyService {
     public void setAuthUtils(AuthUtils authUtils) {
         this.authUtils = authUtils;
     }
-
-
 }

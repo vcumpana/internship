@@ -63,7 +63,7 @@ function downloadBalance() {
         type: "POST",
         url: "/bank/balance",
         success: function (result) {
-            $("#balance").text(result.balance + " MDL");
+            $("#balance").text(result.balance.toFixed(2) + " MDL");
         }
     });
 }
