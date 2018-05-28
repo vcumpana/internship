@@ -3,12 +3,14 @@ var sumOnTheStart = 0;
 var sumOnTheEnd = 0;
 var maxPageSize;
 var currentPage = 1;
+var activeAJAX = 0;
+var timer;
 
 $(document).ready(function () {
-    downloadBalance();
-    fillDate();
-    downloadStatements(null);
-    isUnreadMessages();
+        downloadBalance();
+        fillDate();
+        downloadStatements(null);
+        isUnreadMessages();
 });
 
 $( document ).ajaxStart(function() {
@@ -16,12 +18,16 @@ $( document ).ajaxStart(function() {
 });
 
 $( document ).ajaxComplete(function() {
-    $( "#pleaseWaitDialog" ).modal('hide');
+    activeAJAX--;
+    if(activeAJAX === 0) {
+        $( "#pleaseWaitDialog" ).modal('hide');
+    }
 });
 
 function downloadStatements(ev) {
     if(ev !== null) {
         ev.preventDefault();
+        currentPage = 1;
     }
     var data = {
         "date": $("#startDate").val(),
@@ -33,6 +39,9 @@ function downloadStatements(ev) {
         contentType: "application/json",
         url: "/bank/statements",
         data: JSON.stringify(data),
+        beforeSend: function(){
+          activeAJAX++;
+        },
         success: function(result){
             sumOnTheStart = result.balanceBefore;
             sumOnTheEnd = result.balanceAfter;
@@ -77,7 +86,7 @@ function fillTableWithStatements(currentSum) {
             $("#tableWithStatements tbody").append(row);
         }
     } else {
-        var row = "<tr><td colspan='4'>No results found for this period</td></tr>";
+        var row = "<tr><td colspan='5'>No results found for this period</td></tr>";
         $("#tableWithStatements tbody").append(row);
     }
     $("#balanceEnd").text("Balance on the end of period: " + sumOnTheEnd.toFixed(2) + " USD");
@@ -87,6 +96,9 @@ function downloadBalance() {
     $.ajax({
         type: "POST",
         url: "/bank/balance",
+        beforeSend: function(){
+            activeAJAX++;
+        },
         success: function (result) {
             $("#balance").text(result.balance.toFixed(2) + " USD");
         }
@@ -105,6 +117,9 @@ function isUnreadMessages() {
     $.ajax({
         type: "GET",
         url: "/notification/getNumberOfUnread",
+        beforeSend: function(){
+            activeAJAX++;
+        },
         success: function (result) {
             if (result > 0) {
                 $("#unreadMessages").css('display', 'inline');
@@ -124,16 +139,19 @@ $(document).on("input change paste", "#currentPage", function () {
     if (/[^\d]/.test(page)) {
         return;
     }
-    clearTimeout(timer);
+    if(currentPage == page){
+        return;
+    }
+    window.clearTimeout(timer);
     if (page < 1) {
         page = 1;
     }
     if (page > maxPageSize) {
         page = maxPageSize;
     }
-    timer = setTimeout(function () {
+    timer = window.setTimeout(function () {
         currentPage = page;
-        getDataForTable();
+        downloadStatements(null);
     }, 1000);
 });
 
@@ -142,7 +160,7 @@ $("#currentPageButton").click(function(){
 });
 
 function verifyIfPreviousExists() {
-    if (currentPage === 1) {
+    if (currentPage == 1) {
         $("#previousPage").addClass("disabled");
         $("#previousPage").attr("disabled", true);
     } else {
@@ -152,7 +170,7 @@ function verifyIfPreviousExists() {
 }
 
 function verifyIfNextExists() {
-    if (currentPage === maxPageSize || maxPageSize === 0) {
+    if (currentPage == maxPageSize || maxPageSize === 0) {
         $("#nextPage").addClass("disabled");
         $("#nextPage").attr("disabled", true);
     } else {

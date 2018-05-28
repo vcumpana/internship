@@ -9,7 +9,7 @@ $(document).ready(function () {
 });
 
 $(window).scroll(function () {
-    if (Math.abs($(window).scrollTop() + $(window).height() - $(document).height()) < 100 && !noMoreNotifications) {
+    if (Math.abs($(window).scrollTop() + $(window).height() - $(document).height()) < 10 && !noMoreNotifications) {
         loadNotifications();
     }
 });
@@ -71,6 +71,8 @@ function isUnreadMessages() {
         success: function (result) {
             if (result > 0) {
                 $("#unreadMessages").css('display', 'inline');
+            } else {
+                $("#unreadMessages").css('display', 'none');
             }
         }
     });
@@ -86,6 +88,7 @@ function markAsRead(event,  id){
             if(status === "UNREAD"){
                 $("#notification" + event.target.id).remove();
             }
+            isUnreadMessages();
         }
     });
 }

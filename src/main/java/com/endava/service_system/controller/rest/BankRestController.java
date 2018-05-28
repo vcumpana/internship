@@ -175,7 +175,7 @@ public class BankRestController {
         normalTransactions.setBalanceBeforeCurrentPage(shortTransactionsDto.getBfc());
         List<NormalTransaction> transactions=shortTransactionsDto.getListOfTransactions()
                 .stream().map(tr->converter.convert(tr,NormalTransaction.class)).collect(Collectors.toList());
-        transactions.stream().forEach(t -> t.setDescription(bankService.parseMessageFromBank(t.getDescription())));
+        transactions.stream().forEach(t -> t.setDescription(bankService.parseMessageFromBank(t.getDescription(), t.getSum())));
         normalTransactions.setListOfTransactions(transactions);
         return new ResponseEntity<Object>(normalTransactions, rs.getStatusCode());
     }

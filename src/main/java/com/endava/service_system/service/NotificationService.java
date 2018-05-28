@@ -123,7 +123,7 @@ public class NotificationService {
 
     public Notification createNotificationPayedForUser(Long invoiceId, String serviceTitle, Credential adminCredential, Credential userCredential, LocalDateTime now) {
         String message = "Succesful payment of <a href='/user/invoicesPage?id=" + invoiceId +"'>" +
-                "invoice : " + invoiceId + "</a> , service " + serviceTitle + ".";
+                "invoice nr. " + invoiceId + "</a> , service " + serviceTitle + ".";
         Notification notification = createNotificationForCredential(adminCredential, userCredential, now, message);
         return notification;
     }
