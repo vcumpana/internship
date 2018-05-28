@@ -5,8 +5,8 @@
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
         </Console>
         <RollingFile name="roll-by-time-and-size"
-                     fileName="${catalina.base}/Catalina.out"
-                     filePattern="${catalina.base}/app.%d{MM-dd-yyyy-HH-mm}.%i.log.gz"
+                     fileName="${catalina.base}/logs/Catalina.out"
+                     filePattern="${catalina.base}/logs/app.%d{MM-dd-yyyy-HH-mm}.%i.log.gz"
                      ignoreExceptions="false">
             <PatternLayout>
                 <Pattern>%d{yyyy-MM-dd HH:mm:ss} %p %m%n</Pattern>
@@ -18,7 +18,7 @@
             </Policies>
             <DefaultRolloverStrategy>
                 <Delete basePath="${baseDir}" maxDepth="2">
-                    <IfFileName glob="${catalina.base}/app.*.log.gz" />
+                    <IfFileName glob="${catalina.base}/logs/app.*.log.gz" />
                     <IfLastModified age="10d" />
                 </Delete>
             </DefaultRolloverStrategy>
