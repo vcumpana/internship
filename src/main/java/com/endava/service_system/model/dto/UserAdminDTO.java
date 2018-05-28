@@ -14,4 +14,5 @@ public class UserAdminDTO {
     private String name;
     private UserStatus status;
     private String username;
+    private long bankAccount;
 }

@@ -1,6 +1,6 @@
 package com.endava.service_system.service;
 
-import com.endava.service_system.dao.CurrentDateDao;
+import com.endava.service_system.dao.InvoiceDao;
 import com.endava.service_system.dao.InvoiceEntityManagerDao;
 import com.endava.service_system.dao.InvoiceUpdateDao;
 import com.endava.service_system.model.dto.ContractForShowingDto;
@@ -9,12 +9,13 @@ import com.endava.service_system.model.dto.InvoiceForPaymentDto;
 import com.endava.service_system.model.dto.NewInvoiceDTO;
 import com.endava.service_system.model.entities.Company;
 import com.endava.service_system.model.entities.Contract;
-import com.endava.service_system.model.filters.InvoiceFilter;
+import com.endava.service_system.model.entities.Invoice;
 import com.endava.service_system.model.enums.InvoiceStatus;
+import com.endava.service_system.model.filters.InvoiceFilter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.endava.service_system.dao.InvoiceDao;
-import com.endava.service_system.model.entities.Invoice;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -31,18 +32,12 @@ import static com.endava.service_system.model.enums.InvoiceStatus.SENT;
 
 @Service
 public class InvoiceService {
+    private static final Logger LOGGER=LogManager.getLogger(InvoiceService.class);
     private InvoiceEntityManagerDao invoiceEntityManagerDao;
     private InvoiceDao invoiceDao;
     private ContractService contractService;
-    private CurrentDateDao currentDateDao;
     private NotificationService notificationService;
-    private CurrentDateService currentDateService;
     private InvoiceUpdateDao invoiceUpdateDao;
-
-    @Autowired
-    public void setCurrentDateService(CurrentDateService currentDateService) {
-        this.currentDateService = currentDateService;
-    }
 
     @Autowired
     public void setNotificationService(NotificationService notificationService) {
@@ -54,10 +49,6 @@ public class InvoiceService {
         this.invoiceUpdateDao = invoiceUpdateDao;
     }
 
-    @Autowired
-    public void setCurrentDateDao(CurrentDateDao currentDateDao) {
-        this.currentDateDao = currentDateDao;
-    }
     @Autowired
     public void setContractService(ContractService contractService) {
         this.contractService = contractService;
@@ -89,6 +80,7 @@ public class InvoiceService {
         Contract contract;
         Invoice invoice;
         int j = 0;
+        LocalDate now=LocalDate.now();
         Map<String, Integer> report = new HashMap<>();
         for (int i = 0; i < ids.size(); i++) {
             contract = contractService.getContractById(Integer.parseInt(ids.get(i)));
@@ -99,20 +91,21 @@ public class InvoiceService {
             invoice.setInvoiceStatus(CREATED);
             Company company = contract.getCompany();
             List<Invoice> invoices = contract.getInvoices();
+
             if (invoices != null && invoices.size() > 0) {
-                if ((invoices.get(invoices.size() - 1).getTillDate().getMonth().getValue() >= currentDateDao.findById(new Long(1)).get().getLocalDate().getMonth().getValue()
-                        && invoices.get(invoices.size() - 1).getTillDate().getYear() >= currentDateDao.findById(new Long(1)).get().getLocalDate().getYear()) ||
+                if ((invoices.get(invoices.size() - 1).getTillDate().getMonth().getValue() >= now.getMonth().getValue()
+                        && invoices.get(invoices.size() - 1).getTillDate().getYear() >= now.getYear()) ||
                         (invoices.get(invoices.size() - 1).getTillDate().getMonth().getValue() > contract.getEndDate().getMonth().getValue()
                     && invoices.get(invoices.size() - 1).getTillDate().getYear() >= contract.getEndDate().getYear()))
                     continue;
                 invoice.setFromDate(invoices.get(invoices.size() - 1).getTillDate().plusDays(1));
             } else
                 invoice.setFromDate(contract.getStartDate());
-            if (contract.getEndDate().getYear() == currentDateDao.findById(new Long(1)).get().getLocalDate().getYear()
-                && contract.getEndDate().getMonth().getValue() == currentDateDao.findById(new Long(1)).get().getLocalDate().getMonth().getValue())
+            if (contract.getEndDate().getYear() == now.getYear()
+                && contract.getEndDate().getMonth().getValue() == now.getMonth().getValue())
                 invoice.setTillDate(contract.getEndDate());
             else
-                invoice.setTillDate(currentDateDao.findById(new Long(1)).get().getLocalDate().with(TemporalAdjusters.lastDayOfMonth()));
+                invoice.setTillDate(now.with(TemporalAdjusters.lastDayOfMonth()));
             if (invoice.getFromDate().isAfter(invoice.getTillDate()))
                 continue;
             invoice.setDueDate(invoice.getTillDate().plusDays(10));
@@ -149,6 +142,7 @@ public class InvoiceService {
         Contract contract;
         Invoice invoice;
         List<Long> canCreateInvoice=new ArrayList<>();
+        LocalDate now=LocalDate.now();
         for (int i = 0; i < list.size(); i++) {
             contract = contractService.getContractById(list.get(i));
             if (contract.getStatus() != ACTIVE) {
@@ -158,8 +152,8 @@ public class InvoiceService {
             Company company = contract.getCompany();
             List<Invoice> invoices = contract.getInvoices();
             if (invoices != null && invoices.size() > 0) {
-                if ((invoices.get(invoices.size() - 1).getTillDate().getMonth().getValue() >= currentDateDao.findById(new Long(1)).get().getLocalDate().getMonth().getValue()
-                        && invoices.get(invoices.size() - 1).getTillDate().getYear() >= currentDateDao.findById(new Long(1)).get().getLocalDate().getYear()) ||
+                if ((invoices.get(invoices.size() - 1).getTillDate().getMonth().getValue() >= now.getMonth().getValue()
+                        && invoices.get(invoices.size() - 1).getTillDate().getYear() >=now.getYear()) ||
                         (invoices.get(invoices.size() - 1).getTillDate().getMonth().getValue() > contract.getEndDate().getMonth().getValue()
                                 && invoices.get(invoices.size() - 1).getTillDate().getYear() >= contract.getEndDate().getYear())) {
 
@@ -168,11 +162,11 @@ public class InvoiceService {
                 invoice.setFromDate(invoices.get(invoices.size() - 1).getTillDate().plusDays(1));
             }else
                 invoice.setFromDate(contract.getStartDate());
-            if (contract.getEndDate().getYear() == currentDateDao.findById(new Long(1)).get().getLocalDate().getYear()
-                    && contract.getEndDate().getMonth().getValue() == currentDateDao.findById(new Long(1)).get().getLocalDate().getMonth().getValue())
+            if (contract.getEndDate().getYear() == now.getYear()
+                    && contract.getEndDate().getMonth().getValue() == now.getMonth().getValue())
                 invoice.setTillDate(contract.getEndDate());
             else
-                invoice.setTillDate(currentDateDao.findById(new Long(1)).get().getLocalDate().with(TemporalAdjusters.lastDayOfMonth()));
+                invoice.setTillDate(now.with(TemporalAdjusters.lastDayOfMonth()));
             if (invoice.getFromDate().isAfter(invoice.getTillDate())) {
 
                 continue;
@@ -188,7 +182,7 @@ public class InvoiceService {
 
     public Period getPeriodBetweenDates(LocalDate firstInputDate, LocalDate secondInputDate) {
         final Period period = Period.between(firstInputDate, secondInputDate);
-        System.out.println("days:"+period.getDays());
+        LOGGER.debug("days:"+period.getDays());
         return period;
     }
 
@@ -265,7 +259,7 @@ public class InvoiceService {
         newInvoiceDTO.setService(contract.getService().getTitle());
         newInvoiceDTO.setFromDate(invoices == null || invoices.size()==0
                 ? contract.getStartDate() : invoices.get(invoices.size() - 1).getTillDate().plusDays(1));
-        newInvoiceDTO.setTillDate(currentDateService.getCurrentDate().getLocalDate().with(TemporalAdjusters.lastDayOfMonth()));
+        newInvoiceDTO.setTillDate(LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()));
         newInvoiceDTO.setDueDate(newInvoiceDTO.getTillDate().plusDays(10));
         newInvoiceDTO.setPrice(contract.getService().getPrice());
         return newInvoiceDTO;

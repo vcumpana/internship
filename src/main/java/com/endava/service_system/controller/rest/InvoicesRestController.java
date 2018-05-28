@@ -2,11 +2,11 @@ package com.endava.service_system.controller.rest;
 
 import com.endava.service_system.model.dto.NewInvoiceDTO;
 import com.endava.service_system.model.entities.Company;
-import com.endava.service_system.model.filters.order.InvoiceOrderBy;
+import com.endava.service_system.model.entities.Invoice;
 import com.endava.service_system.model.enums.InvoiceStatus;
 import com.endava.service_system.model.enums.UserType;
-import com.endava.service_system.model.entities.Invoice;
 import com.endava.service_system.model.filters.InvoiceFilter;
+import com.endava.service_system.model.filters.order.InvoiceOrderBy;
 import com.endava.service_system.service.CompanyService;
 import com.endava.service_system.service.InvoiceService;
 import com.endava.service_system.utils.AuthUtils;
@@ -18,9 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -135,7 +133,6 @@ public class InvoicesRestController {
     }
 
     @PostMapping("/company/newinvoices")
-    @PreAuthorize("hasAnyRole('ROLE_COMPANY')")
     public ResponseEntity createMultipleInvoices(@RequestParam(value = "info[]", required = false) List<String> ids) {
         if (ids == null || ids.size() == 0)
             return new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -144,7 +141,6 @@ public class InvoicesRestController {
     }
 
     @PostMapping("/company/sendinvoices")
-    @PreAuthorize("hasAnyRole('ROLE_COMPANY')")
     public ResponseEntity sendMultipleInvoices(@RequestParam(value = "info[]", required = false) List<String> ids) {
         if (ids == null || ids.size() == 0)
             return new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -153,7 +149,6 @@ public class InvoicesRestController {
     }
 
     @PostMapping("/company/cancelinvoices")
-    @PreAuthorize("hasAnyRole('ROLE_COMPANY')")
     public ResponseEntity cancelMultipleInvoices(@RequestParam(value = "info[]", required = false) List<String> ids) {
         if (ids == null || ids.size() == 0)
             return new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -162,7 +157,6 @@ public class InvoicesRestController {
     }
 
     @PostMapping("/invoice/{id}/{action}")
-    @PreAuthorize("hasAnyRole('ROLE_COMPANY')")
     public ResponseEntity sendOrCancelInvoice(@PathVariable("id") Long invoiceId, @PathVariable("action") String action,
                                               HttpServletRequest request, Model model) {
         LOGGER.log(Level.DEBUG, invoiceId);

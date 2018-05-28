@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
     <title>Index</title>
@@ -34,8 +34,12 @@
                 <li class="nav-item">
                     <a class="nav-link js-scroll-trigger" href="contact">Contact</a>
                 </li>
-                <li class="nav-item">
+                <li sec:authorize="!isAuthenticated()" class="nav-item">
                     <a class="nav-link js-scroll-trigger" href="login">Sign in</a>
+                </li>
+
+                <li sec:authorize="isAuthenticated()" style="background:white;border-radius:15px" class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="/login"  th:text ="${#authentication.getName()}">Sign in</a>
                 </li>
             </ul>
         </div>

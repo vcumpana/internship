@@ -3,7 +3,6 @@ package com.endava.service_system.model.entities;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.sql.Blob;
 
 @Entity
 @Data
@@ -14,4 +13,5 @@ public class ImageEntity {
     private String name;
     @Lob
     private byte[] content;
+
 }

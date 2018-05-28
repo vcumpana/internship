@@ -1,14 +1,15 @@
 function displayCompanies(arr) {
     var theadsForCompany={
-        'Company Name':null,
+        'Company':null,
         'Email':null,
         'Username':null,
         'Bank Account':null,
         'Address':null,
         'Company status':null
     };
-    addObjectTheads(theadsForCompany);
-    console.log(arr)
+    $("#thead").empty();
+    $("#thead").append(`<tr><th>Company</th><th>Email</th><th>Username</th><th style="min-width: 150px">Bank Account</th><th style="min-width: 200px">Address</th><th>Status</th></tr>`)
+    //addObjectTheads(theadsForCompany);
     var tags='';
     var comanyNames = [];
     Object.keys(arr).forEach(nr => {
@@ -18,7 +19,11 @@ function displayCompanies(arr) {
     tags += `<td id="company_name">` + arr[nr]['companyName'] + `</td>`;
     tags += `<td id="company_surname">` + arr[nr]['email'] + `</td>`;
     tags += `<td id="company_username">` + arr[nr]['username'] + `</td>`;
-    tags += `<td id="company_bank_account">` + arr[nr]['bankAccount'] + `</td>`;
+        if(arr[nr]['bankAccount']===null||arr[nr]['bankAccount']===0){
+            tags += `<td id="company_bankaccount">` + `-` + `</td>`;
+        }else{
+            tags += `<td id="company_bankaccount">` + arr[nr]['bankAccount'] + `</td>`;
+        }
     tags += `<td id="company_address">` + arr[nr]['address'] + `</td>`;
     tags += `<td id="company_status">` + arr[nr]['status'] + `</td>`;
     //});
@@ -31,9 +36,7 @@ function displayCompanies(arr) {
         $('tr[value="'+company+'"]').on("click",function (tr) {
             //SET value to edit company and open edit
             var status=$('tr[value="'+company+'"] #company_status').text();
-            console.log($('#input_company_status input[value="'+status+'"]'));
             $('#input_company_status input[value="'+status+'"]').prop("checked", true);
-            console.log(company);
             $("#edit_company_name").text(company);
             $("#editCompany").dialog('option', 'title', "Edit company");
             //$("#input_company_status").text(company);
@@ -48,6 +51,7 @@ function addObjectTheads(data) {
     Object.keys(data).forEach( key=> {
         var nameTd = document.createElement("th");
         nameTd.appendChild(document.createTextNode(key));
+
         tr.appendChild(nameTd);
     });
     var thead = $("#thead");

@@ -6,8 +6,8 @@ import com.endava.service_system.model.entities.Credential;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
-import static com.endava.service_system.model.enums.UserStatus.WAITING;
 import static com.endava.service_system.model.enums.Role.ROLE_COMPANY;
+import static com.endava.service_system.model.enums.UserStatus.WAITING;
 
 @Component
 public class CompanyRegistrationDTOToCompanyConverter implements Converter<CompanyRegistrationDTO, Company> {

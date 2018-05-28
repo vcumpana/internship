@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface TokenDao extends JpaRepository<Token,Long>{
 
     Optional<Token> getTokenByTokenEquals(String token);
+
 }

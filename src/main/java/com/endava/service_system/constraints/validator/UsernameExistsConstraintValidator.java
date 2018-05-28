@@ -18,6 +18,7 @@ public class UsernameExistsConstraintValidator implements ConstraintValidator<Us
 
 
    public void initialize(UsernameInUseConstraint constraint) {
+
    }
 
    public boolean isValid(String username, ConstraintValidatorContext context) {

@@ -1,7 +1,7 @@
 package com.endava.service_system.intercepter;
 
-import com.endava.service_system.model.enums.UserStatus;
 import com.endava.service_system.model.entities.Credential;
+import com.endava.service_system.model.enums.UserStatus;
 import com.endava.service_system.service.CredentialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;

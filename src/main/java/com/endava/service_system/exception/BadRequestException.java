@@ -5,4 +5,5 @@ public class BadRequestException extends Exception {
     public BadRequestException(String jsonMessage){
         super(jsonMessage);
     }
+
 }

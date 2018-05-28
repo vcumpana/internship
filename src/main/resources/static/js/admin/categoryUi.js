@@ -2,7 +2,6 @@ function addCategoryInUi(category) {
     if (getCurrentTable()!==CATEGORY_TABLE) {
         return;
     }
-    console.log(category);
     var categoryName=category['name'];
     var tr = document.createElement("tr");
     tr.id="tr_".concat(categoryName);

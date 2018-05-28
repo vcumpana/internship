@@ -12,10 +12,8 @@ public class BankKey {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    //@Lob
     private byte[] bankModulus;
 
-    //@Lob
     private byte[] javaPrivateKey;
 
 }

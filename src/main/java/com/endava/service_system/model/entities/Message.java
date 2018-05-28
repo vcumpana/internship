@@ -1,9 +1,10 @@
 package com.endava.service_system.model.entities;
 
+import com.endava.service_system.utils.CustomDateSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.NonNull;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Message {
+    private static final String DATE_FORMAT="yyyy-MM-dd HH:mm";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -32,5 +34,6 @@ public class Message {
     @Size(min = 1,max = 255)
     private String text;
     private boolean read;
+    @JsonSerialize(using = CustomDateSerializer.class)
     private LocalDateTime date;
 }

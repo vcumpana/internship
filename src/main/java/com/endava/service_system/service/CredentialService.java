@@ -2,8 +2,10 @@ package com.endava.service_system.service;
 
 import com.endava.service_system.dao.ICredentialDao;
 import com.endava.service_system.model.dto.CredentialDTO;
-import com.endava.service_system.model.enums.UserStatus;
 import com.endava.service_system.model.entities.Credential;
+import com.endava.service_system.model.enums.UserStatus;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import java.util.Optional;
 
 @Service
 public class CredentialService {
+    private static final Logger LOGGER=LogManager.getLogger(CredentialService.class);
     private ICredentialDao credentialDao;
     private PasswordEncoder passwordEncoder;
 
@@ -20,20 +23,20 @@ public class CredentialService {
     }
 
     public Credential save(Credential credential) {
-        System.out.println("Credential before save "+credential);
+        LOGGER.debug("Credential before save "+credential);
         Credential credential1= credentialDao.save(credential);
-        System.out.println("Credential after save "+credential1);
+        LOGGER.debug("Credential after save "+credential1);
         return credential1;
     };
 
     public void encodePassword(Credential credential){
-        System.out.println("Credential before password encoder "+credential);
+        LOGGER.debug("Credential before password encoder "+credential);
         String password=credential.getPassword();
-        System.out.println("Credential before password  "+password);
+        LOGGER.debug("Credential before password  "+password);
         String encoded=passwordEncoder.encode(password);
-        System.out.println("Credential before encoded  "+encoded);
+        LOGGER.debug("Credential before encoded  "+encoded);
         credential.setPassword(encoded);
-        System.out.println("Credential after password encoder "+credential);
+        LOGGER.debug("Credential after password encoder "+credential);
     }
 
     public Credential getDefaultAdminCredential(){

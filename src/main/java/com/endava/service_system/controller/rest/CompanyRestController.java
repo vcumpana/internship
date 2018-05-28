@@ -2,14 +2,17 @@ package com.endava.service_system.controller.rest;
 
 import com.endava.service_system.model.dto.CompanyAdminDTO;
 import com.endava.service_system.model.dto.CredentialDTO;
-import com.endava.service_system.model.enums.UserStatus;
 import com.endava.service_system.model.entities.Company;
 import com.endava.service_system.model.entities.Credential;
+import com.endava.service_system.model.enums.UserStatus;
 import com.endava.service_system.service.BankService;
 import com.endava.service_system.service.CompanyService;
 import com.endava.service_system.service.CredentialService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,16 +20,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
 public class CompanyRestController {
-
-//TODO : access-rights on each method
-
+    private static final Logger LOGGER=LogManager.getLogger(CompanyRestController.class);
+    private static final int DEFAUL_COMPANY_SIZE = 5;
     private CompanyService companyService;
     private ConversionService conversionService;
     private CredentialService credentialService;
@@ -34,26 +36,18 @@ public class CompanyRestController {
 
     @GetMapping("/admin/companies")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity getAllCompanies(@RequestParam(required = false,value = "status")UserStatus status) {
-        List<Company> companyList=getCompaniesWithStatus(status);
-        List<CompanyAdminDTO> companyAdminDTOList=companyList.stream()
-                .map((company)->conversionService.convert(company,CompanyAdminDTO.class))
+    public ResponseEntity getAllCompanies(@RequestParam(required = false,value = "status")UserStatus status,@RequestParam(required = false,value = "page")Integer page) {
+        if(page==null||page<0){
+            page=0;
+        }
+        Map<String,Object> result= companyService.getAll(PageRequest.of(page,DEFAUL_COMPANY_SIZE),status);
+        List<Company> companies = (List<Company>) result.get("companies");
+        List<CompanyAdminDTO> companiesForAdmin = companies.stream()
+                .map((user) -> conversionService.convert(user, CompanyAdminDTO.class))
                 .collect(Collectors.toList());
-        if(!companyAdminDTOList.isEmpty()) {
-            return new ResponseEntity(companyAdminDTOList, HttpStatus.OK);
-        }else {
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
-        }
-    }
-
-    private List<Company> getCompaniesWithStatus(UserStatus status){
-        List<Company> companyList=new ArrayList<>();
-        if(status==null){
-            companyList.addAll(companyService.getAll());
-        }else{
-            companyList.addAll(companyService.getAllWithStatus(status));
-        }
-        return companyList;
+        result.put("companies",companiesForAdmin);
+        LOGGER.debug(result);
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
     @PutMapping("/admin/companies/{username}")
@@ -61,8 +55,8 @@ public class CompanyRestController {
     public ResponseEntity changePasswordWithStatus(@PathVariable("username") String username,
                                                    @Validated @RequestBody CredentialDTO credentialDTO,
                                                    BindingResult bindingResult) {
-        System.out.println("username:"+username);
-        System.out.println("CredentialDTO:"+credentialDTO.toString());
+        LOGGER.debug("username:"+username);
+        LOGGER.debug("CredentialDTO:"+credentialDTO.toString());
         if (bindingResult.hasErrors()) {
             return new ResponseEntity(bindingResult.getAllErrors(), HttpStatus.BAD_REQUEST);
         }
@@ -82,14 +76,6 @@ public class CompanyRestController {
             e.printStackTrace();
             return new ResponseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    @GetMapping("/companies/{companyName}")
-    public ResponseEntity getCompanyByName(@PathVariable("companyName") String companyName){
-        Optional<Company> company = companyService.getCompanyByName(companyName);
-        if (company.isPresent())
-            return new ResponseEntity(company.get(), HttpStatus.OK);
-        return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
     @Autowired

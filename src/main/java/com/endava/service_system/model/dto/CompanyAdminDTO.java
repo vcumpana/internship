@@ -12,7 +12,7 @@ public class CompanyAdminDTO {
     private String companyName;
     private String username;
     private String email;
-    private String bankAccount;
+    private long bankAccount;
     private String address;
     private UserStatus status;
 }

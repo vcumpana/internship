@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
     <title>Contact Page</title>
@@ -53,8 +53,12 @@
                 <li class="nav-item">
                     <a class="nav-link js-scroll-trigger" href="contact">Contact</a>
                 </li>
-                <li class="nav-item">
+                <li sec:authorize="!isAuthenticated()" class="nav-item">
                     <a class="nav-link js-scroll-trigger" href="login">Sign in</a>
+                </li>
+
+                <li sec:authorize="isAuthenticated()" style="background:rgba(0,0,0,.03);border-radius:15px" class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="/login"  th:text ="${#authentication.getName()}">Sign in</a>
                 </li>
             </ul>
         </div>
@@ -74,7 +78,7 @@
                         <div class="card-body">
                             <form class="form" role="form" autocomplete="off" id="form" novalidate th:object="${message}"
                                   method="POST">
-                                <div class="form-group">
+                                <div  class="form-group" sec:authorize="!isAuthenticated()">
                                     <label for="email">Email for Contacting you</label>
                                     <input type="email" class="form-control form-control-lg rounded-0" th:field="*{fromEmail}"
                                            id="email" required="">
@@ -84,6 +88,7 @@
                                        th:each="error : ${#fields.errors('fromEmail')}"
                                        th:text="${error}">Validation error</p>
                                 </div>
+                                <input sec:authorize="isAuthenticated()"  th:field="*{fromEmail}" type="hidden"/>
                                 <div class="form-group">
                                     <label>Message</label>
                                     <textarea th:field="*{text}" class="form-control form-control-lg rounded-0"></textarea>

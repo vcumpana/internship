@@ -12,7 +12,6 @@
             crossorigin="anonymous"></script>
     <script>
         $(document).ready(function () {
-            console.log("s")
             $("#all_checkboxes").on("click", function () {
                 var allCheckBoxesChecked;
                 if ($("#all_checkboxes").is(":checked")) {
@@ -21,9 +20,7 @@
                     allCheckBoxesChecked = false;
                 }
                 // var allCheckBoxesChecked=$("#all_checkboxes").prop("checked");
-                console.log("checkbox=" + allCheckBoxesChecked);
                 $("tbody input[type=checkbox]").each(function (el) {
-                    console.log(this.checked);
                     this.checked = allCheckBoxesChecked;
                 });
             })
@@ -34,7 +31,6 @@
             $("tbody input[type=checkbox]").each(function (el) {
                 ids.push(this.id);
             })
-            console.log(ids);
             payMultipleInvoicesAjax(ids);
         }
 
@@ -51,11 +47,7 @@
                     });
                 },
                 error: function (jqXhr, textStatus, errorThrown) {
-                    console.log(jqXhr)
                     var status = jqXhr.status;
-                    console.log(textStatus)
-                    console.log(errorThrown)
-                    console.log(jqXhr.responseText)
                     var response = JSON.parse(jqXhr.responseText)
                     if (jqXhr.responseText != null && response != null && response.message != null) {
                         displayMessage(response.message)

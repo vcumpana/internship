@@ -1,23 +1,41 @@
 var page=0;
-var size=5;
+var size=10;
 function getMessages() {
     if(page<0){
         page=0;
     }
+    let url;
+    if(currentUser!=="message"){
+        url=HOST+"/admin/messages?page="+0+"&size="+size;
+    }else{
+        url=HOST+"/admin/messages?page="+currentPage+"&size="+size;
+    }
     request = $.ajax({
         type: "GET",
         contentType: "application/json; charset=utf-8",
-        url: HOST+"/admin/messages?page="+page+"&size="+size,
+        url: url,
         dataType: "json"
     });
     request.done(function (response, textStatus, xhr) {
         status = xhr.status;
+        let pages = xhr.responseJSON.totalPages;
         if (status == STATUS.OK) {
             displayMessage("Displaying messages..");
             //check if we are displaying categories now if yes then show it;;
+            deletePagination();
+            if(currentUser!=="message"){
+                currentPage=0;
+            }
+            currentUser="message";
+            maxPages=pages;
             displayMessagesInUi(xhr.responseJSON);
 
             selectButton([$("#show_messages")]);
+            if (maxPages > 1) {
+
+                addPages("displayMessagesPage");
+                //addCategoryInUi(xhr.responseJSON);
+            }
 
             //addCategoryInUi(xhr.responseJSON);
         }else{
@@ -32,6 +50,11 @@ function getMessages() {
             displayMessage("Error , please try it latter");
         }
     })
+}
+
+function displayMessagesPage(page){
+    currentPage=parseInt(page)-1;
+    getMessages()
 }
 
 function markAsReadAjax(id){
@@ -50,7 +73,6 @@ function markAsReadAjax(id,read){
         path="markAsUnread";
         difMessage="unread";
     }
-    console.log(HOST+"/admin/"+path+"/"+id)
     request = $.ajax({
         type: "PUT",
         contentType: "application/json; charset=utf-8",
@@ -79,7 +101,6 @@ function markAsReadAjax(id,read){
     });
     request.error(function (e) {
         status = e.status;
-        console.log(e);
         if (status == STATUS.BAD_REQUEST) {
             displayMessage("Bad request please contact admins");
         } else {

@@ -7,6 +7,7 @@ import javax.persistence.*;
 @Data
 @Entity
 public class BankAccount {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

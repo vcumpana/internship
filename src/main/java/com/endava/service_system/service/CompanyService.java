@@ -1,21 +1,23 @@
 package com.endava.service_system.service;
 
 import com.endava.service_system.dao.CompanyDao;
-import com.endava.service_system.model.dto.ServiceToCompanyDto;
 import com.endava.service_system.model.entities.Company;
+import com.endava.service_system.model.entities.Credential;
+import com.endava.service_system.model.entities.Service;
+import com.endava.service_system.model.enums.UserStatus;
 import com.endava.service_system.utils.AuthUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
-import com.endava.service_system.model.enums.UserStatus;
-import com.endava.service_system.model.entities.Credential;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import com.endava.service_system.model.entities.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @org.springframework.stereotype.Service
@@ -87,6 +89,27 @@ public class CompanyService {
         companyDao.save(company);
     }
 
+    public Map<String,Object> getAll(Pageable page, UserStatus userStatus){
+        Map<String,Object> map=new HashMap<>();
+        long total;
+        if(userStatus!=null) {
+            total = companyDao.countByCredentialStatus(userStatus);
+        }else{
+            total=companyDao.count();
+        }
+        long pages=total/page.getPageSize();
+        if(total%page.getPageSize()!=0){
+            pages++;
+        }
+        map.put("pages",pages);
+        if(userStatus!=null) {
+            map.put("companies", companyDao.getByCredentialStatus(page, userStatus));
+        }else{
+            map.put("companies", companyDao.getAllBy(page));
+        }
+        return map;
+    }
+
     public void updateService(Service service) {
         String username = authUtils.getAuthenticatedUsername();
         LOGGER.log(Level.DEBUG,username);
@@ -102,7 +125,7 @@ public class CompanyService {
 //            }
 //        }
        // company.setServices(services);
-        System.out.println("trying to update : "+service);
+        LOGGER.debug("trying to update : "+service);
         serviceService.saveService(service);
     //    companyDao.save(company);
     }

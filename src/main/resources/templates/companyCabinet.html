@@ -11,6 +11,33 @@
             integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
             crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" th:href="@{/css/userCabinetStyle.css}"/>
+    <style>
+        .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .btn-save {
+            border: 2px solid gray;
+            color: gray;
+            background-color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .upload-btn-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+        }
+
+
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-primary">
@@ -56,6 +83,7 @@
         </ul>
     </div>
 </nav>
+
 <div class="container" style="margin-top: 50px; padding-bottom: 30px">
     <div class="row justify-content-center">
         <div class="col-md-6 border border-primary" style="border-radius:.33rem; padding: 30px">
@@ -67,6 +95,12 @@
             </div>
             <div class="alert alert-danger" style="display: none;" id="failUpdatePassword">
                 <strong>Error!</strong> Old password is incorrect.
+            </div>
+            <div class="alert alert-danger" style="display: none;" id="failUpload">
+                <strong>Error!</strong> Fail to upload company's logo.
+            </div>
+            <div class="alert alert-success" style="display: none;" id="successUpload">
+                <strong>Success!</strong> You have uploaded company's logo.
             </div>
             <h1>Personal information</h1>
             <div style="margin-top: 5px; margin-bottom: 5px">
@@ -99,10 +133,13 @@
                 </span> <br />
             </div>
 
-            <form id="uploadForm">
-                <input type="file" name="file" accept="image/*" id="image">
-            </form>
-            <a id="uploadbutton" type="button" class="btn btn-secondary">Save</a>
+            <div class="upload-form" style="display: block;margin-top:10px;margin-bottom:10px;">
+                <form style="float:left;margin-right:15px" id="uploadForm" class="upload-btn-wrapper">
+                    <button type="button" class="btn btn-save">Choose File</button>
+                    <input type="file" name="file" accept="image/*" id="image">
+                </form>
+                <button id="uploadbutton" type="button" class=" btn btn-save">Sent File</button>
+            </div>
 
             <div style="margin-top: 5px; margin-bottom: 5px">
                 <span class="h4">Email: </span><span class="h4" th:text="${user.email}" id="email"></span><br />
@@ -160,17 +197,10 @@
 <script type="text/javascript" th:src="@{/js/userCabinetScript.js}"></script>
 <script>
     $("#uploadbutton").on("click", function() {
-       //  //var formData =$('#uploadForm').files[0];
-       //  var values = $('#uploadForm input').files[0];
-       //  console.log(values);
         var file_data = $('#image').prop('files')[0];
-        console.log(file_data);
         var data={file:file_data};
         var form_data = new FormData();
         form_data.append('file',file_data);
-        //form_data.append('file', file_data);
-        console.log(form_data);
-
         $.ajax({
             type: "POST",
             url: "/company/uploadimages",
@@ -179,13 +209,16 @@
             cache: false,
             data: form_data,
             success: function(response) {
-                alert("success");
+                $("#successUpload").show();
+                window.setTimeout(function () {
+                    $('#successUpload').hide();
+                }, 2300);
             },
             error: function(a,b,c) {
-                console.log(a)
-                console.log(b)
-                console.log(c)
-                alert("unable to create the record");
+                $("#failUpload").show();
+                window.setTimeout(function () {
+                    $('#failUpload').hide();
+                }, 2300);
             }
 
         });

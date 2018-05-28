@@ -29,7 +29,6 @@ function fillTableWithStatements() {
         for (var i = 0; i < listOfStatements.length; i++) {
             var row = "<tr>";
             var date = new Date(listOfStatements[i].date);
-            console.log(date);
             row += "<td>" + moment(date).format("DD-MM-YYYY HH:mm") + "</td>";
             if (listOfStatements[i].sum > 0) {
                 row += "<td class='text-success'>+ " + listOfStatements[i].sum + " MDL</td>";

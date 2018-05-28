@@ -41,15 +41,10 @@ function deleteService(id) {
         type: "DELETE",
         url: "/service/" + id,
         success: function (result) {
-            console.log(result);
             $('#exampleModal .modal-title').text("Succes!");
             $('#exampleModal .modal-body').text('');
             $('#exampleModal .modal-body').append("<p>Service has been successfully deleted</p>");
             $('#exampleModal').modal("show");
-            // $("#successCanceling").show();
-            // setTimeout(function () {
-            //     $("#successCanceling").hide();
-            // }, 5000);
             downloadServices();
         }
     });
@@ -57,7 +52,6 @@ function deleteService(id) {
 
 $(document).on("click", ".cancel", function () {
     var invoiceId = $(this).data('id');
-    console.log(invoiceId);
     $("#modalDeleteServiceConfirm #serviceId").val(invoiceId);
     // As pointed out in comments,
     // it is superfluous to have to manually call the modal.
@@ -69,9 +63,7 @@ $(document).on("click", ".cancel", function () {
 });
 
 function clickModalYes() {
-        console.log("yes");
         var id = $('#modalDeleteServiceConfirm #serviceId').val();
-        console.log(id);
         deleteService(id);
 }
 

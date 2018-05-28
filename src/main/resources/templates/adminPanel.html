@@ -36,6 +36,10 @@
             margin-top: 4rem;
         }
 
+        .mb-8{
+            margin-bottom: 3rem;
+        }
+
         .ui-widget-content {
             background: #fff;
             color: #000;
@@ -80,6 +84,13 @@
         .dropdown .nav-item{
             margin-bottom: 5px;
         }
+
+        nav .nav-item a,button {
+            width:130px;
+        }
+        /*nav .pagination .a{*/
+            /*width:50px;*/
+        /*}*/
 
     </style>
     <script th:inline="javascript">
@@ -173,7 +184,6 @@
             $("#denied_users").click(showDeniedUsers);
             $("#show_messages").click(showMessages);
             var categories = /*[[${categories}]]*/ 'default';
-            console.log(categories);
             categories.forEach(function (v) {
                 $("#btn_change_" + v.name).click(changeCategory);
                 $("#btn_delete_" + v.name).click(deleteCategory);
@@ -208,7 +218,7 @@
     <button id="edit_company" class="btn btn-primary btn-lg btn-block">Edit</button>
 </div>
 
-<div class="container col-md-6 col-sm-10">
+<div class="container col-md-9 col-sm-11">
     <div class="text-center mt-12">
         <nav class="navbar navbar-light bg-light alert alert-info">
 
@@ -223,13 +233,13 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <div class="nav-item">
-                        <button class="btn btn-primary" id="all_users" href="#">All Users</button>
+                        <button class="btn btn-primary" id="all_users" href="#">All</button>
                     </div>
                     <div class="nav-item">
-                        <button class="btn btn-primary" id="not_verified_users" href="#">Not verified Users</button>
+                        <button class="btn btn-primary" id="not_verified_users" href="#">Not verified</button>
                     </div>
                     <div class="nav-item">
-                        <button class="btn btn-primary nav-link" id="denied_users" href="#">Denied Users</button>
+                        <button class="btn btn-primary nav-link" id="denied_users" href="#">Denied</button>
                     </div>
                 </div>
             </div>
@@ -241,16 +251,13 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <div class="nav-item">
-                        <button class="btn btn-primary nav-link" id="all_companies" href="#">All Companies</button>
+                        <button class="btn btn-primary nav-link" id="all_companies" href="#">All</button>
                     </div>
                     <div class="nav-item">
-                        <button class="btn btn-primary nav-link" id="not_verified_companies" href="#">Not verified
-                            Companies
-                        </button>
+                        <button class="btn btn-primary nav-link" id="not_verified_companies" href="#">Not verified</button>
                     </div>
                     <div class="nav-item">
-                        <button class="btn btn-primary nav-link" id="denied_companies" href="#">Denied Companies
-                        </button>
+                        <button class="btn btn-primary nav-link" id="denied_companies" href="#">Denied</button>
                     </div>
                 </div>
             </div>

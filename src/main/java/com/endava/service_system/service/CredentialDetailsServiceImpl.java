@@ -1,15 +1,15 @@
 package com.endava.service_system.service;
 
-import com.endava.service_system.model.enums.UserStatus;
 import com.endava.service_system.exception.DeniedException;
 import com.endava.service_system.exception.InAprovalException;
 import com.endava.service_system.exception.WrongUsernameException;
 import com.endava.service_system.model.entities.Credential;
+import com.endava.service_system.model.enums.UserStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,7 +27,7 @@ public class CredentialDetailsServiceImpl implements UserDetailsService{
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws BadCredentialsException {
         Optional<Credential> credentialOptional = credentialService.getByUsername(username);
         credentialOptional.orElseThrow(() -> new WrongUsernameException());
         Credential user = credentialOptional.get();

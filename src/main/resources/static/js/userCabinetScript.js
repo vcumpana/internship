@@ -68,7 +68,6 @@ $("#addAction").click(function () {
         url: "/bank/addmoney/",
         data: JSON.stringify(data),
         success: function (rs) {
-            console.log(rs);
             var balance = rs.balance;
             $("#balance").text(balance.toFixed(2) + " USD");
             $("#balanceInCabinet").text(balance.toFixed(2) + " USD");

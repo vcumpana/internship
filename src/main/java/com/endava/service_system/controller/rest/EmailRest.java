@@ -4,7 +4,9 @@ import com.endava.service_system.model.dto.CredentialDTO;
 import com.endava.service_system.model.dto.PasswordDto;
 import com.endava.service_system.model.entities.Credential;
 import com.endava.service_system.model.entities.Token;
-import com.endava.service_system.service.*;
+import com.endava.service_system.service.CredentialService;
+import com.endava.service_system.service.EmailService;
+import com.endava.service_system.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -14,9 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.MailSender;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -35,10 +34,6 @@ public class EmailRest {
     private static Logger LOGGER = LogManager.getLogger(EmailRest.class);
     private EmailService emailService;
     private CredentialService credentialService;
-    private UserService userService;
-    private CompanyService companyService;
-    private MailSender mailSender;
-    private PasswordEncoder passwordEncoder;
     @Qualifier("siteUrl")
     private String sireUrl;
     private TokenService tokenService;
@@ -54,26 +49,6 @@ public class EmailRest {
     }
 
     @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    @Autowired
-    public void setCompanyService(CompanyService companyService) {
-        this.companyService = companyService;
-    }
-
-    @Autowired
-    public void setMailSender(MailSender mailSender) {
-        this.mailSender = mailSender;
-    }
-
-    @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    @Autowired
     public void setSireUrl(@Qualifier("siteUrl") String sireUrl) {
         this.sireUrl = sireUrl;
     }
@@ -84,13 +59,11 @@ public class EmailRest {
     }
 
     @GetMapping("/email/test")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String getEmailForm() {
         return "emailForm";
     }
 
     @PostMapping("/email/test")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String sendEmail(@RequestParam("to") String to, @RequestParam("subject") String subject, @RequestParam("message") String message) {
         LOGGER.log(Level.DEBUG, "to:" + to);
         LOGGER.log(Level.DEBUG, "subject:" + subject);
@@ -101,7 +74,6 @@ public class EmailRest {
 
     @PostMapping(value = "/admin/resetpassword", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity adminResetPassword(@RequestBody Map<String, Object> data) {
         String username = (String) data.get("username");
         LOGGER.log(Level.DEBUG, username);

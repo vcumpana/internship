@@ -1,12 +1,9 @@
 package com.endava.service_system.controller;
 
 import com.endava.service_system.service.CategoryService;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import com.endava.service_system.utils.AuthUtils;
 @Controller
 public class AdminController {
 

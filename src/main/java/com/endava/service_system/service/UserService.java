@@ -2,10 +2,13 @@ package com.endava.service_system.service;
 
 import com.endava.service_system.dao.UserDao;
 import com.endava.service_system.model.dto.UserDtoToShow;
-import com.endava.service_system.model.enums.UserStatus;
 import com.endava.service_system.model.entities.Credential;
 import com.endava.service_system.model.entities.User;
+import com.endava.service_system.model.enums.UserStatus;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,22 +17,26 @@ import javax.crypto.IllegalBlockSizeException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 @Transactional
 public class UserService {
+    private static final Logger LOGGER=LogManager.getLogger(UserService.class);
     private UserDao userDao;
     private CredentialService credentialService;
     private BankService bankService;
+
     public void saveUser(User user) throws InvalidKeySpecException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, IOException {
-        System.out.println("user save in saveUser UserService :"+user);
+        LOGGER.debug("user save in saveUser UserService :"+user);
         //credentialService.save(user.getCredential());
         bankService.addBankAccount(user.getCredential());
         credentialService.encodePassword(user.getCredential());
         User saveUser=userDao.save(user);
-        System.out.println("user saved in saveUser UserService :"+saveUser);
+        LOGGER.debug("user saved in saveUser UserService :"+saveUser);
     }
 
     public User updateUserWithoutCredentials(User user){
@@ -42,6 +49,27 @@ public class UserService {
 
     public Optional<User> getByEmail(String email){
         return userDao.getByEmail(email);
+    }
+
+    public Map<String,Object> getAll(Pageable page, UserStatus userStatus){
+        Map<String,Object> map=new HashMap<>();
+        long total;
+        if(userStatus!=null) {
+            total = userDao.countByCredentialStatus(userStatus);
+        }else{
+            total=userDao.count();
+        }
+        long pages=total/page.getPageSize();
+        if(total%page.getPageSize()!=0){
+            pages++;
+        }
+        map.put("pages",pages);
+        if(userStatus!=null) {
+            map.put("users", userDao.getByCredentialStatus(page, userStatus));
+        }else{
+            map.put("users", userDao.getAllBy(page));
+        }
+        return map;
     }
 
     public void updateUserNameAndSurname(String username, UserDtoToShow userDtoToShow){

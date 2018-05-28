@@ -1,8 +1,8 @@
 package com.endava.service_system.model.filters;
 
-import com.endava.service_system.model.filters.order.InvoiceOrderBy;
 import com.endava.service_system.model.enums.InvoiceStatus;
 import com.endava.service_system.model.enums.UserType;
+import com.endava.service_system.model.filters.order.InvoiceOrderBy;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

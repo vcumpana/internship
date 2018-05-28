@@ -1,7 +1,7 @@
 package com.endava.service_system.dao;
 
-import com.endava.service_system.model.enums.UserStatus;
 import com.endava.service_system.model.entities.Credential;
+import com.endava.service_system.model.enums.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

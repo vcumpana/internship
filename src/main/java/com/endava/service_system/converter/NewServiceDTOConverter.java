@@ -1,7 +1,6 @@
 package com.endava.service_system.converter;
 
 import com.endava.service_system.model.dto.NewServiceDTO;
-import com.endava.service_system.model.dto.ServiceToUserDto;
 import com.endava.service_system.model.entities.Service;
 import com.endava.service_system.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;

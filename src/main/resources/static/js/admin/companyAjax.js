@@ -1,23 +1,44 @@
 //TODO change theader
+var currentStatus="";
+var currentUser;
 function getCompanyFromDb(companyStatus) {
-    console.log(companyStatus);
+    let url;
+    if(currentStatus!==companyStatus||currentUser!=="company"){
+        url=HOST+"/admin/companies?status="+companyStatus+"&page="+0;
+    }else{
+        url=HOST+"/admin/companies?status="+companyStatus+"&page="+currentPage
+    }
     request = $.ajax({
         type: "GET",
         contentType: "application/json; charset=utf-8",
-        url: HOST+"/admin/companies?status="+companyStatus,
+        url: url,
         dataType: "json"
     });
     request.done(function (response, textStatus, xhr) {
         status = xhr.status;
+        let pages = xhr.responseJSON.pages;
         if (status == STATUS.OK) {
-
+            if (pages == 0) {
+                displayMessage("There isn't any data");
+                return;
+            }
             displayMessage("Showing companies ...");
+            if(companyStatus!==currentStatus){
+                currentPage=0;
+            }
+            if(currentUser!=="company"){
+                currentPage=0;
+            }
+            currentUser="company";
+            maxPages=pages;
             //check if we are displaying categories now if yes then show it;;
-            displayCompanies(xhr.responseJSON);
-//            $("#navbarDropdownMenuLink2").addClass("btn-dark");
-            // $("#navbarDropdownMenuLink2").text(getTextForStatus(companyStatus));
-            selectButton([$("#navbarDropdownMenuLink2"),$(getCompanyIdForStatus(companyStatus))]);
-            //addCategoryInUi(xhr.responseJSON);
+            displayCompanies(xhr.responseJSON.companies);
+            selectButton([$("#navbarDropdownMenuLink2"), $(getCompanyIdForStatus(companyStatus))]);
+            deletePagination();
+            currentStatus=companyStatus;
+            if (maxPages > 1) {
+                addPages("changeCompanyPage");
+            }
         }else{
             displayMessage("There isn't any data");
         }
@@ -31,6 +52,12 @@ function getCompanyFromDb(companyStatus) {
         }
     })
 }
+
+function changeCompanyPage(page){
+    currentPage=parseInt(page)-1;
+    getCompanyFromDb(currentStatus)
+}
+
 function getTextForStatus(status){
     if(status==""){
         return " ALL Companies";
@@ -73,7 +100,6 @@ function updateCompany(name,company){
         }
     });
     request.error(function (e) {
-        console.log(e);
         status = e.status;
         if (status == STATUS.BAD_REQUEST) {
             displayMessage("Bad request please contact admins ");

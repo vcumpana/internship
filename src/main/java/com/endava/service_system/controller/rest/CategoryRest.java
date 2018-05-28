@@ -2,7 +2,8 @@ package com.endava.service_system.controller.rest;
 
 import com.endava.service_system.model.entities.Category;
 import com.endava.service_system.service.CategoryService;
-import com.endava.service_system.service.ServiceService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -13,9 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
+
 @RestController
 public class CategoryRest {
-
+    private static final Logger LOGGER=LogManager.getLogger(CategoryRest.class);
     private CategoryService categoryService;
 
     @PostMapping("/admin/category")
@@ -56,8 +58,8 @@ public class CategoryRest {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity changeCategory(@PathVariable("name") String name, @RequestBody Category category) {
         try {
-            System.out.println("Name:" + name);
-            System.out.println("NewName:" + category.getName());
+            LOGGER.debug("Name:" + name);
+            LOGGER.debug("NewName:" + category.getName());
             int entitiesUpdated = categoryService.updateName(name, category.getName());
             if (entitiesUpdated == 0) {
                 return new ResponseEntity(HttpStatus.BAD_REQUEST);

@@ -40,7 +40,6 @@ function getDataForTable() {
         type: "GET",
         url: url,
         success: function (result) {
-            console.log(result);
             maxPageSize = result.pages
             listOfInvoices = result.invoices;
             fillTableWithInvoices();
@@ -163,11 +162,7 @@ function payInvoice(element) {
             downloadBalance();
         },
         error: function (jqXhr, textStatus, errorThrown) {
-            console.log(jqXhr)
             var status = jqXhr.status;
-            console.log(textStatus)
-            console.log(errorThrown)
-            console.log(jqXhr.responseText)
             var response = JSON.parse(jqXhr.responseText)
             if (jqXhr.responseText != null && response != null && response.message != null) {
                 displayMessage(response.message)
@@ -221,7 +216,6 @@ function parseURL() {
     if (id != null && id !== "null") {
         $("#tableWithInvoices").find("tbody").find("tr").each(function () {
             if ($(this).attr("id") === ("invoice" + id)) {
-                console.log("here");
                 found = true;
                 $(this).addClass("table-success");
                 $('html, body').animate({

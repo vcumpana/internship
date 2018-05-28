@@ -93,7 +93,6 @@ function fillArray() {
 
 function downloadInvoices() {
     var url = makeURL(currentPage);
-    console.log(url);
     $.ajax({
         type: "GET",
         url: url,
@@ -134,7 +133,6 @@ function sendInvoices() {
     data = {
         info: arr
     };
-    console.log(data);
     $.ajax({
         type: "POST",
         url: "/company/sendinvoices/",
@@ -203,7 +201,6 @@ function cancelInvoices() {
     data = {
         info: arr
     };
-    console.log(data);
     $.ajax({
         type: "POST",
         url: "/company/cancelinvoices/",
@@ -529,7 +526,6 @@ function deleteInvoicesConfirmation(){
 
 $(document).on("click", ".cancel", function () {
     var invoiceId = $(this).data('id');
-    console.log(invoiceId);
     $("#modalDeleteOneInvoiceConfirm #invoiceId").val(invoiceId);
     // As pointed out in comments,
     // it is superfluous to have to manually call the modal.
@@ -542,7 +538,6 @@ $(document).on("click", ".cancel", function () {
 
 $(document).on("click", ".send", function () {
     var invoiceId = $(this).data('id');
-    console.log(invoiceId);
     $("#modalSendOneInvoiceConfirm #invoiceId1").val(invoiceId);
     // As pointed out in comments,
     // it is superfluous to have to manually call the modal.
@@ -561,9 +556,7 @@ function clickModalYes(modalName){
         cancelInvoices();
     }
     if (modalName === 'modalDeleteOneInvoiceConfirm'){
-        console.log("yes");
         var id = $('#modalDeleteOneInvoiceConfirm #invoiceId').val();
-        console.log(id);
         cancelInvoice(id);
     }
     if (modalName === 'modalSendOneInvoiceConfirm'){

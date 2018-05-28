@@ -39,8 +39,13 @@ public class ServiceSystemApplication {
 		@Override
 		public void addInterceptors(InterceptorRegistry registry) {
 			registry.addInterceptor(logoutNotAcceptedStatus)
-					.addPathPatterns("/admin/**","/user/**","/company/**")
-					.excludePathPatterns("/company/registration","/user/registration");
+					.addPathPatterns("/user/**","/company/**","/admin/**",
+							"/category","/invoces","/bank/**","/notification/**",
+							"/image/*","/user/selfUpdatePassword","/services/*",
+							"/email/test",
+							"/newContract","/invoice/payInvoice","/services","/*/services","/services/getPDF",
+							"contract/**","invoice/*/*","/service/**")
+					.excludePathPatterns("/", "/login", "/index", "/services","/contact","/user/registration","/company/registration","/forgotPassword","/resetPassword/*");
 		}
 
 		@Autowired

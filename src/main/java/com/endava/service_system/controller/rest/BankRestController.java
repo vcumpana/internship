@@ -22,7 +22,9 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.BadPaddingException;
@@ -243,16 +245,16 @@ public class BankRestController {
         List<InvoiceForPaymentDto> invoiceForPaymentDtos = new ArrayList<>();
         List paymentData=getInvoicesForPayment(ids);
         listOfPayments= (List<PaymentDto>) paymentData.get(1);
-        System.out.println(listOfPayments);
+        LOGGER.debug(listOfPayments);
         invoiceForPaymentDtos= (List<InvoiceForPaymentDto>) paymentData.get(0);
         BankKey bankKey=bankAccount.getBankKeys();
         encryptionUtils.init(bankKey);
         String encrypted= encryptionUtils.encryptData(listOfPayments);
-        System.out.println(encrypted);
+        LOGGER.debug(encrypted);
         HttpEntity<String> request = new HttpEntity<>(encrypted, headers);
         ResponseEntity rs = restTemplate.postForEntity(bankApi + "sendmoney/BulkPayment", request, Object.class);
         Object decryptData= encryptionUtils.decryptData(rs.getBody().toString(),Object.class);
-        System.out.println(decryptData);
+        LOGGER.debug(decryptData);
         if (rs.getStatusCode() == HttpStatus.OK) {
             invoiceService.makeInvoicesPayed(ids);
             sendNotifications(invoiceForPaymentDtos);
