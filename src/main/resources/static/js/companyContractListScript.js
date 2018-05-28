@@ -139,6 +139,28 @@ $("th[scopeForSort='sort']").click(function () {
     fillTableWithContracts();
 });
 
+function modifyContractStatus(id, action) {
+    var operation;
+    if (action === "approve"){
+        operation = "approved";
+    }
+    if (action === "deny"){
+        operation = "denied";
+    }
+
+    $.ajax({
+        type: "GET",
+        url: "/contract/" + id +"/" + action,
+        success: function (result) {
+            $('#exampleModal .modal-title').text("Success!");
+            $('#exampleModal .modal-body').text('');
+            $('#exampleModal .modal-body').append("<p>Contract no. " + id + " has been successfully " + operation + "</p>");
+            $('#exampleModal').modal("show");
+            downloadContracts();
+        }
+    });
+}
+
 function fillTableWithContracts() {
     $("#tableWithContracts tbody").html("");
     var dateText;
@@ -178,10 +200,10 @@ function fillTableWithContracts() {
             default:
         }
         if (listOfContracts[i].contractStatus === "SIGNEDBYCLIENT") {
-            row += "<td><a href=\"" + "/contract/" + listOfContracts[i].id + "/approve\" "
-                + " role=\"button\" class=\"btn btn-warning btn-sm \" style = \"display:inline;width: 71px\">Approve</a>"
-                + "<a href=" + "/contract/" + listOfContracts[i].id + "/deny"
-                + " role=\"button\" class=\"btn btn-danger btn-sm \" style = \"display:inline;width: 71px\">Deny</a></td>";
+            row += "<td><button data-id=" + listOfContracts[i].id + " data-client=\"" + listOfContracts[i].fullName + "\" data-service=\"" + listOfContracts[i].categoryName + ", " + listOfContracts[i].serviceTitle
+                + "\" class=\"btn btn-warning btn-sm approve\" style = \"display:inline;width: 71px\">Approve</button>"
+                + "<button data-id=" + listOfContracts[i].id + " data-client=\"" + listOfContracts[i].fullName + "\" data-service=\"" + listOfContracts[i].categoryName + ", " + listOfContracts[i].serviceTitle
+                + "\" class=\"btn btn-danger btn-sm deny\" style = \"display:inline;width: 71px\">Deny</button></td>";
             row +="<td>-</td>";
         } else if (listOfContracts[i].contractStatus === "ACTIVE" && listOfContracts[i].availForInvoice === true){
             row +="<td>-</td>";
@@ -196,6 +218,37 @@ function fillTableWithContracts() {
     }
     verifyIfPreviousExists();
     verifyIfNextExists();
+}
+
+$(document).on("click", ".approve", function () {
+    var contractId = $(this).data('id');
+    var client = $(this).data('client');
+    var service = $(this).data('service');
+    $("#modalApproveContract #contractId").val(contractId);
+    $('#modalApproveContract .modal-body').text("Are you sure you want to approve the contract signed by " + client + " for " + service + " subscription plan?");
+    $('#modalApproveContract .modal-title').text("Confirm");
+    $("#modalApproveContract").modal("show");
+});
+
+$(document).on("click", ".deny", function () {
+    var contractId1 = $(this).data('id');
+    var client = $(this).data('client');
+    var service = $(this).data('service');
+    $("#modalDenyConfirm #contractId1").val(contractId1);
+    $('#modalDenyConfirm .modal-body').text("Are you sure you want to deny the contract signed by " + client + " for " + service + " subscription plan?");
+    $('#modalDenyConfirm .modal-title').text("Confirm");
+    $("#modalDenyConfirm").modal("show");
+});
+
+function clickModalYesContractApproval(modalName) {
+        if (modalName === 'modalApproveContract'){
+            var id = $('#modalApproveContract #contractId').val();
+            modifyContractStatus(id, "approve");
+        }
+        if (modalName === 'modalDenyConfirm'){
+            var id = $('#modalDenyConfirm #contractId1').val();
+            modifyContractStatus(id, "deny");
+        }
 }
 
 function comparatorForCategory(a, b) {

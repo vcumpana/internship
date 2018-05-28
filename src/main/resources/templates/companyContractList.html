@@ -249,6 +249,47 @@
         </div>
     </div>
 </div>
+
+<!-- Modal approve contract confirm -->
+<div class="modal fade" id="modalApproveContract" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalApprove">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer"><input type="hidden" id="contractId" value="" >
+                <button type="button" onclick="clickModalYesContractApproval('modalApproveContract')" data-dismiss="modal" class="btn btn-primary">Yes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal deny contract confirm -->
+<div class="modal fade" id="modalDenyConfirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exaModalTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer"><input type="hidden" id="contractId1" value="" >
+                <button type="button" onclick="clickModalYesContractApproval('modalDenyConfirm')" class="btn btn-primary" data-dismiss="modal">Yes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script type="text/javascript" th:src="@{/js/companyContractListScript.js}"></script>
 </body>
 </html>
