@@ -176,10 +176,6 @@ public class InvoiceService {
         return canCreateInvoice;
     }
 
-
-
-
-
     public Period getPeriodBetweenDates(LocalDate firstInputDate, LocalDate secondInputDate) {
         final Period period = Period.between(firstInputDate, secondInputDate);
         LOGGER.debug("days:"+period.getDays());
@@ -277,8 +273,7 @@ public class InvoiceService {
     }
 
     public Long[] getAllInvoicesIdsbyCompanyUsername(String authenticatedUsername) {
-        long[] invoicesIds = invoiceDao.getAllInvoicesIdsByCompanyUsername(authenticatedUsername);
-        List longList=new ArrayList<>(Arrays.asList(invoicesIds));
-        return (Long[])canCreateInvoices(longList).toArray();
+        Long[] invoicesIds = invoiceDao.getAllInvoicesIdsByCompanyUsername(authenticatedUsername);
+        return invoicesIds;
     }
 }

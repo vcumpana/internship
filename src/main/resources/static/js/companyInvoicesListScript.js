@@ -62,7 +62,6 @@ function getAllInvoicesIds() {
         success: function (result) {
             arr = [];
             arr = $.merge(arr, result);
-            //  listOfContracts.sort(comparatorForCategory);
         }
     });
 }
@@ -101,7 +100,6 @@ function downloadInvoices() {
             listOfInvoices = result.invoices;
             maxPage = result.pages;
             setPages();
-            //  listOfContracts.sort(comparatorForCategory);
             fillTableWithInvoices();
             setCheckboxes();
         }
@@ -142,10 +140,6 @@ function sendInvoices() {
             $('#exampleModal .modal-body').text('');
             $('#exampleModal .modal-body').append("<p>Invoices have been successfully sent</p>");
             $('#exampleModal').modal("show");
-            //$("#successSending").show();
-            // window.setTimeout(function () {
-            //     $("#successSending").hide();
-            // }, 5000);
             downloadInvoices();
         }
     });
@@ -161,12 +155,6 @@ function sendInvoice(id) {
             $('#exampleModal .modal-body').text('');
             $('#exampleModal .modal-body').append("<p>Invoice has been successfully sent</p>");
             $('#exampleModal').modal("show");
-            /*
-$("#successSending").show();
-             setTimeout(function () {
-                 $("#successSending").hide();
-             }, 5000);
-*/
             downloadInvoices();
         }
     });
@@ -181,10 +169,6 @@ function cancelInvoice(id) {
             $('#exampleModal .modal-body').text('');
             $('#exampleModal .modal-body').append("<p>Invoice has been successfully deleted</p>");
             $('#exampleModal').modal("show");
-            // $("#successCanceling").show();
-            // setTimeout(function () {
-            //     $("#successCanceling").hide();
-            // }, 5000);
             downloadInvoices();
         }
     });
@@ -210,10 +194,6 @@ function cancelInvoices() {
             $('#exampleModal .modal-body').text('');
             $('#exampleModal .modal-body').append("<p>Invoices have been successfully deleted</p>");
             $('#exampleModal').modal("show");
-           // $("#successCancel").show();
-           //  window.setTimeout(function () {
-           //      $("#successCancel").hide();
-           //  }, 5000);
             downloadInvoices();
         }
     });
@@ -451,7 +431,7 @@ function downloadBalance() {
         type: "POST",
         url: "/bank/balance",
         success: function (result) {
-            $("#balance").text(result.balance + " USD");
+            $("#balance").text(result.balance.toFixed(2) + " USD");
         }
     });
 }
@@ -527,9 +507,6 @@ function deleteInvoicesConfirmation(){
 $(document).on("click", ".cancel", function () {
     var invoiceId = $(this).data('id');
     $("#modalDeleteOneInvoiceConfirm #invoiceId").val(invoiceId);
-    // As pointed out in comments,
-    // it is superfluous to have to manually call the modal.
-    // $('#addBookDialog').modal('show');
     $('#modalDeleteOneInvoiceConfirm .modal-body').text("You are going to delete an invoice");
     $('#modalDeleteOneInvoiceConfirm .modal-body').append("<p>Please confirm!</p><br>");
     $('#modalDeleteOneInvoiceConfirm .modal-title').text("Confirm");
@@ -539,9 +516,6 @@ $(document).on("click", ".cancel", function () {
 $(document).on("click", ".send", function () {
     var invoiceId = $(this).data('id');
     $("#modalSendOneInvoiceConfirm #invoiceId1").val(invoiceId);
-    // As pointed out in comments,
-    // it is superfluous to have to manually call the modal.
-    // $('#addBookDialog').modal('show');
     $('#modalSendOneInvoiceConfirm .modal-body').text("You are going to send an invoice");
     $('#modalSendOneInvoiceConfirm .modal-body').append("<p>Please confirm!</p><br>");
     $('#modalSendOneInvoiceConfirm .modal-title').text("Confirm");

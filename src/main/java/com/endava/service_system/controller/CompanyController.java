@@ -70,6 +70,7 @@ public class CompanyController {
         CompanyDtoToShow company = conversionService.convert(companyService.getCompanyByUsername(username).get(), CompanyDtoToShow.class);
         addCompanyNameToModel(model);
         model.addAttribute("user", company);
+        model.addAttribute("username1", username);
         addCompanyToModel(model);
         return "companyCabinet";
     }
@@ -233,7 +234,6 @@ public class CompanyController {
         String fullName=user.getName()+" "+user.getSurname();
         String serviceTitle =contract.getService().getTitle();
         redirectAttributes.addFlashAttribute("message","You have created an invoice for client: " +fullName +", on service : " +serviceTitle +" with sum " + invoice.getPrice() + " USD");
-        //companyService.addNewInvoice(invoice);
         return "redirect:/company/myinvoices";
     }
 

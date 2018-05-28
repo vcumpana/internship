@@ -32,11 +32,6 @@ $("#showRepeatedPassword").click(function(){
     convertPasswordIntoTextAndInverse("#confirmPassword", this);
 });
 
-// $("#resetButton").click(function () {
-//     toNeutral("#feedbackPassword", "#password");
-//     toNeutral("#feedbackRepeatedPassword", "#confirmPassword");
-// });
-
 $("#btnRegister").click(function(event){
     var errors = 0;
     if(validatePassword("#password") == false){

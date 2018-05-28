@@ -31,7 +31,7 @@ function downloadBalance(){
         type: "POST",
         url: "/bank/balance",
         success: function (result) {
-            $("#balance").text(result.balance + " MDL");
+            $("#balance").text(result.balance.toFixed(2) + " USD");
         }
     });
 }
@@ -53,9 +53,6 @@ function deleteService(id) {
 $(document).on("click", ".cancel", function () {
     var invoiceId = $(this).data('id');
     $("#modalDeleteServiceConfirm #serviceId").val(invoiceId);
-    // As pointed out in comments,
-    // it is superfluous to have to manually call the modal.
-    // $('#addBookDialog').modal('show');
     $('#modalDeleteServiceConfirm .modal-body').text("You are going to delete a service");
     $('#modalDeleteServiceConfirm .modal-body').append("<p>Please confirm!</p><br>");
     $('#modalDeleteServiceConfirm .modal-title').text("Confirm");

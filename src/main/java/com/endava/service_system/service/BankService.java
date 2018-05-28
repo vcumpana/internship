@@ -32,6 +32,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 import java.util.Optional;
 
+import static com.endava.service_system.model.enums.Role.ROLE_COMPANY;
 import static com.endava.service_system.model.enums.Role.ROLE_USER;
 
 @Service
@@ -145,7 +146,17 @@ public class BankService {
             result = "You paid invoice from date " + invoice.getFromDate() + " to date " + invoice.getTillDate() + " according to " +
                     "<a href='/user/profile?id=" + contractId + "'>contract nr." + contractId + "</a>.";
         }
-        if(message.toLowerCase().contains("sum") && (currentUser.getRole() == ROLE_USER)){
+        if(message.toLowerCase().contains("invoice") && (currentUser.getRole() == ROLE_COMPANY)){
+            message = message.replaceAll("\\D+", "");
+            long invoiceId = new Integer(message);
+            Invoice invoice = invoiceDao.getOne(invoiceId);
+            long contractId = invoice.getContract().getId();
+            result = invoice.getContract().getUser().getName() + " " + invoice.getContract().getUser().getSurname()
+                    +" has paid invoice from date " + invoice.getFromDate() + " to date " + invoice.getTillDate() + " for " + invoice.getContract().getService().getCategory().getName()
+                    + ", " + invoice.getContract().getService().getTitle() + " subscription plan, according to " +
+                     contractId + " contract no." + contractId;
+        }
+        if(message.toLowerCase().contains("sum")){
             sum = sum.setScale(2);
             result = "You added " + sum.toString() + " USD to your count.";
         }

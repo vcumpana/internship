@@ -5,7 +5,10 @@ import com.endava.service_system.model.dto.ServiceToUserDto;
 import com.endava.service_system.model.entities.Service;
 import com.endava.service_system.model.filters.ServiceDtoFilter;
 import com.endava.service_system.model.filters.order.ServiceOrderBy;
+import com.endava.service_system.service.CategoryService;
+import com.endava.service_system.service.CompanyService;
 import com.endava.service_system.service.ServiceService;
+import com.endava.service_system.utils.AuthUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,12 +26,17 @@ import java.util.Map;
 @RestController
 public class ServiceRestController {
     private final ServiceService serviceService;
-    private static final Logger LOGGER = LogManager.getLogger(InvoicesRestController.class);
+    private final CompanyService companyService;
+    private final CategoryService categoryService;
+    private final AuthUtils authUtils;
+    private static final Logger LOGGER = LogManager.getLogger(ServiceRestController.class);
 
 
-    public ServiceRestController(ServiceService serviceService) {
+    public ServiceRestController(ServiceService serviceService, CompanyService companyService, CategoryService categoryService, AuthUtils authUtils) {
         this.serviceService = serviceService;
-
+        this.companyService = companyService;
+        this.categoryService = categoryService;
+        this.authUtils = authUtils;
     }
 
     @PostMapping("service")
