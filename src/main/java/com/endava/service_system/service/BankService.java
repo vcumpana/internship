@@ -140,7 +140,7 @@ public class BankService {
         Credential currentUser = credentialService.getByUsername(username).get();
         if(message.toLowerCase().contains("invoice") && (currentUser.getRole() == ROLE_USER)){
             message = message.replaceAll("\\D+", "");
-            long invoiceId = new Integer(message);
+            long invoiceId = Integer.valueOf(message);
             Invoice invoice = invoiceDao.getOne(invoiceId);
             long contractId = invoice.getContract().getId();
             result = "You paid invoice from date " + invoice.getFromDate() + " to date " + invoice.getTillDate() + " according to " +

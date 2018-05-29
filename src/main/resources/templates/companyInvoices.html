@@ -13,6 +13,7 @@
     <script th:src="@{/js/moment.js}" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" th:href="@{/css/companyInvoicesStyle.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/customSelectStyle.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bg-primary.css}"/>
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-primary">
@@ -187,7 +188,7 @@
 </div>
 
     <div class="float-right" style="margin-bottom: 10px">
-        <button onclick="sendInvoicesConfirmation()" class="btn btn-info">Send invoices</button>
+        <button onclick="sendInvoicesConfirmation()" class="btn btn-primary">Send invoices</button>
         <button onclick="deleteInvoicesConfirmation()" class="btn btn-danger">Delete invoices</button>
     </div>
 <div class="table-responsive">

@@ -14,6 +14,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
             integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
             crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bg-primary.css}"/>
     <style>
         #left {
             width: 35%;
@@ -98,7 +99,7 @@
                                        th:each="error : ${#fields.errors('text')}"
                                        th:text="${error}">Validation error</p>
                                 </div>
-                                <button type="submit" class="btn btn-success btn-lg btn-block" id="btnLogin">Send Message</button>
+                                <button type="submit" class="btn btn-primary btn-lg btn-block" id="btnLogin">Send Message</button>
                             </form>
                             <div style="display:flex">
                                 <div id="right">

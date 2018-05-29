@@ -36,7 +36,7 @@ import java.util.Optional;
 @Controller
 public class CompanyController {
 
-    private static Logger LOGGER= LogManager.getLogger(CompanyController.class);
+    private static Logger LOGGER = LogManager.getLogger(CompanyController.class);
     private CompanyService companyService;
     private ConversionService conversionService;
     private CategoryService categoryService;
@@ -54,7 +54,7 @@ public class CompanyController {
 
     @PostMapping("/company/registration")
     public String registerCompany(Model model, @ModelAttribute("company") @Valid CompanyRegistrationDTO companyRegistrationDTO, BindingResult bindingResult) {
-        LOGGER.log(Level.DEBUG,companyRegistrationDTO);
+        LOGGER.log(Level.DEBUG, companyRegistrationDTO);
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("company", companyRegistrationDTO);
@@ -65,7 +65,7 @@ public class CompanyController {
     }
 
     @GetMapping(value = "/company/cabinet")
-    public String companyCabinet(Model model){
+    public String companyCabinet(Model model) {
         String username = authUtils.getAuthenticatedUsername();
         CompanyDtoToShow company = conversionService.convert(companyService.getCompanyByUsername(username).get(), CompanyDtoToShow.class);
         addCompanyNameToModel(model);
@@ -76,37 +76,37 @@ public class CompanyController {
     }
 
     @GetMapping(value = "/company/serviceList")
-    public String userServiceList(Model model){
+    public String userServiceList(Model model) {
         addCompanyNameToModel(model);
         List<Category> categories = categoryService.getAll();
         model.addAttribute("categories", categories);
-        return  "companyServiceList";
+        return "companyServiceList";
     }
 
     @GetMapping(value = "/company/mycontracts")
-    public String getMyContractsPage(Model model){
+    public String getMyContractsPage(Model model) {
         addCompanyNameToModel(model);
         addCategoriesToModel(model);
         addServicesToModel(model);
-        return  "companyContractList";
+        return "companyContractList";
     }
 
     @GetMapping(value = "/company/notifications")
-    public String getMyNotificationsPage(Model model){
+    public String getMyNotificationsPage(Model model) {
         addCompanyNameToModel(model);
-        return  "companyNotifications";
+        return "companyNotifications";
     }
 
     @GetMapping(value = "/company/myinvoices")
-    public String getMyInvoicesPage(Model model){
+    public String getMyInvoicesPage(Model model) {
         addCompanyNameToModel(model);
         addCategoriesToModel(model);
         addServicesToModel(model);
-        return  "companyInvoices";
+        return "companyInvoices";
     }
 
     @GetMapping(value = "/company/statements")
-    public String userStatements(Model model){
+    public String userStatements(Model model) {
         addCompanyNameToModel(model);
         return "companyStatement";
     }
@@ -130,15 +130,13 @@ public class CompanyController {
         serviceDTO.setPrice(service.getPrice());
         serviceDTO.setId(service.getId());
         Optional<Company> company = companyService.getCompanyNameByUsername(authUtils.getAuthenticatedUsername());
-        if (service != null) {
-            if (serviceService.getServicesByCompanyName(company.get().getName()).contains(service)) {
-                List<Category> categories = categoryService.getAll();
-                model.addAttribute("categories", categories);
-                model.addAttribute("username", company.get().getName());
-                model.addAttribute("service", serviceDTO);
-                LOGGER.debug(serviceDTO);
-                return "companyEditService";
-            }
+        if (serviceService.getServicesByCompanyName(company.get().getName()).contains(service)) {
+            List<Category> categories = categoryService.getAll();
+            model.addAttribute("categories", categories);
+            model.addAttribute("username", company.get().getName());
+            model.addAttribute("service", serviceDTO);
+            LOGGER.debug(serviceDTO);
+            return "companyEditService";
         }
         return "redirect:/company/serviceList";
     }
@@ -166,7 +164,7 @@ public class CompanyController {
             model.addAttribute("service", newServiceDTO);
             return "companyAddService";
         }
-        Service beforeSaving=conversionService.convert(newServiceDTO, Service.class);
+        Service beforeSaving = conversionService.convert(newServiceDTO, Service.class);
         beforeSaving.setId(newServiceDTO.getId());
         companyService.updateService(beforeSaving);
         redirectAttributes.addFlashAttribute("message", "Service has been successfully updated");
@@ -182,12 +180,12 @@ public class CompanyController {
     }
 
     @PostMapping("/company/createInvoice")
-    public String registerNewService(RedirectAttributes redirectAttributes, HttpServletResponse response,HttpServletRequest request,  Model model, @ModelAttribute("invoice") @Validated NewInvoiceDTO newInvoiceDTO, BindingResult bindingResult) {
-        LOGGER.log(Level.DEBUG,newInvoiceDTO);
-        LOGGER.log(Level.DEBUG,bindingResult.getAllErrors());
+    public String registerNewService(RedirectAttributes redirectAttributes, HttpServletResponse response, HttpServletRequest request, Model model, @ModelAttribute("invoice") @Validated NewInvoiceDTO newInvoiceDTO, BindingResult bindingResult) {
+        LOGGER.log(Level.DEBUG, newInvoiceDTO);
+        LOGGER.log(Level.DEBUG, bindingResult.getAllErrors());
         if (bindingResult.hasErrors()) {
             model.addAttribute("invoice", newInvoiceDTO);
-            for(Cookie one:request.getCookies()) {
+            for (Cookie one : request.getCookies()) {
                 if (one.getName().equalsIgnoreCase("conflict")) {
                     one.setValue("");
                     one.setPath("/");
@@ -198,24 +196,24 @@ public class CompanyController {
             return "companyCreateInvoice";
         }
 
-                //i
-        if(invoiceService.invoicePeriodExists(newInvoiceDTO)) {
-            String cookieValue=null;
-            for(Cookie one:request.getCookies()){
-                if(one.getName().equalsIgnoreCase("conflict")) {
-                    cookieValue=one.getValue();
+        //i
+        if (invoiceService.invoicePeriodExists(newInvoiceDTO)) {
+            String cookieValue = null;
+            for (Cookie one : request.getCookies()) {
+                if (one.getName().equalsIgnoreCase("conflict")) {
+                    cookieValue = one.getValue();
                 }
             }
-            LOGGER.debug("cookieValue: "+cookieValue);
-            if (cookieValue== null || cookieValue.equalsIgnoreCase("true")) {
+            LOGGER.debug("cookieValue: " + cookieValue);
+            if (cookieValue == null || cookieValue.equalsIgnoreCase("true")) {
                 LOGGER.debug("adding cookie : ");
                 Cookie conflictCookie = new Cookie("conflict", "true");
                 response.addCookie(conflictCookie);
                 return "companyCreateInvoice";
-            }else{
+            } else {
 
-                for(Cookie one:request.getCookies()){
-                    if(one.getName().equalsIgnoreCase("conflict")) {
+                for (Cookie one : request.getCookies()) {
+                    if (one.getName().equalsIgnoreCase("conflict")) {
                         one.setValue("");
                         one.setPath("/");
                         one.setMaxAge(0);
@@ -230,17 +228,17 @@ public class CompanyController {
         invoice.setContract(contract);
         invoice.setCreatedDate(LocalDate.now());
         invoiceService.save(invoice);
-        User user=contract.getUser();
-        String fullName=user.getName()+" "+user.getSurname();
-        String serviceTitle =contract.getService().getTitle();
-        redirectAttributes.addFlashAttribute("message","You have created an invoice for client: " +fullName +", on service : " +serviceTitle +" with sum " + invoice.getPrice() + " USD");
+        User user = contract.getUser();
+        String fullName = user.getName() + " " + user.getSurname();
+        String serviceTitle = contract.getService().getTitle();
+        redirectAttributes.addFlashAttribute("message", "You have created an invoice for client: " + fullName + ", on service : " + serviceTitle + " with sum " + invoice.getPrice() + " USD");
         return "redirect:/company/myinvoices";
     }
 
     @PostMapping("/company/editInvoice")
     public String editInvoice(Model model, @ModelAttribute("invoice") @Validated NewInvoiceDTO newInvoiceDTO, BindingResult bindingResult) {
-        LOGGER.log(Level.DEBUG,newInvoiceDTO);
-        LOGGER.log(Level.DEBUG,bindingResult.getAllErrors());
+        LOGGER.log(Level.DEBUG, newInvoiceDTO);
+        LOGGER.log(Level.DEBUG, bindingResult.getAllErrors());
         if (bindingResult.hasErrors()) {
             model.addAttribute("invoice", newInvoiceDTO);
             return "companyEditInvoice";
@@ -253,30 +251,30 @@ public class CompanyController {
         return "redirect:/company/myinvoices";
     }
 
-    private void addCompanyNameToModel(Model model){
+    private void addCompanyNameToModel(Model model) {
         Optional<Company> company = companyService.getCompanyNameByUsername(getAuthenticatedUsername());
         model.addAttribute("username", company.get().getName());
     }
 
-    private void addCompanyToModel(Model model){
+    private void addCompanyToModel(Model model) {
         model.addAttribute("company", companyService.getCompanyByUsername(getAuthenticatedUsername()).get());
     }
 
     private void addServicesToModel(Model model) {
-        model.addAttribute("services",serviceService.getServicesByCompanyName(companyService.getCompanyNameByUsername(authUtils.getAuthenticatedUsername()).get().getName()));
+        model.addAttribute("services", serviceService.getServicesByCompanyName(companyService.getCompanyNameByUsername(authUtils.getAuthenticatedUsername()).get().getName()));
     }
 
-    private void addUsernameToModel(Model model){
+    private void addUsernameToModel(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         model.addAttribute("username", username);
     }
 
-    private void addCategoriesToModel(Model model){
-        model.addAttribute("categories",categoryService.getAll());
+    private void addCategoriesToModel(Model model) {
+        model.addAttribute("categories", categoryService.getAll());
     }
 
-    private String getAuthenticatedUsername(){
+    private String getAuthenticatedUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
     }

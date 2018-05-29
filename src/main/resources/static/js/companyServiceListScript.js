@@ -31,7 +31,8 @@ function downloadBalance(){
         type: "POST",
         url: "/bank/balance",
         success: function (result) {
-            $("#balance").text(result.balance.toFixed(2) + " USD");
+            $("#balance").addClass("balance");
+            $("#balance").text("Balance: " + result.balance.toFixed(2) + " USD");
         }
     });
 }
@@ -94,7 +95,7 @@ function fillTableWithServices() {
         row += "<td>" + listOfServices[i].price + " USD</td>";
         row += "<td>" + listOfServices[i].numberOfContracts + "</td>";
         if (listOfServices[i].numberOfContracts == 0){
-            row += "<td><a role = \"button\" style = \"display: inline-block;;width: 58px\" class=\"btn btn-info btn-sm send\" href=\"/service/"+ listOfServices[i].id+"/edit\" data-id="+ listOfServices[i].id+" >Edit</a>" +
+            row += "<td><a role = \"button\" style = \"display: inline-block;;width: 58px\" class=\"btn btn-primary btn-sm send\" href=\"/service/"+ listOfServices[i].id+"/edit\" data-id="+ listOfServices[i].id+" >Edit</a>" +
                 "<button class=\"btn btn-danger btn-sm cancel\" style = \"display:inline;width: 58px\" data-id="+ listOfServices[i].id+ " >Delete</button></td>";
 
         } else {

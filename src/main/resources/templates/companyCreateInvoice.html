@@ -13,6 +13,7 @@
     <script th:src="@{/js/moment.js}" type="text/javascript"></script>
     <script th:src="@{/js/cookie.js}" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" th:href="@{/css/companyInvoicesStyle.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bg-primary.css}"/>
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-primary">
@@ -147,7 +148,7 @@
                                 <p class="error-message"
                                    th:each="error : ${#fields.errors('global')}"
                                    th:text="${error}">Validation error</p>
-                                <button type="button"  onclick="createInvoiceConfirmation()" class="btn btn-success" id="btnRegister">
+                                <button type="button"  onclick="createInvoiceConfirmation()" class="btn btn-primary" id="btnRegister">
                                     Create
                                 </button>
                                 <a onclick="cancelCreateInvoice()"  role="button" class="btn btn-danger" id="btnCancel">

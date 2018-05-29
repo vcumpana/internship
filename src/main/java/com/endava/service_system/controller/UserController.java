@@ -110,6 +110,7 @@ public class UserController {
         String username = authentication.getName();
         UserDtoToShow user = conversionService.convert(userService.getByUsername(username).get(), UserDtoToShow.class);
         model.addAttribute("username", username);
+        model.addAttribute("username1", user.getName() + " " + user.getSurname());
         model.addAttribute("user", user);
         return "userCabinet";
     }
@@ -117,7 +118,8 @@ public class UserController {
     private void addUsernameToModel(Model model){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        model.addAttribute("username", username);
+        User user = userService.getByUsername(username).get();
+        model.addAttribute("username", user.getName() + " " + user.getSurname());
     }
 
     private void addCategoriesToModel(Model model){
