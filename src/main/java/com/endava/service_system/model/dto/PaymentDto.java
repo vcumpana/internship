@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 @Data
 public class PaymentDto {
-    private Long C;
-    private BigDecimal S;
-    private String D;
+    private Long correspondentCount;
+    private BigDecimal sum;
+    private String description;
 }

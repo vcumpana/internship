@@ -31,8 +31,9 @@ function downloadStatements(ev) {
     }
     var data = {
         "date": $("#startDate").val(),
-        "dateTo": $("#endDate").val(),
-        "pages": currentPage
+        "dateTo": $("#endDate").val()
+        //,
+        //"pages": currentPage
     };
     $.ajax({
         type: "POST",
@@ -79,9 +80,9 @@ function fillTableWithStatements(currentSum) {
                 row += "<td class='text-danger'>- " + Math.abs(listOfStatements[i].sum).toFixed(2) + " USD</td>";
             }
             row += "<td>" + listOfStatements[i].description + "</td>";
-            row += "<td>" + currentSum.toFixed(2) + " USD</td>";
-            currentSum += listOfStatements[i].sum;
-            row += "<td>" + currentSum.toFixed(2) + " USD</td>";
+            // row += "<td>" + currentSum + " USD</td>";
+            // currentSum += listOfStatements[i].sum;
+            // row += "<td>" + currentSum + " USD</td>";
             row += "</tr>";
             $("#tableWithStatements tbody").append(row);
         }
@@ -89,7 +90,7 @@ function fillTableWithStatements(currentSum) {
         var row = "<tr><td colspan='5'>No results found for this period</td></tr>";
         $("#tableWithStatements tbody").append(row);
     }
-    $("#balanceEnd").text("Balance on the end of period: " + sumOnTheEnd.toFixed(2) + " USD");
+    // $("#balanceEnd").text("Balance on the end of period: " + sumOnTheEnd.toFixed(2) + " USD");
 }
 
 function downloadBalance() {

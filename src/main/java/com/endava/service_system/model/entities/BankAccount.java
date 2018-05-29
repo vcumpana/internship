@@ -12,7 +12,5 @@ public class BankAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long countNumber;
-    @OneToOne
-    private BankKey bankKeys;
-
+    private Long accessKey;
 }
