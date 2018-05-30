@@ -14,6 +14,8 @@
             integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
             crossorigin="anonymous"></script>
     <link th:href="@{/css/snackbar.css}" rel="stylesheet">
+    <link th:href="@{/css/bg-primary.css}" rel="stylesheet">
+
     <link th:href="@{/css/dialog.css}" rel="stylesheet"> <!-- Including CSS File Here-->
     <!-- Including CSS & jQuery Dialog UI Here-->
     <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
@@ -33,7 +35,7 @@
     <script th:src="@{/js/moment.js}" type="text/javascript"></script>
     <style>
         .mt-12 {
-            margin-top: 4rem;
+            margin-top: 2rem;
         }
 
         .mb-8{
@@ -87,6 +89,14 @@
 
         nav .nav-item a,button {
             width:130px;
+        }
+
+        tbody .btn {
+            width:130px;
+        }
+
+        .btn-dark{
+            background-color: #174158 !important;
         }
         /*nav .pagination .a{*/
             /*width:50px;*/
@@ -193,6 +203,7 @@
     </script>
 </head>
 <body>
+<h1 class="mt-12 text-center">Admin Panel</h1>
 <div id="addCategoryDialog" title="Add Category">
     <label>Name:</label>
     <input id="add_name" name="name" type="text">
