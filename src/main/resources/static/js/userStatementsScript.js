@@ -45,10 +45,8 @@ function downloadStatements(ev) {
         },
         success: function(result){
             sumOnTheStart = result.balanceBefore;
-            sumOnTheEnd = result.balanceAfter;
             listOfStatements = result.listOfTransactions;
-            maxPageSize = result.pages;
-            fillTableWithStatements(result.balanceBeforeCurrentPage);
+            fillTableWithStatements();
             verifyIfPreviousExists();
             verifyIfNextExists();
             setPages();
@@ -66,8 +64,10 @@ $("#previousPage").click(function () {
     downloadStatements(null);
 });
 
-function fillTableWithStatements(currentSum) {
-    $("#balanceBefore").text("Balance on the beginning of period: " + sumOnTheStart.toFixed(2) + " USD");
+function fillTableWithStatements() {
+
+    $("#balanceBefore").text("Balance in the begin of period: " + sumOnTheStart.toFixed(2) + " USD");
+    var before=sumOnTheStart;
     $("#tableWithStatements tbody").html("");
     if(listOfStatements.length !== 0) {
         for (var i = 0; i < listOfStatements.length; i++) {
@@ -79,12 +79,16 @@ function fillTableWithStatements(currentSum) {
             } else {
                 row += "<td class='text-danger'>- " + Math.abs(listOfStatements[i].sum).toFixed(2) + " USD</td>";
             }
+
             row += "<td>" + listOfStatements[i].description + "</td>";
-            // row += "<td>" + currentSum + " USD</td>";
-            // currentSum += listOfStatements[i].sum;
-            // row += "<td>" + currentSum + " USD</td>";
+            row += "<td>" + before.toFixed(2) + " USD</td>";
+            before+=listOfStatements[i].sum;
+            row += "<td>" + before.toFixed(2) + " USD</td>";
             row += "</tr>";
+            $("#balanceEnd").text("Balance on the end of period: " + before.toFixed(2) + " USD");
+            $("#balanceEnd").append("</br></br>");
             $("#tableWithStatements tbody").append(row);
+            
         }
     } else {
         var row = "<tr><td colspan='5'>No results found for this period</td></tr>";

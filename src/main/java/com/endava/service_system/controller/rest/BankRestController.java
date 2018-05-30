@@ -1,11 +1,10 @@
 package com.endava.service_system.controller.rest;
 
-import com.endava.service_system.model.dto.AddMoneyDto;
-import com.endava.service_system.model.dto.BalanceDto;
-import com.endava.service_system.model.dto.InvoiceForPaymentDto;
-import com.endava.service_system.model.dto.PaymentDto;
+import com.endava.service_system.dao.InvoiceDao;
+import com.endava.service_system.model.dto.*;
 import com.endava.service_system.model.entities.BankAccount;
 import com.endava.service_system.model.entities.Credential;
+import com.endava.service_system.model.entities.Invoice;
 import com.endava.service_system.model.entities.Notification;
 import com.endava.service_system.model.enums.InvoiceStatus;
 import com.endava.service_system.service.BankService;
@@ -23,14 +22,18 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.endava.service_system.model.enums.InvoiceStatus.PAID;
+import static com.endava.service_system.model.enums.Role.ROLE_COMPANY;
+import static com.endava.service_system.model.enums.Role.ROLE_USER;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,6 +48,7 @@ public class BankRestController {
     private ObjectMapper objectMapper;
     private InvoiceService invoiceService;
     private NotificationService notificationService;
+    private InvoiceDao invoiceDao;
 
     @Autowired
     public void setRestTemplate(RestTemplate restTemplate) {
@@ -86,6 +90,11 @@ public class BankRestController {
         this.notificationService = notificationService;
     }
 
+
+    @Autowired
+    public void setInvoiceDao(InvoiceDao invoiceDao) {
+        this.invoiceDao = invoiceDao;
+    }
 
     //TODO add this paths to spring security;
     @PostMapping("/bank/addmoney")
@@ -149,10 +158,41 @@ public class BankRestController {
         //map.add("email", "first.last@example.com");
         //String json=objectMapper.writeValueAsString(rangeDto);
         HttpEntity request = new HttpEntity<>(data, headers);
-        ResponseEntity rs = restTemplate.postForEntity(bankApi + "statement/statement", request, Object.class);
+        ResponseEntity<NormalTransactionsDto> rs = restTemplate.postForEntity(bankApi + "statement/statement", request, NormalTransactionsDto.class);
+        NormalTransactionsDto normalTransactionsDto=rs.getBody();
+        normalTransactionsDto.getListOfTransactions().stream().forEach(t -> t.setDescription(parseMessageFromBank(t.getDescription(), t.getSum())));
         System.out.println(rs.getBody());
         System.out.println(rs);
         return new ResponseEntity(rs.getBody(), rs.getStatusCode());
+    }
+
+    public String parseMessageFromBank(String message, BigDecimal sum){
+        String result = message;
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Credential currentUser = credentialService.getByUsername(username).get();
+        if(message.toLowerCase().contains("invoice") && (currentUser.getRole() == ROLE_USER)){
+            message = message.replaceAll("\\D+", "");
+            long invoiceId = Integer.valueOf(message);
+            Invoice invoice = invoiceDao.getOne(invoiceId);
+            long contractId = invoice.getContract().getId();
+            result = "You paid invoice from date " + invoice.getFromDate() + " to date " + invoice.getTillDate() + " according to " +
+                    "<a href='/user/profile?id=" + contractId + "'>contract nr." + contractId + "</a>.";
+        }
+        if(message.toLowerCase().contains("invoice") && (currentUser.getRole() == ROLE_COMPANY)){
+            message = message.replaceAll("\\D+", "");
+            long invoiceId = new Integer(message);
+            Invoice invoice = invoiceDao.getOne(invoiceId);
+            long contractId = invoice.getContract().getId();
+            result = invoice.getContract().getUser().getName() + " " + invoice.getContract().getUser().getSurname()
+                    +" has paid invoice from date " + invoice.getFromDate() + " to date " + invoice.getTillDate() + " for " + invoice.getContract().getService().getCategory().getName()
+                    + ", " + invoice.getContract().getService().getTitle() + " subscription plan, according to " +
+                    contractId + " contract no." + contractId;
+        }
+        if(message.toLowerCase().contains("sum")){
+            sum = sum.setScale(2);
+            result = "You added " + sum.toString() + " USD to your count.";
+        }
+        return result;
     }
 
     ;
@@ -248,15 +288,18 @@ public class BankRestController {
         paymentDto.setCorrespondentCount(invoice.getCompanyBankCount());
         paymentDto.setDescription("Invoice " + invoice.getInvoiceId());
         paymentDto.setSum(invoice.getPrice());
-        String json = objectMapper.writeValueAsString(paymentDto);
-        HttpEntity request = new HttpEntity<>(json, headers);
-        ResponseEntity rs = restTemplate.postForEntity(bankApi + "sendmoney/sendMoney", request, String.class);
+        //String json = objectMapper.writeValueAsString(paymentDto);
+        LOGGER.debug(paymentDto);
+        HttpEntity request = new HttpEntity<>(paymentDto, headers);
+        ResponseEntity<BalanceDto> rs = restTemplate.postForEntity(bankApi + "sendmoney/sendMoney", request, BalanceDto.class);
         if (rs.getStatusCode() == HttpStatus.OK) {
+            System.out.println("rs:"+rs);
             invoiceService.makeInvoicePayed(invoice.getInvoiceId());
             sendNotification(invoice);
             //TODO create notifications
         }
-        return rs;
+        System.out.println(rs.getBody());
+        return new ResponseEntity(rs.getBody(),rs.getStatusCode());
     }
 
     //TODO create notification for user and companies;

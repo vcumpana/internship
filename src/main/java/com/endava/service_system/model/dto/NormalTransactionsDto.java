@@ -9,7 +9,5 @@ import java.util.List;
 public class NormalTransactionsDto {
     private long pages;
     private BigDecimal balanceBefore;
-    private BigDecimal balanceBeforeCurrentPage;
-    private BigDecimal balanceAfter;
     private List<NormalTransaction> listOfTransactions;
 }

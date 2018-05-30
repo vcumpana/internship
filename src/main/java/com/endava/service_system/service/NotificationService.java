@@ -11,12 +11,15 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.endava.service_system.model.enums.NotificationStatus.READ;
 import static com.endava.service_system.model.enums.NotificationStatus.UNREAD;
+import static com.endava.service_system.model.enums.Role.ROLE_COMPANY;
+import static com.endava.service_system.model.enums.Role.ROLE_USER;
 
 @Service
 public class NotificationService {
@@ -26,7 +29,9 @@ public class NotificationService {
     private CompanyDao companyDao;
     private ICredentialDao credentialDao;
     private ConversionService conversionService;
+    private InvoiceDao invoiceDao;
 
+    private CredentialService credentialService;
     @Autowired
     public void setNotificationDao(NotificationDao notificationDao) {
         this.notificationDao = notificationDao;
@@ -55,6 +60,16 @@ public class NotificationService {
     @Autowired
     public void setConversionService(ConversionService conversionService) {
         this.conversionService = conversionService;
+    }
+
+    @Autowired
+    public void setInvoiceDao(InvoiceDao invoiceDao) {
+        this.invoiceDao = invoiceDao;
+    }
+
+    @Autowired
+    public void setCredentialService(CredentialService credentialService) {
+        this.credentialService = credentialService;
     }
 
     public void saveAboutContractFromUser(ContractDtoFromUser contractDtoFromUser) {
@@ -184,4 +199,5 @@ public class NotificationService {
         Notification notification = createNotificationForCredential(admin, user.getCredential(), now, message);
         return notification;
     }
+
 }

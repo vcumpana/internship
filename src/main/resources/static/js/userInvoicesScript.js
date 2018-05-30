@@ -158,15 +158,17 @@ function payInvoice(element) {
         contentType: "application/json; charset=utf-8",
         url: "/invoice/payInvoice",
         data: JSON.stringify({id: id}),
-        success: function (data) {
+        success: function (newData) {
             invoicePaidUi(id);
+            console.log(newData);
+            //$("#balance").text(data.balance.toFixed(2))
             downloadBalance();
         },
         error: function (jqXhr, textStatus, errorThrown) {
             var status = jqXhr.status;
             var response = JSON.parse(jqXhr.responseText)
             if (jqXhr.responseText != null && response != null && response.message != null) {
-                displayMessage(response.message)
+                displayMessage("No connection with bank")
             } else if (status == STATUS.BAD_REQUEST) {
                 displayMessage("Bad request please contact admins ");
             } else {
